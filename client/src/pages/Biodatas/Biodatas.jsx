@@ -79,7 +79,7 @@ const Biodatas = () => {
         { value: 'Female', label: t('biodata.filters.female'), icon: <FaFemale className="text-rose-500" /> },
     ];
 
-    const FilterSection = () => (
+    const renderFilterContent = () => (
         <div className="space-y-6">
             <div>
                 <Label className="text-sm font-semibold mb-2.5 block">{t('biodata.filters.biodataType')}</Label>
@@ -106,9 +106,9 @@ const Biodatas = () => {
             <div>
                 <Label className="text-sm font-semibold mb-2.5 block">{t('biodata.filters.ageRange')}</Label>
                 <div className="flex items-center gap-2">
-                    <Input type="number" name="minAge" value={filters.minAge} onChange={(e) => setFilter('minAge', e.target.value)} placeholder={t('biodata.filters.min')} min="18" max="80" />
+                    <Input type="number" name="minAge" value={filters.minAge} onChange={(e) => setFilter('minAge', e.target.value)} placeholder={t('biodata.filters.min')} />
                     <span className="text-muted-foreground text-sm">—</span>
-                    <Input type="number" name="maxAge" value={filters.maxAge} onChange={(e) => setFilter('maxAge', e.target.value)} placeholder={t('biodata.filters.max')} min="18" max="80" />
+                    <Input type="number" name="maxAge" value={filters.maxAge} onChange={(e) => setFilter('maxAge', e.target.value)} placeholder={t('biodata.filters.max')} />
                 </div>
             </div>
 
@@ -158,7 +158,7 @@ const Biodatas = () => {
                                         <p className="text-xs text-muted-foreground">{t('biodata.filters.refine')}</p>
                                     </div>
                                 </div>
-                                <FilterSection />
+                                {renderFilterContent()}
                             </CardContent>
                         </Card>
                     </aside>
@@ -169,7 +169,7 @@ const Biodatas = () => {
                             <SheetHeader>
                                 <SheetTitle className="flex items-center gap-2"><SlidersHorizontal className="h-4 w-4 text-primary" /> {t('biodata.filters.filters')}</SheetTitle>
                             </SheetHeader>
-                            <div className="px-4 pb-6"><FilterSection /></div>
+                            <div className="px-4 pb-6">{renderFilterContent()}</div>
                         </SheetContent>
                     </Sheet>
 
