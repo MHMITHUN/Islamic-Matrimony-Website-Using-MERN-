@@ -545,10 +545,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👨‍💻 Developer
 
-**Mohammad Mithun**
-
-- GitHub: [@MHMITHUN](https://github.com/MHMITHUN)
-- Repository: [Client](https://github.com/MHMITHUN/Matrimony-Website-Client--PH-A-12) | [Server](https://github.com/MHMITHUN/Matrimony-Website-Server--PH-A-12)
+Developed by **Team Islamic Matrimony Website**
 
 ---
 
