@@ -12,10 +12,9 @@ import LanguageToggle from '../components/LanguageToggle';
 import DarkModeToggle from '../components/DarkModeToggle';
 import Logo from '../components/shared/Logo';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle,
+    Sheet, SheetContent, SheetHeader, SheetTitle,
 } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { adminAPI } from '../api/api';
@@ -78,7 +77,15 @@ const DashboardLayout = () => {
 
     const links = isAdmin ? adminLinks : userLinks;
 
-    const SidebarContent = () => (
+    // When active item mounts, scroll it into view inside the sidebar scrollable area
+    const handleActiveRef = (el) => {
+        if (el) {
+            el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+    };
+
+    // Render sidebar as a plain function call (NOT a nested component) to prevent remount on route change
+    const renderSidebar = () => (
         <div className="flex flex-col h-full">
             {/* Brand */}
             <div className="px-5 py-5 border-b border-white/10">
@@ -119,34 +126,37 @@ const DashboardLayout = () => {
                     {isAdmin ? t('dashboard.sidebar.adminMenu') : t('dashboard.sidebar.navigation')}
                 </p>
                 <ul className="space-y-1 pb-4">
-                    {links.map((link) => (
-                        <li key={link.path}>
-                            <NavLink
-                                to={link.path}
-                                onClick={() => setSidebarOpen(false)}
-                                className={({ isActive }) =>
-                                    cn(
-                                        'group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm',
-                                        isActive
-                                            ? 'bg-white text-emerald-700 font-semibold shadow-lg shadow-emerald-950/40'
-                                            : 'text-white/70 hover:bg-white/10 hover:text-white'
-                                    )
-                                }
-                            >
-                                {({ isActive }) => (
-                                    <>
-                                        <link.icon className={cn('h-[18px] w-[18px] shrink-0', isActive ? 'text-emerald-600' : 'text-white/60 group-hover:text-white')} />
-                                        <span className="flex-1">{link.label}</span>
-                                        {isAdmin && link.badgeKey === 'premium' && pendingRequests.length > 0 && (
-                                            <span className="grid place-items-center min-w-[20px] h-5 px-1 bg-amber-500 text-white text-[10px] font-bold rounded-full">
-                                                {pendingRequests.length}
-                                            </span>
-                                        )}
-                                    </>
-                                )}
-                            </NavLink>
-                        </li>
-                    ))}
+                    {links.map((link) => {
+                        const isActive = pathname === link.path;
+                        return (
+                            <li key={link.path} ref={isActive ? handleActiveRef : null}>
+                                <NavLink
+                                    to={link.path}
+                                    onClick={() => setSidebarOpen(false)}
+                                    className={({ isActive }) =>
+                                        cn(
+                                            'group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm',
+                                            isActive
+                                                ? 'bg-white text-emerald-700 font-semibold shadow-lg shadow-emerald-950/40'
+                                                : 'text-white/70 hover:bg-white/10 hover:text-white'
+                                        )
+                                    }
+                                >
+                                    {({ isActive }) => (
+                                        <>
+                                            <link.icon className={cn('h-[18px] w-[18px] shrink-0', isActive ? 'text-emerald-600' : 'text-white/60 group-hover:text-white')} />
+                                            <span className="flex-1">{link.label}</span>
+                                            {isAdmin && link.badgeKey === 'premium' && pendingRequests.length > 0 && (
+                                                <span className="grid place-items-center min-w-[20px] h-5 px-1 bg-amber-500 text-white text-[10px] font-bold rounded-full">
+                                                    {pendingRequests.length}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </NavLink>
+                            </li>
+                        );
+                    })}
                 </ul>
             </ScrollArea>
 
@@ -172,7 +182,7 @@ const DashboardLayout = () => {
         <div className="min-h-screen bg-muted/30">
             {/* Desktop sidebar */}
             <aside className="hidden lg:flex flex-col fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-emerald-800 to-emerald-950 h-screen z-40">
-                <SidebarContent />
+                {renderSidebar()}
             </aside>
 
             {/* Mobile sidebar */}
@@ -181,7 +191,7 @@ const DashboardLayout = () => {
                     <SheetHeader className="sr-only">
                         <SheetTitle>Navigation</SheetTitle>
                     </SheetHeader>
-                    <SidebarContent />
+                    {renderSidebar()}
                 </SheetContent>
             </Sheet>
 
