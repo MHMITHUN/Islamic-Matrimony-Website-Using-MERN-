@@ -30,11 +30,23 @@
       "maleProfiles": "Male Profiles",
       "femaleProfiles": "Female Profiles"
     },
+    "quickSearch": {
+      "title": "Find Your Match",
+      "subtitle": "Quick search to begin",
+      "anyGender": "Any Gender",
+      "male": "Male",
+      "female": "Female",
+      "anyAge": "Any Age",
+      "years": "+ years",
+      "anyLocation": "Any Location",
+      "search": "Search"
+    },
     "premium": {
       "badge": "Premium Members",
       "heading": "Meet Our",
       "highlight": "Verified Profiles",
       "subtitle": "Connect with genuine individuals who are seriously looking for their life partners",
+      "sortByAge": "Sort by age:",
       "sortAgeAsc": "Sort by Age: Low to High",
       "sortAgeDesc": "Sort by Age: High to Low",
       "viewAll": "View All Biodatas"
@@ -75,6 +87,19 @@
       "noStories": "No Success Stories Yet",
       "noStoriesDesc": "Be the first to share your beautiful story!",
       "married": "Married:"
+    },
+    "storiesPage": {
+      "title": "Success Stories - Nikah Matrimony",
+      "badge": "Success Stories",
+      "heading": "Real couples,",
+      "highlight": "real unions",
+      "subtitle": "Couples who found their life partners through our platform, alhamdulillah.",
+      "filterByRating": "Filter by rating:",
+      "all": "All",
+      "noStoriesFound": "No stories found",
+      "noStoriesDesc": "No success stories match your filter.",
+      "detailTitle": "Success Story",
+      "married": "Married"
     },
     "featured": {
       "badge": "Featured Profiles",
@@ -193,7 +218,7 @@
       "addToFavorites": "Add to Favorites",
       "favorited": "Favorited",
       "requestContact": "Request Contact Info",
-      "requestContactPrice": "Request Contact Info (৳500)",
+      "requestContactPrice": "Request Contact Info (500 BDT)",
       "basicInfo": "Basic Information",
       "familyInfo": "Family Information",
       "location": "Location",
@@ -317,7 +342,7 @@
     "yourEmail": "Your Email",
     "cardNumber": "Card Number",
     "demoMode": "Demo mode: Enter any 16-digit number",
-    "payButton": "Pay ৳500.00",
+    "payButton": "Pay 500 BDT",
     "processing": "Processing Payment...",
     "securePayment": "Secure Payment",
     "secureDesc": "Your payment is secure. After payment, your request will be sent to admin for approval. Once approved, you can view the contact information from your dashboard."

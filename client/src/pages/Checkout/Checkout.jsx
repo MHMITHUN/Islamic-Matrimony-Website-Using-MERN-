@@ -72,10 +72,10 @@ const Checkout = () => {
                         <div className="rounded-xl border bg-muted/30 p-5">
                             <h3 className="font-bold text-foreground text-sm mb-3 flex items-center gap-1.5"><Star className="h-4 w-4 fill-gold text-gold" /> {t('checkout.orderSummary')}</h3>
                             <div className="space-y-2">
-                                <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">{t('checkout.contactRequest')}</span><span className="font-semibold text-foreground">৳500.00</span></div>
+                                <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">{t('checkout.contactRequest')}</span><span className="font-semibold text-foreground">500 BDT</span></div>
                                 <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">{t('checkout.biodataId')}</span><span className="font-semibold text-primary">#{biodataId}</span></div>
                                 <Separator className="my-2" />
-                                <div className="flex items-center justify-between font-bold"><span className="text-foreground">{t('checkout.total')}</span><span className="text-primary text-lg">৳500.00</span></div>
+                                <div className="flex items-center justify-between font-bold"><span className="text-foreground">{t('checkout.total')}</span><span className="text-primary text-lg">500 BDT</span></div>
                             </div>
                         </div>
 

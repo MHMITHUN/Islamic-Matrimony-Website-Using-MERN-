@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const FeaturedProfiles = ({ biodatas = [] }) => {
+    const { t } = useLanguage();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
     const [perView, setPerView] = useState(3);
@@ -77,53 +79,56 @@ const FeaturedProfiles = ({ biodatas = [] }) => {
                         transition={{ x: { type: 'spring', stiffness: 260, damping: 30 }, opacity: { duration: 0.2 } }}
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
                     >
-                        {visibleBiodatas.map((biodata) => (
-                            <div key={biodata._id} className="group relative rounded-2xl overflow-hidden border border-border bg-card shadow-premium card-lift hover:shadow-premium-lg hover:border-primary/30">
-                                <div className="relative aspect-[4/5] overflow-hidden">
-                                    {biodata.profileImage ? (
-                                        <img
-                                            src={biodata.profileImage}
-                                            alt={`Featured Profile ${biodata.biodataId}`}
-                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="grid place-items-center h-full w-full bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-950 dark:to-slate-900">
-                                            <User className="h-16 w-16 text-emerald-300/60" />
-                                        </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-black/15" />
-
-                                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                                        <Badge className="gap-1 bg-primary border-transparent text-primary-foreground"><Heart className="h-3 w-3 fill-current" /> Featured</Badge>
-                                        {biodata.isPremium && (
-                                            <Badge className="gap-1 bg-gradient-gold border-transparent text-white"><Crown className="h-3 w-3" /> Premium</Badge>
+                        {visibleBiodatas.map((biodata) => {
+                            const isMale = biodata.biodataType === 'Male';
+                            return (
+                                <div key={biodata._id} className="group relative rounded-2xl overflow-hidden border border-border bg-card shadow-premium card-lift hover:shadow-premium-lg hover:border-primary/30">
+                                    <div className="relative aspect-[4/5] overflow-hidden">
+                                        {biodata.profileImage ? (
+                                            <img
+                                                src={biodata.profileImage}
+                                                alt={`Featured Profile ${biodata.biodataId}`}
+                                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="grid place-items-center h-full w-full bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-950 dark:to-slate-900">
+                                                <User className="h-16 w-16 text-emerald-300/60" />
+                                            </div>
                                         )}
-                                    </div>
-                                    <span className={cn('absolute top-3 right-3 rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur', biodata.biodataType === 'Male' ? 'bg-sky-500/85 text-white' : 'bg-rose-500/85 text-white')}>
-                                        {biodata.biodataType}
-                                    </span>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-black/15" />
 
-                                    <div className="absolute bottom-3 left-3 right-3 text-white">
-                                        <p className="text-[10px] text-white/60 tabular-nums">ID: {biodata.biodataId}</p>
-                                        <div className="flex items-end gap-1.5">
-                                            <span className="text-2xl font-bold font-heading leading-none">{biodata.age}</span>
-                                            <span className="text-[11px] text-white/80 mb-0.5">yrs</span>
+                                        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                                            <Badge className="gap-1 bg-primary border-transparent text-primary-foreground"><Heart className="h-3 w-3 fill-current" /> {t('home.featured.featured', 'Featured')}</Badge>
+                                            {biodata.isPremium && (
+                                                <Badge className="gap-1 bg-gradient-gold border-transparent text-white"><Crown className="h-3 w-3" /> {t('biodata.card.premium', 'Premium')}</Badge>
+                                            )}
+                                        </div>
+                                        <span className={cn('absolute top-3 right-3 rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur', isMale ? 'bg-sky-500/85 text-white' : 'bg-rose-500/85 text-white')}>
+                                            {isMale ? t('biodata.filters.male', 'Male') : t('biodata.filters.female', 'Female')}
+                                        </span>
+
+                                        <div className="absolute bottom-3 left-3 right-3 text-white">
+                                            <p className="text-[10px] text-white/60 tabular-nums">ID: {biodata.biodataId}</p>
+                                            <div className="flex items-end gap-1.5">
+                                                <span className="text-2xl font-bold font-heading leading-none">{biodata.age}</span>
+                                                <span className="text-[11px] text-white/80 mb-0.5">{t('biodata.card.years', 'yrs')}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="p-4">
-                                    <p className="font-semibold text-sm text-foreground truncate mb-2">{biodata.occupation || '—'}</p>
-                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
-                                        <MapPin className="h-3.5 w-3.5 text-primary" />
-                                        <span className="truncate">{biodata.permanentDivision || '—'}</span>
+                                    <div className="p-4">
+                                        <p className="font-semibold text-sm text-foreground truncate mb-2">{biodata.occupation ? t(`enum.occupation.${biodata.occupation.toLowerCase()}`, biodata.occupation) : '—'}</p>
+                                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+                                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                                            <span className="truncate">{biodata.permanentDivision ? t(`enum.division.${biodata.permanentDivision.toLowerCase()}`, biodata.permanentDivision) : '—'}</span>
+                                        </div>
+                                        <Button asChild size="sm" className="w-full">
+                                            <Link to={`/biodata/${biodata.biodataId}`}>{t('biodata.card.viewProfile', 'View Profile')} <ArrowRight className="h-3.5 w-3.5" /></Link>
+                                        </Button>
                                     </div>
-                                    <Button asChild size="sm" className="w-full">
-                                        <Link to={`/biodata/${biodata.biodataId}`}>View Profile <ArrowRight className="h-3.5 w-3.5" /></Link>
-                                    </Button>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </motion.div>
                 </AnimatePresence>
             </div>

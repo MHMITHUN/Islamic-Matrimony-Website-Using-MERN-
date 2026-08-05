@@ -168,26 +168,26 @@ const QuickSearch = () => {
                             <div className="flex items-center gap-2 mb-4">
                                 <span className="grid place-items-center h-9 w-9 rounded-lg bg-primary/10 text-primary"><Search className="h-4 w-4" /></span>
                                 <div>
-                                    <h3 className="font-heading font-semibold text-foreground leading-none">Find Your Match</h3>
-                                    <p className="text-xs text-muted-foreground mt-1">Quick search to begin</p>
+                                    <h3 className="font-heading font-semibold text-foreground leading-none">{t('home.quickSearch.title', 'Find Your Match')}</h3>
+                                    <p className="text-xs text-muted-foreground mt-1">{t('home.quickSearch.subtitle', 'Quick search to begin')}</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                                 <select value={gender} onChange={(e) => setGender(e.target.value)} className="h-11 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                                    <option value="">Any Gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
+                                    <option value="">{t('home.quickSearch.anyGender', 'Any Gender')}</option>
+                                    <option value="Male">{t('home.quickSearch.male', 'Male')}</option>
+                                    <option value="Female">{t('home.quickSearch.female', 'Female')}</option>
                                 </select>
                                 <select value={minAge} onChange={(e) => setMinAge(e.target.value)} className="h-11 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                                    <option value="">Any Age</option>
-                                    {[18, 21, 25, 28, 30, 35, 40].map(a => <option key={a} value={a}>{a}+ years</option>)}
+                                    <option value="">{t('home.quickSearch.anyAge', 'Any Age')}</option>
+                                    {[18, 21, 25, 28, 30, 35, 40].map(a => <option key={a} value={a}>{a} {t('home.quickSearch.years', '+ years')}</option>)}
                                 </select>
                                 <select value={division} onChange={(e) => setDivision(e.target.value)} className="h-11 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                                    <option value="">Any Location</option>
-                                    {divisions.map(d => <option key={d} value={d}>{d}</option>)}
+                                    <option value="">{t('home.quickSearch.anyLocation', 'Any Location')}</option>
+                                    {divisions.map(d => <option key={d} value={d}>{t(`enum.division.${d.toLowerCase()}`, d)}</option>)}
                                 </select>
                                 <Button asChild size="lg" className="h-11">
-                                    <Link to={`/biodatas?${buildQuery()}`}>Search <ArrowRight className="h-4 w-4" /></Link>
+                                    <Link to={`/biodatas?${buildQuery()}`}>{t('home.quickSearch.search', 'Search')} <ArrowRight className="h-4 w-4" /></Link>
                                 </Button>
                             </div>
                         </CardContent>
@@ -223,7 +223,7 @@ const PremiumMembersSection = () => {
                 />
                 <Reveal className="flex justify-center mb-8">
                     <div className="inline-flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Sort by age:</span>
+                        <span className="text-xs text-muted-foreground">{t('home.premium.sortByAge', 'Sort by age:')}</span>
                         <div className="inline-flex rounded-lg bg-muted p-0.5">
                             {[['asc', t('home.premium.sortAgeAsc')], ['desc', t('home.premium.sortAgeDesc')]].map(([val, label]) => (
                                 <button

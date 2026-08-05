@@ -5,6 +5,7 @@ import { Crown, MapPin, Heart, User, BadgeCheck, ArrowRight } from 'lucide-react
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 /**
  * Premium reusable biodata profile card.
@@ -15,6 +16,7 @@ import { cn } from '@/lib/utils';
  * @param {(val:boolean)=>void} [onFavoriteChange] - favorite handler
  */
 export default function BiodataCard({ biodata, index = 0, featured = false, isFavorite: controlledFav, onFavoriteChange }) {
+    const { t } = useLanguage();
     const [internalFav, setInternalFav] = useState(false);
     const [imgError, setImgError] = useState(false);
     const isFavorite = controlledFav !== undefined ? controlledFav : internalFav;
@@ -60,12 +62,12 @@ export default function BiodataCard({ biodata, index = 0, featured = false, isFa
                 <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
                     {biodata.isPremium && (
                         <Badge className="gap-1 bg-gradient-gold border-transparent text-white shadow-sm">
-                            <Crown className="h-3 w-3" /> Premium
+                            <Crown className="h-3 w-3" /> {t('biodata.card.premium', 'Premium')}
                         </Badge>
                     )}
                     {featured && (
                         <Badge className="gap-1 bg-primary border-transparent text-primary-foreground shadow-sm">
-                            <BadgeCheck className="h-3 w-3" /> Featured
+                            <BadgeCheck className="h-3 w-3" /> {t('home.featured.featured', 'Featured')}
                         </Badge>
                     )}
                 </div>
@@ -76,7 +78,7 @@ export default function BiodataCard({ biodata, index = 0, featured = false, isFa
                         'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur',
                         isMale ? 'bg-sky-500/85 text-white' : 'bg-rose-500/85 text-white'
                     )}>
-                        {biodata.biodataType}
+                        {isMale ? t('biodata.filters.male', 'Male') : t('biodata.filters.female', 'Female')}
                     </span>
                 </div>
 
@@ -105,21 +107,21 @@ export default function BiodataCard({ biodata, index = 0, featured = false, isFa
                     <p className="text-[10px] text-white/60 mb-0.5 tabular-nums">ID: {biodata.biodataId}</p>
                     <div className="flex items-end gap-1.5">
                         <span className="text-2xl font-bold font-heading leading-none">{biodata.age}</span>
-                        <span className="text-[11px] text-white/80 mb-0.5">yrs</span>
+                        <span className="text-[11px] text-white/80 mb-0.5">{t('biodata.card.years', 'yrs')}</span>
                     </div>
                 </div>
             </div>
 
             {/* Body */}
             <div className="p-4">
-                <p className="font-semibold text-sm text-foreground truncate mb-2">{biodata.occupation || '—'}</p>
+                <p className="font-semibold text-sm text-foreground truncate mb-2">{biodata.occupation ? t(`enum.occupation.${biodata.occupation.toLowerCase()}`, biodata.occupation) : '—'}</p>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
                     <MapPin className="h-3.5 w-3.5 text-primary" />
-                    <span className="truncate">{biodata.permanentDivision || '—'}</span>
+                    <span className="truncate">{biodata.permanentDivision ? t(`enum.division.${biodata.permanentDivision.toLowerCase()}`, biodata.permanentDivision) : '—'}</span>
                 </div>
                 <Button asChild size="sm" className="w-full group/btn">
                     <Link to={`/biodata/${biodata.biodataId}`}>
-                        View Profile
+                        {t('biodata.card.viewProfile', 'View Profile')}
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
                     </Link>
                 </Button>
