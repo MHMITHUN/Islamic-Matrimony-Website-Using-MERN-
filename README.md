@@ -19,6 +19,19 @@
 
 ---
 
+## 🌐 Live Demo
+
+<div align="center">
+
+| Deployment | Platform | URL |
+| :--- | :--- | :--- |
+| 🖥️ **Frontend** | Netlify | [islamic-nikah-website.netlify.app](https://islamic-nikah-website.netlify.app/) |
+| ⚙️ **Backend API** | Vercel | [islamic-matrimony-website-using-mer.vercel.app](https://islamic-matrimony-website-using-mer.vercel.app/) |
+
+</div>
+
+---
+
 ## 🌟 Overview
 
 **Nikah Matrimony** is a full-stack MERN (MongoDB, Express, React, Node.js) web application engineered to facilitate Islamic marriage matching in a safe, verified, and Halal manner. The platform offers seamless bilingual internationalization (English & Bangla), dynamic theme toggling (Dark/Light mode), verified biodata profiles, Stripe payment integration for contact requests, and a comprehensive admin management dashboard.
