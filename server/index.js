@@ -60,6 +60,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/biodata', biodataRoutes);
 app.use('/api/contact-requests', contactRequestRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/recently-viewed', require('./routes/recentlyViewed'));
 app.use('/api/success-stories', successStoryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);

@@ -151,3 +151,10 @@ export const subscriptionAPI = {
     create: (data) => api.post('/subscriptions', data),
     getAll: () => api.get('/subscriptions/admin/all')
 };
+
+export const recentlyViewedAPI = {
+    getAll: () => api.get('/recently-viewed'),
+    add: (biodataId) => api.post('/recently-viewed', { biodataId }),
+    remove: (biodataId) => api.delete(`/recently-viewed/${biodataId}`),
+    clearAll: () => api.delete('/recently-viewed')
+};
