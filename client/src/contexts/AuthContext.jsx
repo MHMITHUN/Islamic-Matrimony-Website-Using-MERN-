@@ -91,6 +91,32 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Admin login (env-based, no Firebase required)
+    const adminLogin = async (email, password) => {
+        setLoading(true);
+        try {
+            const { data } = await authAPI.adminLogin({ email, password });
+            if (data.token) {
+                localStorage.setItem('access-token', data.token);
+            }
+            // Set admin user state directly from server response
+            setUser({
+                email: data.user.email,
+                displayName: data.user.name,
+                photoURL: data.user.photoURL,
+                uid: data.user._id
+            });
+            setIsAdmin(true);
+            setIsPremium(true);
+            return data;
+        } catch (error) {
+            console.error('Admin login error:', error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Check user status
     const checkUserStatus = async (email) => {
         try {
@@ -158,6 +184,7 @@ export const AuthProvider = ({ children }) => {
         register,
         login,
         loginWithGoogle,
+        adminLogin,
         logout,
         getJWTToken,
         checkUserStatus

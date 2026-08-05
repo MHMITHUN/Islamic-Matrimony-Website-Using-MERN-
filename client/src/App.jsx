@@ -20,6 +20,7 @@ import Biodatas from './pages/Biodatas/Biodatas';
 import BiodataDetails from './pages/BiodataDetails/BiodataDetails';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import AdminLogin from './pages/Auth/AdminLogin';
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Checkout from './pages/Checkout/Checkout';
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
       { path: 'about', element: <About /> },
       { path: 'contact', element: <Contact /> },
       { path: 'login', element: <Login /> },
+      { path: 'admin-login', element: <AdminLogin /> },
       { path: 'register', element: <Register /> },
       { path: 'privacy', element: <Privacy /> },
       { path: 'terms', element: <Terms /> },

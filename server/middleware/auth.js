@@ -44,17 +44,12 @@ const verifyToken = async (req, res, next) => {
 
 const verifyAdmin = async (req, res, next) => {
     try {
-        const user = await User.findOne({ email: req.user.email });
-
-        // Admin access is determined SOLELY by the ADMIN_EMAILS env variable
-        const adminEmails = (process.env.ADMIN_EMAILS || '')
-            .split(',')
-            .map(e => e.trim().toLowerCase())
-            .filter(Boolean);
-        const isEnvAdmin = adminEmails.includes(req.user.email.toLowerCase());
+        const adminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+        const isEnvAdmin = req.user.email.trim().toLowerCase() === adminEmail;
 
         if (!isEnvAdmin) {
-            // Downgrade any user whose role is 'admin' but is no longer in ADMIN_EMAILS
+            // Downgrade any user whose role is 'admin' but is not the env-configured admin
+            const user = await User.findOne({ email: req.user.email });
             if (user && user.role === 'admin') {
                 user.role = 'user';
                 await user.save();
@@ -62,7 +57,8 @@ const verifyAdmin = async (req, res, next) => {
             return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
         }
 
-        // Sync database role if env says admin but DB doesn't
+        // Ensure admin user exists in DB with admin role
+        const user = await User.findOne({ email: req.user.email });
         if (user && user.role !== 'admin') {
             user.role = 'admin';
             user.isPremium = true;

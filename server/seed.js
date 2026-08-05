@@ -20,8 +20,7 @@ const seedData = async () => {
         await ContactMessage.deleteMany({});
 
         console.log('👤 Creating admin user...');
-        const adminEmail = (process.env.ADMIN_EMAILS || 'admin@islamicmatrimony.com')
-            .split(',')[0].trim();
+        const adminEmail = (process.env.ADMIN_EMAIL || 'admin@islamicmatrimony.com').trim();
         const admin = await User.create({
             name: 'Admin',
             email: adminEmail,

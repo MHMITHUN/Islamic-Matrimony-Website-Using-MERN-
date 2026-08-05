@@ -41,6 +41,7 @@ export default api;
 
 export const authAPI = {
     getToken: (userData) => api.post('/auth/jwt', userData),
+    adminLogin: (credentials) => api.post('/auth/admin-login', credentials),
     getCurrentUser: () => api.get('/auth/me'),
     checkAdmin: (email) => api.get(`/auth/admin/${email}`),
     checkPremium: (email) => api.get(`/auth/premium/${email}`)
