@@ -65,8 +65,15 @@ export const AuthProvider = ({ children }) => {
         window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
         setIsAdmin(false);
         setIsPremium(false);
+        setUser(null);
         queryClient.clear();
-        return signOut(auth);
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Update profile
@@ -121,10 +128,10 @@ export const AuthProvider = ({ children }) => {
     const checkUserStatus = async (email) => {
         try {
             const [adminRes, premiumRes] = await Promise.all([
-                authAPI.checkAdmin(email).catch(() => ({ data: { admin: false } })),
+                authAPI.checkAdmin(email).catch(() => ({ data: { isAdmin: false } })),
                 authAPI.checkPremium(email).catch(() => ({ data: { isPremium: false } }))
             ]);
-            setIsAdmin(adminRes.data?.admin || false);
+            setIsAdmin(adminRes.data?.isAdmin || adminRes.data?.admin || false);
             setIsPremium(premiumRes.data?.isPremium || false);
         } catch (error) {
             console.error('Error checking user status:', error);
