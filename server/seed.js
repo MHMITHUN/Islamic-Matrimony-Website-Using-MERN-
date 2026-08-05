@@ -81,7 +81,7 @@ const seedData = async () => {
             'https://images.unsplash.com/photo-1613837770636-cae46b162c28?w=400&fit=crop',
             'https://images.unsplash.com/photo-1662806407800-56793fa8e924?w=400&fit=crop',
             'https://images.unsplash.com/photo-1589998059171-989d887dda6e?w=400&fit=crop',
-            'https://images.unsplash.com/photo-1598550880863-4e8aa3d0edb4?w=400&fit=crop'
+            'https://images.unsplash.com/photo-1522219406764-db207f1f7640?w=400&fit=crop'
         ];
 
         const users = [];
