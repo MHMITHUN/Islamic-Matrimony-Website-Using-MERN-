@@ -24,9 +24,9 @@ const Biodatas = () => {
     const [searchParams] = useSearchParams();
     const [filters, setFilters] = useState({
         biodataType: searchParams.get('biodataType') || '',
-        division: searchParams.get('permanentDivision') || '',
-        minAge: '',
-        maxAge: searchParams.get('age') || '',
+        division: searchParams.get('division') || searchParams.get('permanentDivision') || '',
+        minAge: searchParams.get('minAge') || searchParams.get('age') || '',
+        maxAge: searchParams.get('maxAge') || '',
     });
     const [page, setPage] = useState(1);
     const [showMobileFilter, setShowMobileFilter] = useState(false);

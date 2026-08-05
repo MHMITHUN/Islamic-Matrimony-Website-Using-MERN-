@@ -154,8 +154,8 @@ const QuickSearch = () => {
     const buildQuery = () => {
         const p = new URLSearchParams();
         if (gender) p.set('biodataType', gender);
-        if (minAge) p.set('age', minAge);
-        if (division) p.set('permanentDivision', division);
+        if (minAge) p.set('minAge', minAge);
+        if (division) p.set('division', division);
         return p.toString();
     };
 
