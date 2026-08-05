@@ -1,144 +1,131 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { FaEdit, FaHeart, FaEnvelope, FaEye, FaCrown, FaSearch, FaRing, FaClock, FaCheckCircle, FaHourglassHalf, FaHistory, FaCog } from 'react-icons/fa';
+import { Pencil, Search, Heart, Mail, Crown, CheckCircle2, Clock, ArrowRight, Sparkles } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { biodataAPI, favoritesAPI, contactRequestAPI } from '../../../api/api';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
 import { useProfileCompletion } from '../../../hooks/useProfileCompletion';
 import ProfileCompleteness from '../../../components/ProfileCompleteness';
+import PageHeader from '../../../components/dashboard/PageHeader';
+import StatCard from '../../../components/dashboard/StatCard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const UserOverview = () => {
     const { user, isPremium } = useAuth();
-    const { t } = useLanguage();
 
     const { data: biodata, isLoading: loadingBiodata } = useQuery({
         queryKey: ['myBiodata'],
-        queryFn: async () => { try { const res = await biodataAPI.getMyBiodata(); return res.data; } catch (e) { if (e.response?.status === 404) return null; throw e; } }
+        queryFn: async () => { try { const res = await biodataAPI.getMyBiodata(); return res.data; } catch (e) { if (e.response?.status === 404) return null; throw e; } },
     });
-
-    const { data: favorites = [] } = useQuery({
-        queryKey: ['myFavorites'],
-        queryFn: async () => { const res = await favoritesAPI.getAll(); return res.data; }
-    });
-
-    const { data: requests = [] } = useQuery({
-        queryKey: ['myContactRequests'],
-        queryFn: async () => { const res = await contactRequestAPI.getMyRequests(); return res.data; }
-    });
+    const { data: favorites = [] } = useQuery({ queryKey: ['myFavorites'], queryFn: async () => { const res = await favoritesAPI.getAll(); return res.data; } });
+    const { data: requests = [] } = useQuery({ queryKey: ['myContactRequests'], queryFn: async () => { const res = await contactRequestAPI.getMyRequests(); return res.data; } });
 
     const completion = useProfileCompletion(biodata);
     const approvedRequests = requests.filter(r => r.status === 'approved').length;
     const pendingRequests = requests.filter(r => r.status === 'pending').length;
 
     const quickActions = [
-        { to: '/dashboard/edit-biodata', icon: <FaEdit />, label: biodata ? 'Edit Biodata' : 'Create Biodata', color: 'bg-emerald-600' },
-        { to: '/biodatas', icon: <FaSearch />, label: 'Browse Biodatas', color: 'bg-blue-600' },
-        { to: '/dashboard/favorites', icon: <FaHeart />, label: 'My Favorites', color: 'bg-pink-600' },
-        { to: '/dashboard/contact-requests', icon: <FaEnvelope />, label: 'Contact Requests', color: 'bg-purple-600' },
+        { to: '/dashboard/edit-biodata', icon: Pencil, label: biodata ? 'Edit Biodata' : 'Create Biodata', tint: 'bg-emerald-500/10 text-emerald-600' },
+        { to: '/biodatas', icon: Search, label: 'Browse Biodatas', tint: 'bg-sky-500/10 text-sky-600' },
+        { to: '/dashboard/favorites', icon: Heart, label: 'My Favorites', tint: 'bg-rose-500/10 text-rose-600' },
+        { to: '/dashboard/contact-requests', icon: Mail, label: 'Contact Requests', tint: 'bg-purple-500/10 text-purple-600' },
     ];
+
+    const activity = [
+        { icon: Pencil, text: 'Biodata created/updated', time: biodata?.updatedAt ? new Date(biodata.updatedAt).toLocaleDateString() : 'N/A', tint: 'text-emerald-600' },
+        ...(favorites.length > 0 ? [{ icon: Heart, text: `${favorites.length} profiles favorited`, time: 'Active', tint: 'text-rose-500' }] : []),
+        ...(approvedRequests > 0 ? [{ icon: CheckCircle2, text: `${approvedRequests} contact requests approved`, time: 'Active', tint: 'text-sky-600' }] : []),
+    ].slice(0, 4);
 
     return (
         <>
             <Helmet><title>Dashboard - Nikah Matrimony</title></Helmet>
             <div className="space-y-6">
-                <div>
-                    <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-                        Welcome back, {user?.displayName?.split(' ')[0] || 'User'}
-                    </h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Here's an overview of your account</p>
-                </div>
+                <PageHeader title={`Welcome back, ${user?.displayName?.split(' ')[0] || 'User'}`} description="Here's an overview of your account." icon={Sparkles} />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                        <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Profile Completion</h2>
-                        {loadingBiodata ? (
-                            <div className="h-24 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-                        ) : biodata ? (
-                            <ProfileCompleteness {...completion} />
-                        ) : (
-                            <div className="text-center py-4">
-                                <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">You haven't created a biodata yet</p>
-                                <Link to="/dashboard/edit-biodata" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                                    <FaEdit className="text-xs" /> Create Biodata
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                    {/* Profile completion */}
+                    <Card className="lg:col-span-2">
+                        <CardHeader className="pb-2"><CardTitle className="text-base">Profile Completion</CardTitle></CardHeader>
+                        <CardContent>
+                            {loadingBiodata ? (
+                                <div className="h-24 bg-muted rounded-lg animate-pulse" />
+                            ) : biodata ? (
+                                <ProfileCompleteness {...completion} />
+                            ) : (
+                                <div className="text-center py-4">
+                                    <p className="text-muted-foreground text-sm mb-3">You haven't created a biodata yet</p>
+                                    <Button asChild><Link to="/dashboard/edit-biodata"><Pencil className="h-4 w-4" /> Create Biodata</Link></Button>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
 
-                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                        <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Account Status</h2>
-                        <div className="space-y-2.5">
+                    {/* Account status */}
+                    <Card>
+                        <CardHeader className="pb-2"><CardTitle className="text-base">Account Status</CardTitle></CardHeader>
+                        <CardContent className="space-y-3">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500 dark:text-gray-400">Premium</span>
-                                {isPremium ? (
-                                    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded"><FaCrown className="text-[9px]" /> Active</span>
-                                ) : (
-                                    <span className="text-xs text-gray-400">Standard</span>
-                                )}
+                                <span className="text-xs text-muted-foreground">Premium</span>
+                                {isPremium
+                                    ? <Badge variant="gold" className="gap-1"><Crown className="h-3 w-3" /> Active</Badge>
+                                    : <span className="text-xs text-muted-foreground">Standard</span>}
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500 dark:text-gray-400">Biodata</span>
-                                {biodata ? (
-                                    <span className="inline-flex items-center gap-1 text-xs text-emerald-600"><FaCheckCircle className="text-[9px]" /> Created</span>
-                                ) : (
-                                    <span className="text-xs text-gray-400">Not created</span>
-                                )}
+                                <span className="text-xs text-muted-foreground">Biodata</span>
+                                {biodata
+                                    ? <Badge variant="success" className="gap-1"><CheckCircle2 className="h-3 w-3" /> Created</Badge>
+                                    : <span className="text-xs text-muted-foreground">Not created</span>}
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500 dark:text-gray-400">Biodata ID</span>
-                                <span className="text-xs font-mono text-gray-700 dark:text-gray-300">#{biodata?.biodataId || '---'}</span>
+                                <span className="text-xs text-muted-foreground">Biodata ID</span>
+                                <span className="text-xs font-mono text-foreground">#{biodata?.biodataId || '---'}</span>
                             </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    {[
-                        { icon: <FaHeart />, value: favorites.length, label: 'Favorites', color: 'bg-pink-600' },
-                        { icon: <FaEnvelope />, value: requests.length, label: 'Contact Requests', color: 'bg-purple-600' },
-                        { icon: <FaCheckCircle />, value: approvedRequests, label: 'Approved', color: 'bg-emerald-600' },
-                        { icon: <FaHourglassHalf />, value: pendingRequests, label: 'Pending', color: 'bg-amber-600' },
-                    ].map((stat, i) => (
-                        <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
-                            <div className={`w-9 h-9 mx-auto mb-2 ${stat.color} rounded-lg flex items-center justify-center text-white`}>{stat.icon}</div>
-                            <p className="text-xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400">{stat.label}</p>
-                        </div>
-                    ))}
+                {/* Stats */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <StatCard icon={Heart} label="Favorites" value={favorites.length} tint="bg-rose-500/10 text-rose-600" />
+                    <StatCard icon={Mail} label="Contact Requests" value={requests.length} tint="bg-purple-500/10 text-purple-600" />
+                    <StatCard icon={CheckCircle2} label="Approved" value={approvedRequests} tint="bg-emerald-500/10 text-emerald-600" />
+                    <StatCard icon={Clock} label="Pending" value={pendingRequests} tint="bg-amber-500/10 text-amber-600" />
                 </div>
 
+                {/* Quick actions */}
                 <div>
-                    <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Quick Actions</h2>
+                    <h2 className="text-sm font-bold text-foreground mb-3">Quick Actions</h2>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                         {quickActions.map((action, i) => (
-                            <Link key={i} to={action.to} className="flex items-center gap-3 p-3.5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors group">
-                                <div className={`w-9 h-9 ${action.color} rounded-lg flex items-center justify-center text-white text-sm group-hover:scale-105 transition-transform`}>{action.icon}</div>
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{action.label}</span>
+                            <Link key={i} to={action.to} className="group flex items-center gap-3 p-4 rounded-xl border bg-card hover:border-primary/30 hover:shadow-premium transition-all">
+                                <span className={`grid place-items-center h-9 w-9 rounded-lg shrink-0 transition-transform group-hover:scale-110 ${action.tint}`}><action.icon className="h-4 w-4" /></span>
+                                <span className="text-sm font-medium text-foreground">{action.label}</span>
                             </Link>
                         ))}
                     </div>
                 </div>
 
+                {/* Recent activity */}
                 {biodata && (
                     <div>
                         <div className="flex items-center justify-between mb-3">
-                            <h2 className="text-sm font-bold text-gray-900 dark:text-white">Recent Activity</h2>
-                            <Link to="/dashboard/activity" className="text-xs text-emerald-600 dark:text-emerald-400 font-medium hover:underline">View all</Link>
+                            <h2 className="text-sm font-bold text-foreground">Recent Activity</h2>
+                            <Link to="/dashboard/activity" className="text-xs text-primary font-medium hover:underline inline-flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
                         </div>
-                        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
-                            {[
-                                { icon: <FaEdit />, text: 'Biodata created/updated', time: biodata.updatedAt ? new Date(biodata.updatedAt).toLocaleDateString() : 'N/A', color: 'text-emerald-600' },
-                                ...(favorites.length > 0 ? [{ icon: <FaHeart />, text: `${favorites.length} profiles favorited`, time: 'Active', color: 'text-pink-600' }] : []),
-                                ...(approvedRequests > 0 ? [{ icon: <FaCheckCircle />, text: `${approvedRequests} contact requests approved`, time: 'Active', color: 'text-blue-600' }] : []),
-                            ].slice(0, 4).map((item, i) => (
-                                <div key={i} className="flex items-center gap-3 px-4 py-3">
-                                    <span className={`${item.color} text-sm`}>{item.icon}</span>
-                                    <span className="text-sm text-gray-700 dark:text-gray-200 flex-1">{item.text}</span>
-                                    <span className="text-[10px] text-gray-400">{item.time}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <Card>
+                            <CardContent className="p-0 divide-y divide-border">
+                                {activity.map((item, i) => (
+                                    <div key={i} className="flex items-center gap-3 px-4 py-3">
+                                        <span className={`shrink-0 ${item.tint}`}><item.icon className="h-4 w-4" /></span>
+                                        <span className="text-sm text-foreground flex-1">{item.text}</span>
+                                        <span className="text-[10px] text-muted-foreground">{item.time}</span>
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div>

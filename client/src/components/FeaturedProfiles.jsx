@@ -1,72 +1,72 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChevronLeft, FaChevronRight, FaCrown, FaMapMarkerAlt, FaBriefcase, FaHeart } from 'react-icons/fa';
+import { ChevronLeft, ChevronRight, Crown, MapPin, Heart, ArrowRight, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const FeaturedProfiles = ({ biodatas = [] }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
-
-    const itemsPerView = {
-        mobile: 1,
-        tablet: 2,
-        desktop: 3
-    };
-
     const [perView, setPerView] = useState(3);
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 640) setPerView(itemsPerView.mobile);
-            else if (window.innerWidth < 1024) setPerView(itemsPerView.tablet);
-            else setPerView(itemsPerView.desktop);
+            if (window.innerWidth < 640) setPerView(1);
+            else if (window.innerWidth < 1024) setPerView(2);
+            else setPerView(3);
         };
-
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            handleNext();
-        }, 5000);
-        return () => clearInterval(timer);
-    }, [currentIndex, biodatas.length, perView]);
+    const maxIndex = Math.max(1, biodatas.length - perView + 1);
 
     const handleNext = () => {
         setDirection(1);
-        setCurrentIndex((prev) => (prev + 1) % Math.max(1, biodatas.length - perView + 1));
+        setCurrentIndex((prev) => (prev + 1) % maxIndex);
     };
 
     const handlePrev = () => {
         setDirection(-1);
-        setCurrentIndex((prev) => (prev - 1 + Math.max(1, biodatas.length - perView + 1)) % Math.max(1, biodatas.length - perView + 1));
+        setCurrentIndex((prev) => (prev - 1 + maxIndex) % maxIndex);
     };
+
+    useEffect(() => {
+        const timer = setInterval(handleNext, 5000);
+        return () => clearInterval(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentIndex, biodatas.length, perView]);
 
     const visibleBiodatas = biodatas.slice(currentIndex, currentIndex + perView);
 
     const variants = {
-        enter: (direction) => ({
-            x: direction > 0 ? 200 : -200,
-            opacity: 0
-        }),
-        center: {
-            x: 0,
-            opacity: 1
-        },
-        exit: (direction) => ({
-            x: direction < 0 ? 200 : -200,
-            opacity: 0
-        })
+        enter: (dir) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
+        center: { x: 0, opacity: 1 },
+        exit: (dir) => ({ x: dir < 0 ? 60 : -60, opacity: 0 }),
     };
 
     if (!biodatas || biodatas.length === 0) return null;
 
+    const NavBtn = ({ onClick, icon: Icon, label, side }) => (
+        <button
+            onClick={onClick}
+            aria-label={label}
+            className={cn(
+                'absolute top-1/2 -translate-y-1/2 z-20 grid place-items-center h-11 w-11 rounded-full bg-background/90 backdrop-blur border border-border shadow-premium-lg text-foreground/70 hover:text-primary hover:border-primary/40 hover:-translate-y-1/2 hover:scale-105 transition-all',
+                side === 'left' ? '-left-2 md:-left-5' : '-right-2 md:-right-5'
+            )}
+        >
+            <Icon className="h-5 w-5" />
+        </button>
+    );
+
     return (
-        <div className="relative">
+        <div className="relative px-2 md:px-5">
             <div className="overflow-hidden">
-                <AnimatePresence initial={false} custom={direction}>
+                <AnimatePresence initial={false} custom={direction} mode="wait">
                     <motion.div
                         key={currentIndex}
                         custom={direction}
@@ -74,67 +74,53 @@ const FeaturedProfiles = ({ biodatas = [] }) => {
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        transition={{
-                            x: { type: "spring", stiffness: 300, damping: 30 },
-                            opacity: { duration: 0.2 }
-                        }}
+                        transition={{ x: { type: 'spring', stiffness: 260, damping: 30 }, opacity: { duration: 0.2 } }}
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
                     >
                         {visibleBiodatas.map((biodata) => (
-                            <div
-                                key={biodata._id}
-                                className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-all duration-200"
-                            >
-                                <div className="relative h-56 overflow-hidden">
-                                    <img
-                                        src={biodata.profileImage || 'https://via.placeholder.com/400x400?text=No+Image'}
-                                        alt={`Featured Profile ${biodata.biodataId}`}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            <div key={biodata._id} className="group relative rounded-2xl overflow-hidden border border-border bg-card shadow-premium card-lift hover:shadow-premium-lg hover:border-primary/30">
+                                <div className="relative aspect-[4/5] overflow-hidden">
+                                    {biodata.profileImage ? (
+                                        <img
+                                            src={biodata.profileImage}
+                                            alt={`Featured Profile ${biodata.biodataId}`}
+                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div className="grid place-items-center h-full w-full bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-950 dark:to-slate-900">
+                                            <User className="h-16 w-16 text-emerald-300/60" />
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-black/15" />
 
-                                    <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-                                        <span className="px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-bold rounded flex items-center gap-1">
-                                            <FaHeart className="text-[8px]" /> Featured
-                                        </span>
+                                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                                        <Badge className="gap-1 bg-primary border-transparent text-primary-foreground"><Heart className="h-3 w-3 fill-current" /> Featured</Badge>
                                         {biodata.isPremium && (
-                                            <span className="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded flex items-center gap-1">
-                                                <FaCrown className="text-[8px]" /> Premium
-                                            </span>
+                                            <Badge className="gap-1 bg-gradient-gold border-transparent text-white"><Crown className="h-3 w-3" /> Premium</Badge>
                                         )}
                                     </div>
-
-                                    <span className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-bold ${biodata.biodataType === 'Male' ? 'bg-blue-500 text-white' : 'bg-pink-500 text-white'
-                                        }`}>
+                                    <span className={cn('absolute top-3 right-3 rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur', biodata.biodataType === 'Male' ? 'bg-sky-500/85 text-white' : 'bg-rose-500/85 text-white')}>
                                         {biodata.biodataType}
                                     </span>
 
-                                    <div className="absolute bottom-2.5 left-2.5 right-2.5">
-                                        <p className="text-white/70 text-[10px] mb-0.5">ID: {biodata.biodataId}</p>
-                                        <div className="flex items-center gap-1.5 text-white">
-                                            <span className="text-xl font-bold">{biodata.age}</span>
-                                            <span className="text-xs">years old</span>
+                                    <div className="absolute bottom-3 left-3 right-3 text-white">
+                                        <p className="text-[10px] text-white/60 tabular-nums">ID: {biodata.biodataId}</p>
+                                        <div className="flex items-end gap-1.5">
+                                            <span className="text-2xl font-bold font-heading leading-none">{biodata.age}</span>
+                                            <span className="text-[11px] text-white/80 mb-0.5">yrs</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="p-4">
-                                    <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300 mb-2 text-sm">
-                                        <FaBriefcase className="text-emerald-600 text-xs" />
-                                        <span className="font-medium truncate">{biodata.occupation}</span>
+                                    <p className="font-semibold text-sm text-foreground truncate mb-2">{biodata.occupation || '—'}</p>
+                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+                                        <MapPin className="h-3.5 w-3.5 text-primary" />
+                                        <span className="truncate">{biodata.permanentDivision || '—'}</span>
                                     </div>
-
-                                    <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs mb-3">
-                                        <FaMapMarkerAlt className="text-emerald-600 text-[10px]" />
-                                        <span>{biodata.permanentDivision}</span>
-                                    </div>
-
-                                    <Link
-                                        to={`/biodata/${biodata.biodataId}`}
-                                        className="block w-full py-2 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors text-sm"
-                                    >
-                                        View Profile
-                                    </Link>
+                                    <Button asChild size="sm" className="w-full">
+                                        <Link to={`/biodata/${biodata.biodataId}`}>View Profile <ArrowRight className="h-3.5 w-3.5" /></Link>
+                                    </Button>
                                 </div>
                             </div>
                         ))}
@@ -142,41 +128,21 @@ const FeaturedProfiles = ({ biodatas = [] }) => {
                 </AnimatePresence>
             </div>
 
-            {/* Navigation Buttons */}
             {biodatas.length > perView && (
                 <>
-                    <button
-                        onClick={handlePrev}
-                        aria-label="Previous profiles"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-emerald-600 hover:border-emerald-300 transition-colors z-10"
-                    >
-                        <FaChevronLeft className="text-sm" />
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        aria-label="Next profiles"
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-emerald-600 hover:border-emerald-300 transition-colors z-10"
-                    >
-                        <FaChevronRight className="text-sm" />
-                    </button>
+                    <NavBtn onClick={handlePrev} icon={ChevronLeft} label="Previous profiles" side="left" />
+                    <NavBtn onClick={handleNext} icon={ChevronRight} label="Next profiles" side="right" />
+                    <div className="flex justify-center gap-1.5 mt-6">
+                        {[...Array(maxIndex)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => { setDirection(i > currentIndex ? 1 : -1); setCurrentIndex(i); }}
+                                aria-label={`Go to slide ${i + 1}`}
+                                className={cn('h-1.5 rounded-full transition-all', i === currentIndex ? 'w-7 bg-primary' : 'w-1.5 bg-border hover:bg-primary/50')}
+                            />
+                        ))}
+                    </div>
                 </>
-            )}
-
-            {/* Indicators */}
-            {biodatas.length > perView && (
-                <div className="flex justify-center gap-1.5 mt-6">
-                    {[...Array(Math.max(1, biodatas.length - perView + 1))].map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => setCurrentIndex(i)}
-                            aria-label={`Go to slide ${i + 1}`}
-                            className={`h-1.5 rounded-full transition-all ${i === currentIndex
-                                ? 'w-6 bg-emerald-600'
-                                : 'w-1.5 bg-gray-300 dark:bg-gray-600 hover:bg-emerald-400'
-                                }`}
-                        />
-                    ))}
-                </div>
             )}
         </div>
     );

@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaLock, FaUser, FaImage, FaMosque, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, User, ImageIcon, CheckCircle2, XCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import AuthAside from '../../components/shared/AuthAside';
+import Logo from '../../components/shared/Logo';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        photoURL: ''
-    });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', photoURL: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -19,12 +21,7 @@ const Register = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const validatePassword = (password) => {
         if (password.length < 6) return t('toast.passwordMinLength');
@@ -35,20 +32,10 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const { name, email, password, photoURL } = formData;
-
-        if (!name || !email || !password) {
-            toast.error(t('toast.fillAllFields'));
-            return;
-        }
-
+        if (!name || !email || !password) { toast.error(t('toast.fillAllFields')); return; }
         const passwordError = validatePassword(password);
-        if (passwordError) {
-            toast.error(passwordError);
-            return;
-        }
-
+        if (passwordError) { toast.error(passwordError); return; }
         setLoading(true);
         try {
             await register(email, password, name, photoURL);
@@ -56,15 +43,10 @@ const Register = () => {
             navigate('/');
         } catch (error) {
             console.error('Register error:', error);
-            if (error.code === 'auth/email-already-in-use') {
-                toast.error(t('toast.accountExists'));
-            } else if (error.code === 'auth/weak-password') {
-                toast.error(t('toast.weakPassword'));
-            } else if (error.code === 'auth/invalid-email') {
-                toast.error(t('toast.invalidEmail'));
-            } else {
-                toast.error(error.message || t('toast.genericError'));
-            }
+            if (error.code === 'auth/email-already-in-use') toast.error(t('toast.accountExists'));
+            else if (error.code === 'auth/weak-password') toast.error(t('toast.weakPassword'));
+            else if (error.code === 'auth/invalid-email') toast.error(t('toast.invalidEmail'));
+            else toast.error(error.message || t('toast.genericError'));
         } finally {
             setLoading(false);
         }
@@ -76,117 +58,102 @@ const Register = () => {
         { label: t('auth.register.passwordChecks.2'), valid: /[a-z]/.test(formData.password) },
     ];
 
+    const strength = passwordChecks.filter(c => c.valid).length;
+    const strengthPct = (strength / 3) * 100;
+
     return (
-        <div className="min-h-screen flex items-center justify-center py-12 px-4 pt-20 bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-md w-full">
-                <div className="text-center mb-8">
-                    <Link to="/" className="inline-flex items-center gap-2.5 mb-5">
-                        <div className="bg-emerald-600 p-2.5 rounded-lg">
-                            <FaMosque className="text-2xl text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nikah</h1>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium -mt-0.5">Islamic Matrimony</p>
-                        </div>
-                    </Link>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('auth.register.heading')}</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t('auth.register.subtitle')}</p>
-                </div>
+        <div className="min-h-screen grid lg:grid-cols-2 bg-background">
+            <AuthAside
+                title="Create your account,"
+                highlight="find your match"
+                subtitle="Join a trusted Muslim matrimonial community built on faith, sincerity, and serious intentions for marriage."
+                points={['Free to register & create your biodata', 'Your privacy is always protected', 'Connect with verified, serious profiles']}
+            />
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+            <div className="flex flex-col items-center justify-center px-6 py-12 lg:px-12">
+                <div className="w-full max-w-md">
+                    <div className="lg:hidden mb-8 flex justify-center"><Logo /></div>
+
+                    <div className="mb-8">
+                        <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">{t('auth.register.heading')}</h1>
+                        <p className="text-muted-foreground mt-1.5 text-sm">{t('auth.register.subtitle')}</p>
+                    </div>
+
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                {t('auth.register.fullName')} <span className="text-red-500">*</span>
-                            </label>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="name">{t('auth.register.fullName')} <span className="text-destructive">*</span></Label>
                             <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><FaUser className="text-sm" /></span>
-                                <input type="text" name="name" value={formData.name} onChange={handleChange}
-                                    placeholder={t('auth.register.fullNamePlaceholder')}
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400 dark:text-white text-sm"
-                                    required />
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                <Input id="name" name="name" value={formData.name} onChange={handleChange}
+                                    placeholder={t('auth.register.fullNamePlaceholder')} className="pl-10" required />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                {t('auth.register.email')} <span className="text-red-500">*</span>
-                            </label>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="email">{t('auth.register.email')} <span className="text-destructive">*</span></Label>
                             <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><FaEnvelope className="text-sm" /></span>
-                                <input type="email" name="email" value={formData.email} onChange={handleChange}
-                                    placeholder={t('auth.register.emailPlaceholder')}
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400 dark:text-white text-sm"
-                                    required />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange}
+                                    placeholder={t('auth.register.emailPlaceholder')} className="pl-10" required />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                {t('auth.register.password')} <span className="text-red-500">*</span>
-                            </label>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="password">{t('auth.register.password')} <span className="text-destructive">*</span></Label>
                             <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><FaLock className="text-sm" /></span>
-                                <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange}
-                                    placeholder={t('auth.register.passwordPlaceholder')}
-                                    className="w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400 dark:text-white text-sm"
-                                    required />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors" aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                                    {showPassword ? <FaEyeSlash className="text-sm" /> : <FaEye className="text-sm" />}
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                <Input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange}
+                                    placeholder={t('auth.register.passwordPlaceholder')} className="pl-10 pr-10" required />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                    aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
                             </div>
                             {formData.password && (
-                                <div className="mt-2 space-y-1">
-                                    {passwordChecks.map((check, index) => (
-                                        <div key={index} className={`flex items-center gap-1.5 text-xs ${check.valid ? 'text-emerald-600' : 'text-gray-400'}`}>
-                                            <FaCheckCircle className={check.valid ? 'text-emerald-500' : 'text-gray-300'} />
-                                            {check.label}
-                                        </div>
-                                    ))}
+                                <div className="space-y-2 pt-1">
+                                    <Progress value={strengthPct} className="h-1.5"
+                                        indicatorClassName={cn(strength === 1 && 'bg-rose-500', strength === 2 && 'bg-amber-500', strength === 3 && 'bg-emerald-500')} />
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {passwordChecks.map((check, index) => (
+                                            <div key={index} className={cn('flex items-center gap-1 text-[11px]', check.valid ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground')}>
+                                                {check.valid ? <CheckCircle2 className="h-3 w-3 shrink-0" /> : <XCircle className="h-3 w-3 shrink-0 opacity-50" />}
+                                                <span className="truncate">{check.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                {t('auth.register.photoUrl')} <span className="text-gray-400 font-normal">{t('auth.register.photoUrlOptional')}</span>
-                            </label>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="photoURL">{t('auth.register.photoUrl')} <span className="text-muted-foreground font-normal">{t('auth.register.photoUrlOptional')}</span></Label>
                             <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><FaImage className="text-sm" /></span>
-                                <input type="url" name="photoURL" value={formData.photoURL} onChange={handleChange}
-                                    placeholder={t('auth.register.photoUrlPlaceholder')}
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400 dark:text-white text-sm" />
+                                <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                <Input id="photoURL" name="photoURL" type="url" value={formData.photoURL} onChange={handleChange}
+                                    placeholder={t('auth.register.photoUrlPlaceholder')} className="pl-10" />
                             </div>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-2.5 px-4 rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
+                        <Button type="submit" disabled={loading} size="lg" className="w-full shadow-glow">
                             {loading ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    {t('auth.register.creating')}
-                                </span>
+                                <><Loader2 className="h-4 w-4 animate-spin" /> {t('auth.register.creating')}</>
                             ) : (
-                                t('auth.register.submit')
+                                <>{t('auth.register.submit')} <ArrowRight className="h-4 w-4" /></>
                             )}
-                        </button>
+                        </Button>
                     </form>
 
-                    <p className="text-center mt-5 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-center mt-6 text-sm text-muted-foreground">
                         {t('auth.register.haveAccount')}{' '}
-                        <Link to="/login" className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">
-                            {t('auth.register.loginLink')}
-                        </Link>
+                        <Link to="/login" className="text-primary font-semibold hover:underline">{t('auth.register.loginLink')}</Link>
+                    </p>
+
+                    <p className="text-center mt-6 text-xs italic text-muted-foreground/70">
+                        {t('auth.register.islamicQuote')}
+                        <span className="block mt-1 not-italic font-medium">{t('auth.register.hadithRef')}</span>
                     </p>
                 </div>
-
-                <p className="text-center mt-6 text-xs text-gray-400 italic">
-                    {t('auth.register.islamicQuote')}
-                    <span className="block mt-1 text-gray-500 not-italic font-medium">{t('auth.register.hadithRef')}</span>
-                </p>
             </div>
         </div>
     );

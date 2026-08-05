@@ -1,24 +1,31 @@
 import { Link } from 'react-router-dom';
-import { FaHome, FaSearch, FaMosque } from 'react-icons/fa';
+import { Home, Search, Compass } from 'lucide-react';
+import { FaMosque } from 'react-icons/fa';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
 
 const NotFound = () => {
     const { t } = useLanguage();
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 pt-20">
-            <div className="max-w-lg w-full text-center">
-                <FaMosque className="text-6xl text-emerald-600 mx-auto mb-4" />
-                <h1 className="text-7xl md:text-8xl font-bold text-emerald-600 mb-3">404</h1>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">{t('notFound.heading')}</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto text-sm">{t('notFound.desc')}</p>
+        <div className="relative min-h-screen grid place-items-center overflow-hidden bg-background px-4 pt-16">
+            <div className="absolute inset-0 bg-aurora opacity-70" />
+            <div className="absolute inset-0 bg-grid opacity-[0.4] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+            <div className="relative max-w-lg w-full text-center">
+                <div className="inline-grid place-items-center h-16 w-16 rounded-2xl bg-gradient-brand shadow-glow mx-auto mb-6">
+                    <FaMosque className="text-3xl text-white" />
+                </div>
+                <h1 className="font-heading text-7xl md:text-9xl font-bold text-gradient-brand leading-none">404</h1>
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground mt-4 mb-3">
+                    <Compass className="h-3.5 w-3.5" /> Page not found
+                </div>
+                <h2 className="font-heading text-xl md:text-2xl font-bold text-foreground mb-2">{t('notFound.heading')}</h2>
+                <p className="text-muted-foreground mb-7 max-w-md mx-auto text-sm">{t('notFound.desc')}</p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Link to="/" className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm"><FaHome className="text-xs" />{t('notFound.goHome')}</Link>
-                    <Link to="/biodatas" className="inline-flex items-center justify-center gap-2 px-6 py-2.5 border border-emerald-600 text-emerald-700 dark:text-emerald-400 font-semibold rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors text-sm"><FaSearch className="text-xs" />{t('notFound.browseBiodatas')}</Link>
+                    <Button asChild size="lg"><Link to="/"><Home className="h-4 w-4" />{t('notFound.goHome')}</Link></Button>
+                    <Button asChild size="lg" variant="outline"><Link to="/biodatas"><Search className="h-4 w-4" />{t('notFound.browseBiodatas')}</Link></Button>
                 </div>
-                <div className="mt-10 text-xs text-gray-400">
-                    <span className="dark:text-gray-500">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</span>
-                </div>
+                <div className="mt-12 text-xs text-muted-foreground/70">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</div>
             </div>
         </div>
     );

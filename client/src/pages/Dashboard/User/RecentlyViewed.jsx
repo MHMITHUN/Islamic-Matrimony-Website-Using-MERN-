@@ -1,89 +1,74 @@
 import { Link } from 'react-router-dom';
-import { FaTrash, FaEye, FaClock, FaMapMarkerAlt, FaBriefcase, FaHistory } from 'react-icons/fa';
+import { Trash2, Eye, Clock, MapPin, Briefcase, History, ArrowRight } from 'lucide-react';
+import { FaMale, FaFemale } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import { useRecentlyViewed } from '../../../hooks/useRecentlyViewed';
+import PageHeader from '../../../components/dashboard/PageHeader';
+import EmptyState from '../../../components/dashboard/EmptyState';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+const formatTime = (isoString) => {
+    const date = new Date(isoString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+};
 
 const RecentlyViewed = () => {
     const { items, removeItem, clearAll } = useRecentlyViewed();
 
-    const formatTime = (isoString) => {
-        const date = new Date(isoString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        return `${diffDays}d ago`;
-    };
-
     return (
         <>
             <Helmet><title>Recently Viewed - Nikah Matrimony</title></Helmet>
-            <div className="space-y-5">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <FaHistory className="text-emerald-600" /> Recently Viewed
-                        </h1>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Profiles you've recently browsed</p>
-                    </div>
+            <div className="space-y-6">
+                <PageHeader title="Recently Viewed" description="Profiles you've recently browsed." icon={History}>
                     {items.length > 0 && (
-                        <button onClick={clearAll} className="px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors font-medium">
-                            Clear All
-                        </button>
+                        <Button variant="ghost" size="sm" onClick={clearAll} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-4 w-4" /> Clear All
+                        </Button>
                     )}
-                </div>
+                </PageHeader>
 
                 {items.length === 0 ? (
-                    <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-                        <FaEye className="text-3xl text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-                        <h3 className="text-base font-bold text-gray-700 dark:text-gray-200 mb-1">No recently viewed profiles</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Start browsing biodatas to see them here</p>
-                        <Link to="/biodatas" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                            Browse Biodatas
-                        </Link>
-                    </div>
+                    <EmptyState icon={Eye} title="No recently viewed profiles" description="Start browsing biodatas to see them here."
+                        action={<Button asChild><Link to="/biodatas">Browse Biodatas <ArrowRight className="h-4 w-4" /></Link></Button>} />
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {items.map((item) => (
-                            <div key={item.biodataId} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors group">
+                            <Card key={item.biodataId} className="overflow-hidden card-lift hover:border-primary/30 group">
                                 <div className="relative h-36 overflow-hidden">
-                                    <img
-                                        src={item.profileImage || 'https://via.placeholder.com/300x300?text=No+Image'}
-                                        alt={item.name}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                                    {item.profileImage
+                                        ? <img src={item.profileImage} alt={item.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        : <div className="grid place-items-center h-full w-full bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-950 dark:to-slate-900"><History className="h-8 w-8 text-emerald-300/60" /></div>}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
                                     <div className="absolute top-2 right-2">
-                                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${item.biodataType === 'Male' ? 'bg-blue-500 text-white' : 'bg-pink-500 text-white'}`}>
-                                            {item.biodataType}
+                                        <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold backdrop-blur', item.biodataType === 'Male' ? 'bg-sky-500/85 text-white' : 'bg-rose-500/85 text-white')}>
+                                            {item.biodataType === 'Male' ? <FaMale /> : <FaFemale />}
                                         </span>
                                     </div>
-                                    <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white/70 text-[10px]">
-                                        <FaClock className="text-[8px]" /> {formatTime(item.viewedAt)}
-                                    </div>
+                                    <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white/80 text-[10px]"><Clock className="h-2.5 w-2.5" /> {formatTime(item.viewedAt)}</div>
                                 </div>
-                                <div className="p-3.5">
-                                    <p className="text-[10px] text-gray-400 mb-0.5">ID: #{item.biodataId}</p>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1.5">{item.name}</h3>
-                                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-3">
-                                        <span className="flex items-center gap-1"><FaBriefcase className="text-[10px]" />{item.occupation}</span>
-                                        <span className="flex items-center gap-1"><FaMapMarkerAlt className="text-[10px]" />{item.permanentDivision}</span>
+                                <CardContent className="p-3.5">
+                                    <p className="text-[10px] text-muted-foreground mb-0.5 tabular-nums">#{item.biodataId}</p>
+                                    <h3 className="font-semibold text-foreground text-sm mb-1.5">{item.name}</h3>
+                                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                                        <span className="inline-flex items-center gap-1"><Briefcase className="h-3 w-3 text-primary" />{item.occupation}</span>
+                                        <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3 text-primary" />{item.permanentDivision}</span>
                                     </div>
                                     <div className="flex gap-2">
-                                        <Link to={`/biodata/${item.biodataId}`} className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors">
-                                            <FaEye className="text-[10px]" /> View
-                                        </Link>
-                                        <button onClick={() => removeItem(item.biodataId)} className="px-3 py-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
-                                            <FaTrash className="text-xs" />
-                                        </button>
+                                        <Button asChild size="sm" className="flex-1"><Link to={`/biodata/${item.biodataId}`}><Eye className="h-3.5 w-3.5" /> View</Link></Button>
+                                        <Button variant="outline" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => removeItem(item.biodataId)}><Trash2 className="h-3.5 w-3.5" /></Button>
                                     </div>
-                                </div>
-                            </div>
+                                </CardContent>
+                            </Card>
                         ))}
                     </div>
                 )}

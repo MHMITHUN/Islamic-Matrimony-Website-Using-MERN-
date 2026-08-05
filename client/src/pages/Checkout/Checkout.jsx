@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { FaCreditCard, FaLock, FaCheckCircle, FaShieldAlt, FaArrowLeft, FaStar } from 'react-icons/fa';
+import { CreditCard, Lock, CheckCircle2, ShieldCheck, ArrowLeft, Star, Loader2, Mail, Hash } from 'lucide-react';
 import { paymentAPI, contactRequestAPI } from '../../api/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import toast from 'react-hot-toast';
 
 const Checkout = () => {
@@ -18,7 +23,7 @@ const Checkout = () => {
     const createRequest = useMutation({
         mutationFn: async (paymentId) => { return contactRequestAPI.create({ biodataId: parseInt(biodataId), paymentId }); },
         onSuccess: () => { toast.success(t('toast.contactRequested')); navigate('/dashboard/contact-requests'); },
-        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); }
+        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); },
     });
 
     const handleSubmit = async (e) => {
@@ -45,44 +50,70 @@ const Checkout = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 pt-28">
+        <div className="min-h-screen bg-muted/30 py-12 pt-28">
             <div className="container-custom max-w-xl">
-                <Link to={`/biodata/${biodataId}`} className="inline-flex items-center gap-1.5 text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm mb-5 transition-colors"><FaArrowLeft className="text-xs" /> {t('checkout.backToProfile')}</Link>
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div className="bg-emerald-700 p-8 text-center">
-                        <div className="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center mx-auto mb-3"><FaCreditCard className="text-2xl text-white" /></div>
-                        <h1 className="text-xl font-bold text-white mb-1">{t('checkout.heading')}</h1>
-                        <p className="text-emerald-200 text-sm">{t('checkout.subtitle')}</p>
+                <Button asChild variant="ghost" size="sm" className="mb-5 -ml-2 text-muted-foreground hover:text-foreground">
+                    <Link to={`/biodata/${biodataId}`}><ArrowLeft className="h-4 w-4" /> {t('checkout.backToProfile')}</Link>
+                </Button>
+
+                <Card className="overflow-hidden">
+                    {/* Header */}
+                    <div className="relative bg-gradient-brand p-8 text-center overflow-hidden">
+                        <div className="absolute inset-0 bg-dots opacity-[0.1]" />
+                        <div className="relative">
+                            <div className="grid place-items-center h-14 w-14 rounded-2xl bg-white/15 mx-auto mb-3"><CreditCard className="h-6 w-6 text-white" /></div>
+                            <h1 className="font-heading text-xl font-bold text-white mb-1">{t('checkout.heading')}</h1>
+                            <p className="text-emerald-100 text-sm">{t('checkout.subtitle')}</p>
+                        </div>
                     </div>
-                    <div className="p-6 md:p-8">
-                        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-5 mb-6 border border-gray-200 dark:border-gray-700">
-                            <h3 className="font-bold text-gray-900 dark:text-white text-sm mb-3 flex items-center gap-1.5"><FaStar className="text-amber-500 text-xs" />{t('checkout.orderSummary')}</h3>
+
+                    <CardContent className="p-6 md:p-8 space-y-6">
+                        {/* Order summary */}
+                        <div className="rounded-xl border bg-muted/30 p-5">
+                            <h3 className="font-bold text-foreground text-sm mb-3 flex items-center gap-1.5"><Star className="h-4 w-4 fill-gold text-gold" /> {t('checkout.orderSummary')}</h3>
                             <div className="space-y-2">
-                                <div className="flex items-center justify-between text-sm"><span className="text-gray-600 dark:text-gray-300">{t('checkout.contactRequest')}</span><span className="font-semibold text-gray-900 dark:text-white">500.00</span></div>
-                                <div className="flex items-center justify-between text-sm"><span className="text-gray-600 dark:text-gray-300">{t('checkout.biodataId')}</span><span className="font-semibold text-emerald-600">#{biodataId}</span></div>
-                                <hr className="border-gray-200 dark:border-gray-700" />
-                                <div className="flex items-center justify-between font-bold"><span className="text-gray-900 dark:text-white">{t('checkout.total')}</span><span className="text-emerald-600">500.00</span></div>
+                                <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">{t('checkout.contactRequest')}</span><span className="font-semibold text-foreground">৳500.00</span></div>
+                                <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">{t('checkout.biodataId')}</span><span className="font-semibold text-primary">#{biodataId}</span></div>
+                                <Separator className="my-2" />
+                                <div className="flex items-center justify-between font-bold"><span className="text-foreground">{t('checkout.total')}</span><span className="text-primary text-lg">৳500.00</span></div>
                             </div>
                         </div>
+
+                        {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{t('checkout.biodataId')}</label><input type="text" value={`#${biodataId}`} readOnly className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 text-sm cursor-not-allowed" /></div>
-                            <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{t('checkout.yourEmail')}</label><input type="email" value={user?.email || ''} readOnly className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 text-sm cursor-not-allowed" /></div>
-                            <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{t('checkout.cardNumber')}</label>
-                                <div className="relative"><input type="text" value={cardNumber} onChange={(e) => setCardNumber(formatCardNumber(e.target.value))} placeholder="1234 5678 9012 3456" maxLength={19} className="w-full pl-4 pr-10 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400 dark:text-white text-sm" required /><FaCreditCard className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" /></div>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 flex items-center gap-1"><FaShieldAlt className="text-emerald-600 text-[10px]" />{t('checkout.demoMode')}</p>
+                            <div className="space-y-1.5">
+                                <Label>{t('checkout.biodataId')}</Label>
+                                <Input type="text" value={`#${biodataId}`} readOnly className="bg-muted cursor-not-allowed" />
                             </div>
-                            <button type="submit" disabled={processing} className="w-full py-2.5 px-4 rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                                {processing ? (<><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>{t('checkout.processing')}</>) : (<><FaLock className="text-xs" /> {t('checkout.payButton')}</>)}
-                            </button>
+                            <div className="space-y-1.5">
+                                <Label>{t('checkout.yourEmail')}</Label>
+                                <div className="relative"><Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" /><Input type="email" value={user?.email || ''} readOnly className="pl-10 bg-muted cursor-not-allowed" /></div>
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="card">{t('checkout.cardNumber')}</Label>
+                                <div className="relative">
+                                    <Input id="card" type="text" value={cardNumber} onChange={(e) => setCardNumber(formatCardNumber(e.target.value))} placeholder="1234 5678 9012 3456" maxLength={19} className="pl-4 pr-10" required />
+                                    <CreditCard className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <p className="text-xs text-muted-foreground flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-emerald-500" /> {t('checkout.demoMode')}</p>
+                            </div>
+                            <Button type="submit" disabled={processing} size="lg" className="w-full">
+                                {processing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('checkout.processing')}</> : <><Lock className="h-4 w-4" /> {t('checkout.payButton')}</>}
+                            </Button>
                         </form>
-                        <div className="mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+
+                        {/* Secure note */}
+                        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
                             <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0"><FaCheckCircle className="text-white text-sm" /></div>
-                                <div><h4 className="font-semibold text-emerald-800 dark:text-emerald-400 text-sm mb-0.5">{t('checkout.securePayment')}</h4><p className="text-xs text-emerald-700 dark:text-emerald-300">{t('checkout.secureDesc')}</p></div>
+                                <div className="grid place-items-center h-8 w-8 rounded-lg bg-emerald-500 text-white shrink-0"><CheckCircle2 className="h-4 w-4" /></div>
+                                <div>
+                                    <h4 className="font-semibold text-emerald-700 dark:text-emerald-400 text-sm mb-0.5">{t('checkout.securePayment')}</h4>
+                                    <p className="text-xs text-emerald-700/80 dark:text-emerald-300/80">{t('checkout.secureDesc')}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

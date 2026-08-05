@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FaUser, FaEdit, FaCrown, FaMapMarkerAlt, FaBriefcase, FaCalendar, FaRulerVertical, FaWeight, FaPhone, FaEnvelope, FaStar, FaCheckCircle, FaClock, FaHeart } from 'react-icons/fa';
+import { User, Pencil, Crown, MapPin, Briefcase, CalendarDays, Ruler, Scale, Star, Clock, Loader2, Heart, FileText } from 'lucide-react';
 import { biodataAPI } from '../../../api/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import PageHeader from '../../../components/dashboard/PageHeader';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
@@ -14,83 +20,96 @@ const ViewBiodata = () => {
 
     const { data: biodata, isLoading, error } = useQuery({
         queryKey: ['myBiodata'],
-        queryFn: async () => { const response = await biodataAPI.getMyBiodata(); return response.data; }
+        queryFn: async () => { const response = await biodataAPI.getMyBiodata(); return response.data; },
     });
 
     const requestPremiumMutation = useMutation({
         mutationFn: () => biodataAPI.requestPremium(),
         onSuccess: () => { queryClient.invalidateQueries(['myBiodata']); toast.success(t('toast.premiumRequested')); },
-        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); }
+        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); },
     });
 
     const handleRequestPremium = async () => {
-        const result = await Swal.fire({
-            title: t('dashboard.viewBiodata.premiumRequestTitle'),
-            text: t('dashboard.viewBiodata.premiumRequestText'),
-            icon: 'question', showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#ef4444', confirmButtonText: t('dashboard.viewBiodata.premiumRequestConfirm')
-        });
+        const result = await Swal.fire({ title: t('dashboard.viewBiodata.premiumRequestTitle'), text: t('dashboard.viewBiodata.premiumRequestText'), icon: 'question', showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#ef4444', confirmButtonText: t('dashboard.viewBiodata.premiumRequestConfirm') });
         if (result.isConfirmed) requestPremiumMutation.mutate();
     };
 
-    if (isLoading) return <div className="flex flex-col items-center justify-center py-20"><div className="spinner-lg"></div><p className="mt-4 text-slate-500">{t('dashboard.viewBiodata.loading')}</p></div>;
+    if (isLoading) return <div className="flex flex-col items-center justify-center py-20"><Loader2 className="h-10 w-10 animate-spin text-primary" /><p className="mt-3 text-muted-foreground text-sm">{t('dashboard.viewBiodata.loading')}</p></div>;
 
     if (error || !biodata) return (
-        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-black/30 border border-slate-100 dark:border-slate-700 p-12 text-center">
-            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6"><FaUser className="text-4xl text-slate-300 dark:text-slate-500" /></div>
-            <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200 mb-2">{t('dashboard.viewBiodata.noBiodata')}</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-6">{t('dashboard.viewBiodata.noBiodataDesc')}</p>
-            <Link to="/dashboard/edit-biodata" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm"><FaEdit className="text-xs" /> {t('dashboard.viewBiodata.createBiodata')}</Link>
+        <Card className="text-center"><CardContent className="pt-12 pb-12 flex flex-col items-center">
+            <div className="grid place-items-center h-16 w-16 rounded-2xl bg-muted text-muted-foreground mb-4"><FileText className="h-7 w-7" /></div>
+            <h2 className="font-heading text-xl font-bold text-foreground mb-2">{t('dashboard.viewBiodata.noBiodata')}</h2>
+            <p className="text-muted-foreground text-sm mb-5">{t('dashboard.viewBiodata.noBiodataDesc')}</p>
+            <Button asChild><Link to="/dashboard/edit-biodata"><Pencil className="h-4 w-4" /> {t('dashboard.viewBiodata.createBiodata')}</Link></Button>
+        </CardContent></Card>
+    );
+
+    const InfoItem = ({ icon: Icon, label, value, tint = 'bg-primary/10 text-primary' }) => (
+        <div className="flex items-start gap-3 rounded-xl border bg-card/50 p-3.5 hover:border-primary/30 transition-colors">
+            <span className={cn('grid place-items-center h-9 w-9 rounded-lg shrink-0', tint)}><Icon className="h-4 w-4" /></span>
+            <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
+                <p className="font-semibold text-foreground break-words mt-0.5">{value || t('dashboard.viewBiodata.na')}</p>
+            </div>
         </div>
     );
 
-    const InfoItem = ({ icon, label, value, color = 'bg-emerald-600' }) => (
-        <div className="group flex items-start gap-3 p-3.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors">
-            <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center text-white flex-shrink-0 text-sm`}>{icon}</div>
-            <div className="min-w-0 flex-1"><p className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wide">{label}</p><p className="font-semibold text-slate-800 dark:text-slate-200 break-words mt-0.5">{value || t('dashboard.viewBiodata.na')}</p></div>
+    const Section = ({ title, icon: Icon, children, accent = 'text-primary' }) => (
+        <div>
+            <h3 className="flex items-center gap-2 font-heading font-bold text-foreground mb-3"><Icon className={cn('h-5 w-5', accent)} /> {title}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{children}</div>
         </div>
     );
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 rounded-full text-emerald-600 text-sm font-medium mb-2"><FaStar className="text-xs" /><span>{t('dashboard.viewBiodata.badge')}</span></div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{t('dashboard.viewBiodata.heading')}</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">{t('dashboard.viewBiodata.subtitle')}</p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                    <Link to="/dashboard/edit-biodata" className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all"><FaEdit /> {t('dashboard.viewBiodata.editBiodata')}</Link>
-                    {!isPremium && biodata.premiumRequestStatus !== 'pending' && <button onClick={handleRequestPremium} disabled={requestPremiumMutation.isLoading} className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors text-sm disabled:opacity-50"><FaCrown className="text-xs" /> {t('dashboard.viewBiodata.requestPremium')}</button>}
-                    {biodata.premiumRequestStatus === 'pending' && <span className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-amber-100 text-amber-700 text-sm font-bold rounded-xl"><FaClock /> {t('dashboard.contactRequests.pending')} Approval</span>}
-                </div>
-            </div>
+            <PageHeader title={t('dashboard.viewBiodata.heading')} description={t('dashboard.viewBiodata.subtitle')} icon={User}>
+                <Button asChild variant="outline"><Link to="/dashboard/edit-biodata"><Pencil className="h-4 w-4" /> {t('dashboard.viewBiodata.editBiodata')}</Link></Button>
+                {!isPremium && biodata.premiumRequestStatus !== 'pending' && (
+                    <Button variant="gold" onClick={handleRequestPremium} disabled={requestPremiumMutation.isLoading}><Crown className="h-4 w-4" /> {t('dashboard.viewBiodata.requestPremium')}</Button>
+                )}
+                {biodata.premiumRequestStatus === 'pending' && (
+                    <Badge variant="gold" className="gap-1 py-2 px-3"><Clock className="h-3.5 w-3.5" /> {t('dashboard.contactRequests.pending')} Approval</Badge>
+                )}
+            </PageHeader>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-black/30 border border-slate-100 dark:border-slate-700 overflow-hidden">
-                <div className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 p-6 md:p-8 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+            <Card className="overflow-hidden">
+                <div className="relative h-28 bg-gradient-brand overflow-hidden">
+                    <div className="absolute inset-0 bg-dots opacity-[0.12]" />
                 </div>
-                <div className="p-6 md:p-8">
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><FaUser className="text-emerald-500" /> Personal Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        <InfoItem icon={<FaCalendar />} label="Date of Birth" value={new Date(biodata.dateOfBirth).toLocaleDateString()} />
-                        <InfoItem icon={<FaUser />} label="Age" value={`${biodata.age} years`} />
-                        <InfoItem icon={<FaRulerVertical />} label="Height" value={biodata.height} />
-                        <InfoItem icon={<FaWeight />} label="Weight" value={biodata.weight} />
-                        <InfoItem icon={<FaBriefcase />} label="Occupation" value={biodata.occupation} />
-                        <InfoItem icon={<FaUser />} label="Skin Color" value={biodata.race} />
+                <CardContent className="relative p-6 md:p-8 space-y-7">
+                    <div className="flex items-center gap-4 -mt-14">
+                        <Avatar className="h-20 w-20 rounded-2xl border-4 border-background shadow-premium-lg">
+                            {biodata.profileImage ? <AvatarImage src={biodata.profileImage} alt="Profile" /> : null}
+                            <AvatarFallback className="rounded-2xl bg-primary/10 text-primary"><User className="h-8 w-8" /></AvatarFallback>
+                        </Avatar>
+                        <div className="pt-10">
+                            <h3 className="font-heading text-lg font-bold text-foreground">My Biodata</h3>
+                            <p className="text-sm text-muted-foreground tabular-nums">ID #{biodata.biodataId}</p>
+                        </div>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><FaHeart className="text-pink-500" /> Family Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        <InfoItem icon={<FaUser />} label="Father's Name" value={biodata.fathersName} color="bg-pink-600" />
-                        <InfoItem icon={<FaUser />} label="Mother's Name" value={biodata.mothersName} color="bg-pink-600" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><FaMapMarkerAlt className="text-blue-500" /> Location</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        <InfoItem icon={<FaMapMarkerAlt />} label="Permanent Division" value={biodata.permanentDivision} color="bg-blue-600" />
-                        <InfoItem icon={<FaMapMarkerAlt />} label="Present Division" value={biodata.presentDivision} color="bg-blue-600" />
-                    </div>
-                </div>
-            </div>
+
+                    <Section title="Personal Information" icon={User}>
+                        <InfoItem icon={CalendarDays} label="Date of Birth" value={new Date(biodata.dateOfBirth).toLocaleDateString()} />
+                        <InfoItem icon={User} label="Age" value={`${biodata.age} years`} />
+                        <InfoItem icon={Ruler} label="Height" value={biodata.height} />
+                        <InfoItem icon={Scale} label="Weight" value={biodata.weight} />
+                        <InfoItem icon={Briefcase} label="Occupation" value={biodata.occupation} />
+                        <InfoItem icon={User} label="Skin Color" value={biodata.race} />
+                    </Section>
+
+                    <Section title="Family Information" icon={Heart} accent="text-rose-500">
+                        <InfoItem icon={User} label="Father's Name" value={biodata.fathersName} tint="bg-rose-500/10 text-rose-500" />
+                        <InfoItem icon={User} label="Mother's Name" value={biodata.mothersName} tint="bg-rose-500/10 text-rose-500" />
+                    </Section>
+
+                    <Section title="Location" icon={MapPin} accent="text-sky-500">
+                        <InfoItem icon={MapPin} label="Permanent Division" value={biodata.permanentDivision} tint="bg-sky-500/10 text-sky-500" />
+                        <InfoItem icon={MapPin} label="Present Division" value={biodata.presentDivision} tint="bg-sky-500/10 text-sky-500" />
+                    </Section>
+                </CardContent>
+            </Card>
         </div>
     );
 };

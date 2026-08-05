@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FaHeart, FaPhone, FaEnvelope, FaMapMarkerAlt, FaBriefcase, FaUser, FaCalendar, FaRulerVertical, FaWeight, FaStar, FaLock, FaCrown, FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
+import {
+    Heart, Phone, Mail, MapPin, Briefcase, User, CalendarDays, Ruler, Scale,
+    Star, Lock, Crown, ArrowLeft, CheckCircle2, ShieldCheck, Sparkles, Loader2,
+} from 'lucide-react';
+import { FaMale, FaFemale } from 'react-icons/fa';
 import { biodataAPI, favoritesAPI } from '../../api/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 const BiodataDetails = () => {
@@ -20,7 +29,7 @@ const BiodataDetails = () => {
             occupation: { 'Student': 'student', 'Job': 'job', 'Business': 'business', 'Housewife': 'housewife', 'Teacher': 'teacher', 'Doctor': 'doctor', 'Engineer': 'engineer', 'Other': 'other' },
             race: { 'Fair': 'fair', 'Light Brown': 'lightBrown', 'Brown': 'brown', 'Dark': 'dark' },
             division: { 'Dhaka': 'dhaka', 'Chattagram': 'chattagram', 'Rangpur': 'rangpur', 'Barisal': 'barisal', 'Khulna': 'khulna', 'Mymensingh': 'mymensingh', 'Sylhet': 'sylhet' },
-            biodataType: { 'Male': 'biodata.filters.male', 'Female': 'biodata.filters.female' }
+            biodataType: { 'Male': 'biodata.filters.male', 'Female': 'biodata.filters.female' },
         };
         if (type === 'biodataType') {
             const key = map.biodataType[value];
@@ -32,161 +41,217 @@ const BiodataDetails = () => {
 
     const { data: biodata, isLoading, error } = useQuery({
         queryKey: ['biodata', id],
-        queryFn: async () => { const response = await biodataAPI.getById(id); return response.data; }
+        queryFn: async () => { const response = await biodataAPI.getById(id); return response.data; },
     });
 
     const { data: similarBiodatas = [] } = useQuery({
         queryKey: ['similarBiodatas', id],
         queryFn: async () => { const response = await biodataAPI.getSimilar(id); return response.data; },
-        enabled: !!biodata
+        enabled: !!biodata,
     });
 
     useQuery({
         queryKey: ['isFavorited', id],
         queryFn: async () => { const response = await favoritesAPI.check(id); setIsFavorited(response.data.isFavorited); return response.data; },
-        enabled: !!user
+        enabled: !!user,
     });
 
     const addToFavorites = useMutation({
         mutationFn: () => favoritesAPI.add(parseInt(id)),
         onSuccess: () => { setIsFavorited(true); queryClient.invalidateQueries(['favorites']); toast.success(t('toast.addToFavorites')); },
-        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); }
+        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); },
     });
 
     if (isLoading) {
-        return (<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"><div className="text-center"><div className="spinner-lg"></div><p className="mt-3 text-gray-500 text-sm">{t('biodata.details.loading')}</p></div></div>);
+        return (
+            <div className="min-h-[70vh] grid place-items-center bg-background pt-16">
+                <div className="text-center"><Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" /><p className="mt-3 text-muted-foreground text-sm">{t('biodata.details.loading')}</p></div>
+            </div>
+        );
     }
 
     if (error || !biodata) {
-        return (<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"><div className="text-center bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-10 max-w-md mx-4"><div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4"><FaUser className="text-2xl text-gray-400" /></div><h2 className="text-xl font-bold text-gray-800 dark:text-white mb-3">{t('biodata.details.notFound')}</h2><p className="text-gray-500 dark:text-gray-400 text-sm mb-5">{t('biodata.details.notFoundDesc')}</p><Link to="/biodatas" className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors text-sm"><FaArrowLeft className="text-xs" /> {t('biodata.details.browseBiodatas')}</Link></div></div>);
+        return (
+            <div className="min-h-[70vh] grid place-items-center bg-background pt-16 px-4">
+                <Card className="max-w-md text-center"><CardContent className="pt-10 flex flex-col items-center">
+                    <div className="grid place-items-center h-16 w-16 rounded-full bg-muted text-muted-foreground mb-4"><User className="h-7 w-7" /></div>
+                    <h2 className="text-xl font-bold text-foreground mb-2">{t('biodata.details.notFound')}</h2>
+                    <p className="text-muted-foreground text-sm mb-5">{t('biodata.details.notFoundDesc')}</p>
+                    <Button asChild><Link to="/biodatas"><ArrowLeft className="h-4 w-4" /> {t('biodata.details.browseBiodatas')}</Link></Button>
+                </CardContent></Card>
+            </div>
+        );
     }
 
     const canViewContact = biodata.canViewContact || isPremium;
     const isOwnBiodata = biodata.userEmail === user?.email;
+    const isMale = biodata.biodataType === 'Male';
 
-    const InfoCard = ({ icon, label, value }) => (
-        <div className="flex items-start gap-3 p-3.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors">
-            <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white flex-shrink-0 text-sm">{icon}</div>
-            <div><p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{label}</p><p className="font-semibold text-gray-800 dark:text-gray-200 text-sm mt-0.5">{value || t('biodata.details.notSpecified')}</p></div>
+    const InfoItem = ({ icon: Icon, label, value }) => (
+        <div className="flex items-start gap-3 rounded-xl border border-border bg-card/50 p-3.5 hover:border-primary/30 hover:bg-primary/[0.03] transition-colors">
+            <span className="grid place-items-center h-9 w-9 rounded-lg bg-primary/10 text-primary shrink-0"><Icon className="h-4 w-4" /></span>
+            <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
+                <p className="font-semibold text-foreground text-sm mt-0.5 truncate">{value || t('biodata.details.notSpecified')}</p>
+            </div>
         </div>
     );
 
+    const Section = ({ title, icon: Icon, children, accent = 'text-primary' }) => (
+        <Card>
+            <CardContent className="p-5 md:p-6">
+                <h2 className="flex items-center gap-2.5 text-base font-bold font-heading text-foreground mb-4">
+                    <Icon className={cn('h-5 w-5', accent)} /> {title}
+                </h2>
+                {children}
+            </CardContent>
+        </Card>
+    );
+
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 pt-24">
+        <div className="min-h-screen bg-muted/30 pt-20 pb-12">
             <div className="container-custom">
-                <Link to="/biodatas" className="inline-flex items-center gap-1.5 text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm mb-5 transition-colors"><FaArrowLeft className="text-xs" /> {t('biodata.details.backToBiodatas')}</Link>
+                <Button asChild variant="ghost" size="sm" className="mb-5 -ml-2 text-muted-foreground hover:text-foreground">
+                    <Link to="/biodatas"><ArrowLeft className="h-4 w-4" /> {t('biodata.details.backToBiodatas')}</Link>
+                </Button>
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-5">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <div className="relative h-40 bg-emerald-700"></div>
-                            <div className="relative px-6 pb-6">
+                        {/* Hero */}
+                        <Card className="overflow-hidden">
+                            <div className="relative h-32 bg-gradient-brand">
+                                <div className="absolute inset-0 bg-dots opacity-[0.12]" />
+                            </div>
+                            <CardContent className="relative px-6 pb-6">
                                 <div className="flex flex-col md:flex-row gap-5">
-                                    <div className="relative -mt-16 md:-mt-12">
-                                        <div className="relative">
-                                            <img src={biodata.profileImage || 'https://via.placeholder.com/200x200?text=No+Image'} alt="Profile" className="w-32 h-32 md:w-36 md:h-36 object-cover rounded-xl border-4 border-white dark:border-gray-800 shadow-lg mx-auto md:mx-0" />
-                                            {biodata.isPremium && <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded flex items-center gap-1"><FaCrown className="text-[8px]" /> {t('biodata.details.premium')}</span>}
-                                        </div>
+                                    <div className="relative -mt-14 md:-mt-12 shrink-0">
+                                        <Avatar className="h-32 w-32 md:h-36 md:w-36 rounded-2xl border-4 border-background shadow-premium-lg">
+                                            {biodata.profileImage ? <AvatarImage src={biodata.profileImage} alt="Profile" /> : null}
+                                            <AvatarFallback className="rounded-2xl bg-primary/10 text-primary"><User className="h-10 w-10" /></AvatarFallback>
+                                        </Avatar>
+                                        {biodata.isPremium && (
+                                            <Badge className="absolute -top-2 -right-2 gap-1 bg-gradient-gold border-transparent text-white shadow-sm"><Crown className="h-3 w-3" /> {t('biodata.details.premium')}</Badge>
+                                        )}
                                     </div>
                                     <div className="flex-1 text-center md:text-left pt-2 md:pt-4">
                                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
-                                            <span className={`px-2.5 py-0.5 rounded text-xs font-semibold ${biodata.biodataType === 'Male' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400'}`}>{translateEnum('biodataType', biodata.biodataType)}</span>
-                                            <span className="text-gray-400 text-xs">ID: #{biodata.biodataId}</span>
+                                            <Badge variant="outline" className={cn('gap-1', isMale ? 'border-sky-500/30 bg-sky-500/10 text-sky-600' : 'border-rose-500/30 bg-rose-500/10 text-rose-600')}>
+                                                {isMale ? <FaMale /> : <FaFemale />} {translateEnum('biodataType', biodata.biodataType)}
+                                            </Badge>
+                                            <span className="text-xs text-muted-foreground tabular-nums">ID: #{biodata.biodataId}</span>
                                         </div>
-                                        <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1.5">{biodata.name}</h1>
-                                        <p className="text-gray-600 dark:text-gray-300 flex items-center justify-center md:justify-start gap-1.5 text-sm"><FaBriefcase className="text-emerald-600 text-xs" /> {translateEnum('occupation', biodata.occupation)}</p>
-                                        <p className="text-gray-500 dark:text-gray-400 flex items-center justify-center md:justify-start gap-1.5 text-sm mt-0.5"><FaMapMarkerAlt className="text-emerald-600 text-xs" /> {translateEnum('division', biodata.permanentDivision)}</p>
-                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-3">
+                                        <h1 className="font-heading text-xl md:text-2xl font-bold text-foreground mb-1.5">{biodata.name}</h1>
+                                        <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-1.5 text-sm"><Briefcase className="h-3.5 w-3.5 text-primary" /> {translateEnum('occupation', biodata.occupation)}</p>
+                                        <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-1.5 text-sm mt-0.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {translateEnum('division', biodata.permanentDivision)}</p>
+                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-4">
                                             {!isOwnBiodata && (
-                                                <button onClick={() => addToFavorites.mutate()} disabled={isFavorited || addToFavorites.isLoading} className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-medium transition-colors text-sm ${isFavorited ? 'bg-red-50 dark:bg-red-900/20 text-red-500 cursor-default' : 'bg-red-500 hover:bg-red-600 text-white'}`}>
-                                                    <FaHeart className="text-xs" /> {isFavorited ? t('biodata.details.favorited') : t('biodata.details.addToFavorites')}
-                                                </button>
+                                                <Button onClick={() => addToFavorites.mutate()} disabled={isFavorited || addToFavorites.isLoading} variant={isFavorited ? 'secondary' : 'default'} className={cn(isFavorited && 'text-rose-600')}>
+                                                    <Heart className={cn('h-4 w-4', isFavorited && 'fill-current')} /> {isFavorited ? t('biodata.details.favorited') : t('biodata.details.addToFavorites')}
+                                                </Button>
                                             )}
                                             {!canViewContact && !isOwnBiodata && (
-                                                <Link to={`/checkout/${biodata.biodataId}`} className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors text-sm"><FaLock className="text-xs" /> {t('biodata.details.requestContact')}</Link>
+                                                <Button asChild variant="gold">
+                                                    <Link to={`/checkout/${biodata.biodataId}`}><Lock className="h-4 w-4" /> {t('biodata.details.requestContact')}</Link>
+                                                </Button>
                                             )}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <Section title={t('biodata.details.basicInfo')} icon={<FaUser />} color="bg-emerald-600">
+                            </CardContent>
+                        </Card>
+
+                        <Section title={t('biodata.details.basicInfo')} icon={User}>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <InfoCard icon={<FaCalendar />} label={t('biodata.details.dateOfBirth')} value={new Date(biodata.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} />
-                                <InfoCard icon={<FaUser />} label={t('biodata.details.age')} value={`${biodata.age} ${t('biodata.details.years')}`} />
-                                <InfoCard icon={<FaRulerVertical />} label={t('biodata.details.height')} value={biodata.height} />
-                                <InfoCard icon={<FaWeight />} label={t('biodata.details.weight')} value={biodata.weight} />
-                                <InfoCard icon={<FaBriefcase />} label={t('biodata.details.occupation')} value={translateEnum('occupation', biodata.occupation)} />
-                                <InfoCard icon={<FaStar />} label={t('biodata.details.race')} value={translateEnum('race', biodata.race)} />
+                                <InfoItem icon={CalendarDays} label={t('biodata.details.dateOfBirth')} value={new Date(biodata.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} />
+                                <InfoItem icon={User} label={t('biodata.details.age')} value={`${biodata.age} ${t('biodata.details.years')}`} />
+                                <InfoItem icon={Ruler} label={t('biodata.details.height')} value={biodata.height} />
+                                <InfoItem icon={Scale} label={t('biodata.details.weight')} value={biodata.weight} />
+                                <InfoItem icon={Briefcase} label={t('biodata.details.occupation')} value={translateEnum('occupation', biodata.occupation)} />
+                                <InfoItem icon={Star} label={t('biodata.details.race')} value={translateEnum('race', biodata.race)} />
                             </div>
                         </Section>
-                        <Section title={t('biodata.details.familyInfo')} icon={<FaHeart />} color="bg-pink-600">
+
+                        <Section title={t('biodata.details.familyInfo')} icon={Heart} accent="text-rose-500">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <InfoCard icon={<FaUser />} label={t('biodata.details.fathersName')} value={biodata.fathersName} />
-                                <InfoCard icon={<FaUser />} label={t('biodata.details.mothersName')} value={biodata.mothersName} />
+                                <InfoItem icon={User} label={t('biodata.details.fathersName')} value={biodata.fathersName} />
+                                <InfoItem icon={User} label={t('biodata.details.mothersName')} value={biodata.mothersName} />
                             </div>
                         </Section>
-                        <Section title={t('biodata.details.location')} icon={<FaMapMarkerAlt />} color="bg-blue-600">
+
+                        <Section title={t('biodata.details.location')} icon={MapPin} accent="text-sky-500">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <InfoCard icon={<FaMapMarkerAlt />} label={t('biodata.details.permanentDivision')} value={translateEnum('division', biodata.permanentDivision)} />
-                                <InfoCard icon={<FaMapMarkerAlt />} label={t('biodata.details.presentDivision')} value={translateEnum('division', biodata.presentDivision)} />
+                                <InfoItem icon={MapPin} label={t('biodata.details.permanentDivision')} value={translateEnum('division', biodata.permanentDivision)} />
+                                <InfoItem icon={MapPin} label={t('biodata.details.presentDivision')} value={translateEnum('division', biodata.presentDivision)} />
                             </div>
                         </Section>
-                        <Section title={t('biodata.details.expectedPartner')} icon={<FaStar />} color="bg-amber-600">
+
+                        <Section title={t('biodata.details.expectedPartner')} icon={Sparkles} accent="text-gold">
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <InfoCard icon={<FaUser />} label={t('biodata.details.expectedAge')} value={biodata.expectedPartnerAge} />
-                                <InfoCard icon={<FaRulerVertical />} label={t('biodata.details.expectedHeight')} value={biodata.expectedPartnerHeight} />
-                                <InfoCard icon={<FaWeight />} label={t('biodata.details.expectedWeight')} value={biodata.expectedPartnerWeight} />
+                                <InfoItem icon={User} label={t('biodata.details.expectedAge')} value={biodata.expectedPartnerAge} />
+                                <InfoItem icon={Ruler} label={t('biodata.details.expectedHeight')} value={biodata.expectedPartnerHeight} />
+                                <InfoItem icon={Scale} label={t('biodata.details.expectedWeight')} value={biodata.expectedPartnerWeight} />
                             </div>
                         </Section>
-                        <Section title={t('biodata.details.contactInfo')} icon={<FaPhone />} color="bg-purple-600">
+
+                        <Section title={t('biodata.details.contactInfo')} icon={Phone} accent="text-purple-500">
                             {canViewContact ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <InfoCard icon={<FaEnvelope />} label={t('biodata.details.email')} value={biodata.userEmail} />
-                                    <InfoCard icon={<FaPhone />} label={t('biodata.details.mobile')} value={biodata.mobileNumber} />
+                                    <InfoItem icon={Mail} label={t('biodata.details.email')} value={biodata.userEmail} />
+                                    <InfoItem icon={Phone} label={t('biodata.details.mobile')} value={biodata.mobileNumber} />
                                 </div>
                             ) : (
-                                <div className="text-center py-8 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                                    <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3"><FaLock className="text-xl text-gray-400" /></div>
-                                    <h3 className="text-base font-bold text-gray-700 dark:text-gray-200 mb-1">{t('biodata.details.contactHidden')}</h3>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 max-w-sm mx-auto">{t('biodata.details.contactHiddenDesc')}</p>
-                                    <Link to={`/checkout/${biodata.biodataId}`} className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors text-sm"><FaCheckCircle className="text-xs" /> {t('biodata.details.requestContactPrice')}</Link>
+                                <div className="text-center py-8 rounded-xl border border-dashed border-border bg-muted/30">
+                                    <div className="grid place-items-center h-12 w-12 rounded-full bg-muted text-muted-foreground mx-auto mb-3"><Lock className="h-5 w-5" /></div>
+                                    <h3 className="text-base font-bold text-foreground mb-1">{t('biodata.details.contactHidden')}</h3>
+                                    <p className="text-muted-foreground text-sm mb-4 max-w-sm mx-auto">{t('biodata.details.contactHiddenDesc')}</p>
+                                    <Button asChild><Link to={`/checkout/${biodata.biodataId}`}><CheckCircle2 className="h-4 w-4" /> {t('biodata.details.requestContactPrice')}</Link></Button>
                                 </div>
                             )}
                         </Section>
                     </div>
+
+                    {/* Sidebar: similar */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 sticky top-24">
-                            <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"><div className="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center"><FaHeart className="text-white text-xs" /></div>{t('biodata.details.similarProfiles')}</h2>
-                            {similarBiodatas.length === 0 ? (
-                                <div className="text-center py-6"><div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3"><FaUser className="text-lg text-gray-400" /></div><p className="text-gray-500 dark:text-gray-400 text-sm">{t('biodata.details.noSimilar')}</p></div>
-                            ) : (
-                                <div className="space-y-3">
-                                    {similarBiodatas.map((similar) => (
-                                        <Link key={similar._id} to={`/biodata/${similar.biodataId}`} className="block p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors">
-                                            <div className="flex items-center gap-3">
-                                                <img src={similar.profileImage || 'https://via.placeholder.com/60x60'} alt="Profile" className="w-11 h-11 rounded-lg object-cover" />
-                                                <div className="flex-1 min-w-0"><p className="text-[10px] text-gray-400">ID: {similar.biodataId}</p><p className="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate">{translateEnum('occupation', similar.occupation)}</p><p className="text-xs text-gray-500 dark:text-gray-400">{translateEnum('division', similar.permanentDivision)} &bull; {similar.age} yrs</p></div>
-                                            </div>
-                                        </Link>
-                                    ))}
+                        <Card className="sticky top-24">
+                            <CardContent className="p-5">
+                                <h2 className="flex items-center gap-2 text-base font-bold font-heading text-foreground mb-4">
+                                    <span className="grid place-items-center h-7 w-7 rounded-lg bg-primary/10 text-primary"><Heart className="h-4 w-4" /></span>
+                                    {t('biodata.details.similarProfiles')}
+                                </h2>
+                                {similarBiodatas.length === 0 ? (
+                                    <div className="text-center py-6">
+                                        <div className="grid place-items-center h-12 w-12 rounded-full bg-muted text-muted-foreground mx-auto mb-3"><User className="h-5 w-5" /></div>
+                                        <p className="text-muted-foreground text-sm">{t('biodata.details.noSimilar')}</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {similarBiodatas.map((similar) => (
+                                            <Link key={similar._id} to={`/biodata/${similar.biodataId}`} className="flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/[0.03] transition-colors">
+                                                <Avatar className="h-11 w-11 rounded-lg">
+                                                    {similar.profileImage ? <AvatarImage src={similar.profileImage} alt="Profile" /> : null}
+                                                    <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs"><User className="h-4 w-4" /></AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-[10px] text-muted-foreground tabular-nums">ID: {similar.biodataId}</p>
+                                                    <p className="font-semibold text-foreground text-sm truncate">{translateEnum('occupation', similar.occupation)}</p>
+                                                    <p className="text-xs text-muted-foreground">{translateEnum('division', similar.permanentDivision)} • {similar.age} yrs</p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                                <div className="mt-5 pt-5 border-t border-border">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <ShieldCheck className="h-4 w-4 text-emerald-500" /> All profiles are verified
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-
-const Section = ({ title, icon, color, children }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 md:p-6">
-        <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2.5">
-            <div className={`w-7 h-7 ${color} rounded-lg flex items-center justify-center text-white text-xs`}>{icon}</div>
-            {title}
-        </h2>
-        {children}
-    </div>
-);
 
 export default BiodataDetails;
