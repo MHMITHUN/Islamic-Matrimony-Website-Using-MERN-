@@ -64,10 +64,10 @@ const Login = () => {
     return (
         <div className="min-h-screen grid lg:grid-cols-2 bg-background">
             <AuthAside
-                title="Begin your journey to"
-                highlight="a blessed union"
-                subtitle="Sign in to continue your search for a righteous, compatible life partner — the halal way."
-                points={['Trusted by thousands of Muslim families', 'Verified, secure & private by design', 'Find matches aligned with Islamic values']}
+                title={t('auth.aside.loginTitle', 'Begin your journey to')}
+                highlight={t('auth.aside.loginHighlight', 'a blessed union')}
+                subtitle={t('auth.aside.loginSubtitle', 'Sign in to continue your search for a righteous, compatible life partner — the halal way.')}
+                points={t('auth.aside.loginPoints', ['Trusted by thousands of Muslim families', 'Verified, secure & private by design', 'Find matches aligned with Islamic values'])}
             />
 
             <div className="flex flex-col items-center justify-center px-6 py-12 lg:px-12">

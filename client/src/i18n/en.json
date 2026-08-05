@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "biodatas": "Biodatas",
+    "stories": "Stories",
     "about": "About Us",
     "contact": "Contact Us",
     "dashboard": "Dashboard",
@@ -130,6 +131,27 @@
       "loginLink": "Sign In",
       "islamicQuote": "\"Marriage completes half of one's faith\"",
       "hadithRef": "— Prophet Muhammad (PBUH)"
+    },
+    "aside": {
+      "marriages": "Marriages",
+      "verified": "Verified",
+      "rating": "Rating",
+      "registerTitle": "Create your account,",
+      "registerHighlight": "find your match",
+      "registerSubtitle": "Join a trusted Muslim matrimonial community built on faith, sincerity, and serious intentions for marriage.",
+      "registerPoints": [
+        "Free to register & create your biodata",
+        "Your privacy is always protected",
+        "Connect with verified, serious profiles"
+      ],
+      "loginTitle": "Begin your journey to",
+      "loginHighlight": "a blessed union",
+      "loginSubtitle": "Sign in to continue your search for a righteous, compatible life partner — the halal way.",
+      "loginPoints": [
+        "Trusted by thousands of Muslim families",
+        "Verified, secure & private by design",
+        "Find matches aligned with Islamic values"
+      ]
     }
   },
   "biodata": {

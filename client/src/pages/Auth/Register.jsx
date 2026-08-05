@@ -64,10 +64,10 @@ const Register = () => {
     return (
         <div className="min-h-screen grid lg:grid-cols-2 bg-background">
             <AuthAside
-                title="Create your account,"
-                highlight="find your match"
-                subtitle="Join a trusted Muslim matrimonial community built on faith, sincerity, and serious intentions for marriage."
-                points={['Free to register & create your biodata', 'Your privacy is always protected', 'Connect with verified, serious profiles']}
+                title={t('auth.aside.registerTitle', 'Create your account,')}
+                highlight={t('auth.aside.registerHighlight', 'find your match')}
+                subtitle={t('auth.aside.registerSubtitle', 'Join a trusted Muslim matrimonial community built on faith, sincerity, and serious intentions for marriage.')}
+                points={t('auth.aside.registerPoints', ['Free to register & create your biodata', 'Your privacy is always protected', 'Connect with verified, serious profiles'])}
             />
 
             <div className="flex flex-col items-center justify-center px-6 py-12 lg:px-12">

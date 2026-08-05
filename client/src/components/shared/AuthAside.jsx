@@ -1,10 +1,13 @@
 import { CheckCircle2, ShieldCheck, HeartHandshake, Star } from 'lucide-react';
 import Logo from './Logo';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 /**
  * Branded split-panel shown beside auth forms on large screens.
  */
 export default function AuthAside({ title, highlight, subtitle, points = [], quote, quoteRef }) {
+    const { t } = useLanguage();
+
     return (
         <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-gradient-to-br from-emerald-800 to-emerald-950 p-12 text-white">
             {/* decorative */}
@@ -38,17 +41,17 @@ export default function AuthAside({ title, highlight, subtitle, points = [], quo
                 <div className="flex items-center gap-6">
                     <div>
                         <p className="text-2xl font-bold font-heading flex items-center gap-1.5"><HeartHandshake className="h-5 w-5 text-amber-300" /> 1K+</p>
-                        <p className="text-xs text-emerald-200/70">Marriages</p>
+                        <p className="text-xs text-emerald-200/70">{t('auth.aside.marriages', 'Marriages')}</p>
                     </div>
                     <div className="h-8 w-px bg-white/15" />
                     <div>
                         <p className="text-2xl font-bold font-heading flex items-center gap-1.5"><ShieldCheck className="h-5 w-5 text-emerald-300" /> 100%</p>
-                        <p className="text-xs text-emerald-200/70">Verified</p>
+                        <p className="text-xs text-emerald-200/70">{t('auth.aside.verified', 'Verified')}</p>
                     </div>
                     <div className="h-8 w-px bg-white/15" />
                     <div>
                         <p className="text-2xl font-bold font-heading flex items-center gap-1.5"><Star className="h-5 w-5 fill-amber-300 text-amber-300" /> 4.9</p>
-                        <p className="text-xs text-emerald-200/70">Rating</p>
+                        <p className="text-xs text-emerald-200/70">{t('auth.aside.rating', 'Rating')}</p>
                     </div>
                 </div>
                 {quote && (
