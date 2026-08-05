@@ -88,8 +88,10 @@
 
 ### 👥 User Features
 - **🔐 Firebase & JWT Authentication**: Email/Password and Google Social Login with JWT token verification.
+- **🛡️ Advanced Security**: Strict cross-account data isolation and automated session expiration handling.
 - **📝 Comprehensive Biodata Management**: Create, view, update, and manage personal, familial, educational, and preference data.
 - **🔍 Advanced Search & Multi-filter**: Search by gender, age range, division/location, and occupation.
+- **👀 Recently Viewed History**: Cloud-synced profile view history across sessions and devices.
 - **💖 Favorites & Likes**: Bookmark profiles and manage favorite lists in user dashboard.
 - **📧 Contact Request System**: Request verified contact details of candidates.
 - **💳 Stripe Payment Gateway**: Secure 500 BDT payment processing to request contact information.
