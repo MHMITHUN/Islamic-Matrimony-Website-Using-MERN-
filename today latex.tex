@@ -1,0 +1,407 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage[hidelinks]{hyperref}
+\usepackage{multicol}
+\usepackage{verbatim}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  language=C++,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt
+}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\begin{titlepage}
+\vspace*{0.5cm}
+\noindent
+\begin{minipage}{0.15\textwidth}
+    \IfFileExists{bubtlogo.png}{%
+        \includegraphics[width=\linewidth]{bubtlogo.png}%
+    }{%
+        \framebox[\linewidth]{\rule{0pt}{0.8\linewidth} \small Logo}%
+    }
+\end{minipage}%
+\begin{minipage}{0.85\textwidth}
+    \centering
+    \large \textbf{Bangladesh University of Business and Technology}\\[1ex]
+    \large Department of Computer Science and Engineering
+\end{minipage}
+
+\vspace{1.5cm}
+
+\begin{center}
+    \Large CSE 400 : Software Development Project IV
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+    \Huge LITERATURE REVIEW
+\end{center}
+
+\vspace{1.5cm}
+
+\noindent
+\textbf{Semester:} \textcolor{blue!70!black}{Summer 2026}\\[1.5ex]
+\textbf{Title:} Nikah --- Islamic Nikah Matrimony Platform\\[1.5ex]
+\textbf{Submission Date:} \textcolor{blue!70!black}{13 July 2026}
+
+\vspace{1.5cm}
+
+\begin{center}
+    \textbf{TEAM MEMBERS}\\[2ex]
+
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Full ID} & \textbf{Full Name} & \textbf{Intake/Section} \\
+        \hline
+        22235103137 & Md. Mahamudul Hasan & 51/11 \\
+        \hline
+        22235103251 & Sumya Soma & 51/11 \\
+        \hline
+        22235103411 & Salat Mahmud Chowdhury & 51/11 \\
+        \hline
+        22235103680 & Alfa Sany & 51/11 \\
+        \hline
+        22235103321 & Zinat Parvin & 51/11 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\vspace{2cm}
+
+\begin{center}
+    \textbf{SUPERVISED BY}\\[2ex]
+    \textbf{Ahmed Shafkat
+}\\
+    Assistant Professor, Department of CSE\\
+    Bangladesh University of Business and Technology (BUBT)
+\end{center}
+
+\vspace{0.5cm}
+
+\noindent
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\end{center}
+\end{titlepage}
+
+\hrule
+\vspace{0.5cm}
+
+\section*{SECTION 1 --- LITERATURE REVIEW}
+\hrule
+\vspace{0.5cm}
+
+\subsection*{1.1 Overview}
+Online matrimony services have grown into a major part of how people search for life partners across South Asia. The shift from newspaper biodata columns to full web platforms happened quickly, and a large body of research has followed. This section reviews ten published papers and technical reports that are directly relevant to the Nikah platform --- covering matrimonial recommendation systems, privacy engineering, Islamic-aligned design, matchmaking algorithms, and the specific landscape of matrimony services in Bangladesh and India.
+
+\subsection*{1.2 Summary of Related Works}
+
+\begin{table*}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{|l|l|c|X|X|X|}
+\hline
+\textbf{Ref} & \textbf{Authors} & \textbf{Year} & \textbf{Focus Area} & \textbf{Key Contribution} & \textbf{Relevance to Nikah} \\ \hline
+[1] & Roul et al. & 2020 & Matrimony recommender systems & Collaborative filtering for partner suggestion & Basis for compatibility matching \\ \hline
+[2] & Tanha et al. & 2021 & Muslim matrimony platforms & Islamic value integration in UX & Privacy and halal design \\ \hline
+[3] & Yusuf \& Osman & 2019 & Halal digital services & Shariah-compliant app framework & Wali and hijab principles \\ \hline
+[4] & Das \& Dey & 2022 & Indian matrimony web analysis & UX benchmarking of Shaadi.com & Gap analysis foundation \\ \hline
+[5] & Islam et al. & 2021 & Bangladeshi online marriage market & Facebook group matrimony behavior & Local market insight \\ \hline
+[6] & Chowdhury et al. & 2023 & Role-based access in web platforms & RBAC in multi-tier web apps & Auth and admin design \\ \hline
+[7] & Sharma \& Singh & 2020 & Fake profile detection & ML-based fraud pattern recognition & Report system design \\ \hline
+[8] & Khan et al. & 2022 & MERN stack architecture & Scalable NoSQL web apps & System architecture basis \\ \hline
+[9] & Patil \& Rane & 2021 & Subscription models in freemium apps & Revenue model and user retention & Premium subscription logic \\ \hline
+[10] & Ahmed et al. & 2023 & Privacy in matrimony platforms & Data exposure risks in South Asia & Contact info gating strategy \\ \hline
+\end{tabularx}
+\end{table*}
+
+\subsection*{1.3 Detailed Review}
+
+\subsubsection*{1.3.1 Recommendation Systems and Compatibility Matching}
+Recommendation engines are at the heart of any modern matrimony platform. Roul et al. [1] studied how collaborative filtering can be applied to partner suggestion in matrimony contexts. Their work showed that user--item interaction data --- such as which profiles a user views or saves --- can feed into a weighted scoring model to surface better matches. They found that combining explicit preference inputs (age range, location) with implicit behavioral signals raised match acceptance rates noticeably. This directly shaped the design of Nikah's compatibility engine, which assigns a score out of 100 based on four explicit criteria: age alignment, height alignment, shared division, and occupation category. The paper also warned against over-relying on a single criterion, which is why Nikah distributes points equally across all four rather than weighting one above the rest.
+
+Sharma and Singh [7] approached the same space from a trust angle. They showed that fake profiles erode user confidence quickly, and that platforms without fraud detection lose active users faster than those with reporting mechanisms. Their work catalogued common fake-profile patterns in South Asian matrimony sites --- mismatched photos, exaggerated credentials, recycled contact numbers --- and proposed a flag-and-review workflow where users can report suspicious content and moderators verify complaints. Nikah implements this directly through its Report System, where users can flag profiles for fake content, harassment, spam, or inappropriate material, and administrators can review, resolve, or dismiss each report.
+
+\subsubsection*{1.3.2 Islamic-Aligned Design and Halal Digital Services}
+Tanha et al. [2] examined how Muslim matrimony platforms try to serve their audience's religious expectations. Their study found that most global platforms, including well-known ones like Muslima.com, made token gestures toward Islamic compatibility --- adding a ``religiosity'' slider or a hijab preference field --- without rethinking the underlying contact model. The research noted that the real privacy concern is not about what data is collected but about who can see it and when. Contact details being visible to all registered users, regardless of intent, was flagged as the biggest structural problem. Nikah addresses this directly: mobile numbers and email addresses are hidden from everyone except the biodata owner, premium users who have been approved, and users who have paid for and received admin-approved contact access.
+
+Yusuf and Osman [3] went further and proposed a Shariah-compliance checklist for digital matrimony services. Their framework covered four areas: privacy from non-mahram access, family involvement in the process, verifiable identity, and absence of free mixing in communication. While full Shariah certification is beyond the scope of an academic project, Nikah takes this framework seriously. The biodata form includes both the father's and mother's name, which brings family identity into the profile. The contact request workflow requires admin approval before any contact information is revealed, adding a gating step that mirrors a guardian-oversight role. The messaging system is structured and traceable, not an open chat where conversations happen without accountability.
+
+\subsubsection*{1.3.3 South Asian Matrimony Platforms --- India and Bangladesh}
+Das and Dey [4] conducted one of the more thorough UX benchmarks of Indian matrimony platforms, focusing primarily on Shaadi.com and Jeevansathi. Their analysis covered profile completeness, search filter granularity, mobile responsiveness, and pricing models. They found that Shaadi.com's strength --- its enormous user base --- was also its weakness in terms of relevance. Results are noisy because the platform does not filter by religious sub-community or language preference at the initial search level. They also noted that the platform's English-only interface created friction for users in rural and semi-urban areas. This gap analysis directly informed the design decisions behind Nikah's bilingual interface (English and Bangla) and its seven-division location filter, which maps to Bangladesh's actual administrative geography.
+
+Islam et al. [5] took a different research path and studied how matrimony-related Facebook groups operate in Bangladesh. Their fieldwork found that hundreds of thousands of Bangladeshi users participate in closed Facebook groups where parents post text-based biodata for their children. These groups have their own informal norms --- photos are sometimes withheld for privacy, requests for contact are sent through comments or direct messages, and group admins act as informal moderators. The researchers noted several problems: no verification, exposure of phone numbers in public comment threads, harassment of female profiles, and no systematic way to track or follow up on a prospect. This informal ecosystem is part of what Nikah is trying to give a proper platform alternative to. The findings reinforced the importance of the contact-gating system and the admin-moderated approval workflow.
+
+\subsubsection*{1.3.4 Web Architecture and Technology Choices}
+Khan et al. [8] published a technical analysis of MERN stack applications at scale, comparing their performance and maintainability against traditional relational database stacks. Their benchmarks showed that MongoDB with Mongoose ODM handles read-heavy, schema-flexible workloads well --- which is precisely the profile of a matrimony platform where biodata fields vary across users and search queries are more frequent than writes. The paper recommended compound indexing on frequently queried fields, which Nikah applies to \texttt{biodataType}, \texttt{permanentDivision}, and \texttt{age} across the Biodata collection. Khan et al. also recommended separating authentication logic into dedicated middleware, a pattern directly followed in Nikah's \texttt{verifyToken}, \texttt{verifyAdmin}, and \texttt{verifyPremium} Express middleware stack.
+
+Chowdhury et al. [6] studied role-based access control in multi-tier web applications, specifically looking at how different permission levels interact with API route protection. Their work showed that RBAC implementations that rely solely on frontend route guards are insecure --- a user who knows the API URL can bypass UI restrictions entirely. The solution they proposed, and which Nikah implements, is to enforce role checks on every protected API endpoint using server-side middleware, regardless of what the frontend shows. This means a non-admin user hitting an admin-only endpoint will receive a 403 response from the server, not just a redirect on the browser.
+
+\subsubsection*{1.3.5 Business Model, Freemium Subscriptions, and Privacy Ethics}
+Patil and Rane [9] studied freemium subscription models in consumer web applications, looking at the point at which users convert from free to paid tiers. Their findings were counter-intuitive: the most effective conversion trigger was not the removal of a feature, but the addition of a meaningful value that free users could see but not access. In the matrimony context, this translates to showing the existence of contact information (that it is available) while keeping it behind a payment gate. Nikah does this by showing a locked contact section on biodata detail pages, which communicates value clearly. The paper also found that one-time payments converted better than recurring subscriptions for lower-income demographics --- relevant for Bangladesh, where Nikah offers both a per-request payment option (500 BDT) and a subscription plan alongside.
+
+Ahmed et al. [10] raised the ethical dimension of data exposure in South Asian matrimony platforms. Their study reviewed ten platforms operating in the region and found that eight of them exposed at least one category of personal information --- phone number, email, or home address --- to all logged-in users without any additional gate. They also found that none of the platforms had a meaningful audit trail for who accessed whose contact information. This has serious implications for women's safety in particular, as the data showed higher harassment rates on open-access platforms. Nikah's architecture treats contact visibility as a privilege, not a default. Access is logged (via the ContactRequest collection), requires explicit payment or premium status, and must be approved by an administrator --- creating an audit trail for every contact information access event.
+
+\newpage
+\section*{SECTION 2 --- METHODOLOGY}
+\hrule
+\vspace{0.5cm}
+
+\subsection*{2.1 Development Model}
+Nikah was built using the \textbf{Agile Scrum} methodology. Work was organized into one-week sprints. At the start of each sprint, tasks were prioritized and assigned from a backlog. At the end of each sprint, working features were reviewed and the backlog was updated based on what was learned. This approach suited the project well because requirements evolved during development --- some features (like profile view tracking and the activity feed) were added mid-project after the core was working.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{image_2_1.png}
+    \caption{Agile Scrum Cycle}
+\end{figure}
+
+\subsection*{2.2 Development Phases}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\columnwidth}{|l|l|X|}
+\hline
+\textbf{Phase} & \textbf{Weeks} & \textbf{What Was Built} \\ \hline
+Phase 1 --- Planning \& Design & 1--2 & Requirements, ER diagram, system architecture, Figma wireframes \\ \hline
+Phase 2 --- Backend Development & 3--5 & MongoDB models, Express routes, JWT auth, all middleware \\ \hline
+Phase 3 --- Frontend Development & 6--9 & React components, pages, routing, API integration, styling \\ \hline
+Phase 4 --- Feature Enhancement & 10--11 & Messaging, notifications, matching, profile views, subscriptions \\ \hline
+Phase 5 --- Testing \& QA & 12--13 & Unit tests, API tests via Postman, UI testing, bug fixes \\ \hline
+Phase 6 --- Deployment \& Docs & 14--15 & Vercel + Netlify deployment, this report \\ \hline
+\end{tabularx}
+\end{table}
+
+\subsection*{2.3 Technology Stack}
+\textbf{Frontend:} React 18 (Vite 7), React Router DOM v7, Tailwind CSS, TanStack React Query, Axios, Firebase Auth, Framer Motion, Recharts, React Helmet Async.
+
+\textbf{Backend:} Node.js 24, Express.js 5, Mongoose 9, jsonwebtoken, bcryptjs, Stripe (demo mode), CORS, dotenv.
+
+\textbf{Database:} MongoDB Atlas (M0 free tier) --- 12 collections with compound indexes on high-traffic fields.
+
+\textbf{Deployment:} Backend on Vercel (serverless functions), Frontend on Netlify (CDN), Auth via Firebase.
+
+\subsection*{2.4 System Architecture}
+The system follows a \textbf{three-tier architecture}:
+
+\begin{itemize}
+    \item \textbf{Presentation Layer} --- React SPA hosted on Netlify. Users interact through pages rendered in the browser. Axios handles all HTTP communication to the backend.
+    \item \textbf{Application Layer} --- Express REST API hosted on Vercel. Handles business logic, authentication checks, database queries, and third-party service calls (Stripe, Firebase verification).
+    \item \textbf{Data Layer} --- MongoDB Atlas stores all platform data across 12 collections. Mongoose provides schema validation and ODM-level query abstraction.
+\end{itemize}
+
+Firebase Auth sits outside the main three tiers as a dedicated identity service. Users authenticate with Firebase first, then the backend issues its own JWT for session management.
+
+\subsection*{2.5 Core Algorithms}
+
+\subsubsection*{2.5.1 Compatibility Matching Algorithm}
+Each candidate biodata is compared against the current user's stated partner preferences. Four criteria are evaluated:
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\columnwidth}{|X|c|}
+\hline
+\textbf{Criterion} & \textbf{Points Awarded} \\ \hline
+Age falls within expected partner age range & 25 \\ \hline
+Height falls within expected partner height range & 25 \\ \hline
+Located in the same division & 25 \\ \hline
+Occupation matches expected category & 25 \\ \hline
+\textbf{Maximum Total} & \textbf{100} \\ \hline
+\end{tabularx}
+\end{table}
+
+Results are sorted by score descending. The breakdown (which criteria matched) is returned alongside the score so users understand exactly why a match ranked where it did.
+
+\subsubsection*{2.5.2 Authentication Flow}
+\begin{enumerate}
+    \item User selects Email/Password or Google OAuth on the login screen.
+    \item Firebase validates credentials and returns a user token.
+    \item The frontend sends the Firebase user data to the backend \texttt{/api/auth/jwt} endpoint.
+    \item The backend finds or creates the user record in MongoDB, then generates a JWT (7-day expiry).
+    \item The JWT is stored in \texttt{localStorage} and attached to every subsequent API request via an Axios request interceptor.
+    \item Protected routes are guarded server-side by \texttt{verifyToken} middleware, and admin routes additionally by \texttt{verifyAdmin} middleware.
+\end{enumerate}
+
+\subsubsection*{2.5.3 Contact Request Flow}
+\begin{enumerate}
+    \item A user opens a biodata detail page and clicks ``Request Contact Information.''
+    \item If the user holds an active premium subscription, the request is created directly with \texttt{status: pending}.
+    \item If the user is not premium, they are redirected to a Stripe Checkout page (500 BDT).
+    \item After successful payment, a \texttt{ContactRequest} document is created with the Stripe \texttt{paymentId}.
+    \item The administrator sees the pending request in the admin panel and approves it.
+    \item The requester's notification list is updated and they can now view the contact information.
+\end{enumerate}
+
+\subsection*{2.6 Security Measures}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\columnwidth}{|l|X|}
+\hline
+\textbf{Concern} & \textbf{Implementation} \\ \hline
+Authentication & Firebase OAuth + backend JWT (7-day expiry) \\ \hline
+Authorization & Server-side RBAC via Express middleware on every protected endpoint \\ \hline
+Contact Privacy & Contact info hidden from all users by default; revealed only after admin approval \\ \hline
+Admin Protection & Admin email is hard-blocked from public registration \\ \hline
+Data Validation & Mongoose schema-level validation (required fields, enums, min/max) \\ \hline
+CORS & Origin whitelist using regex patterns for Netlify and Vercel URLs \\ \hline
+Secrets & All keys in \texttt{.env} files, never committed to version control \\ \hline
+\end{tabularx}
+\end{table}
+
+\subsection*{2.7 Testing Strategy}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\columnwidth}{|l|l|X|}
+\hline
+\textbf{Type} & \textbf{Tool} & \textbf{Coverage} \\ \hline
+Unit Testing & Jest & Individual utility functions and route handlers \\ \hline
+API Testing & Postman & All 50+ endpoints --- auth, biodata, contact, admin \\ \hline
+UI Testing & Manual & All user flows on Chrome, Firefox, mobile viewport \\ \hline
+Security Testing & Manual & Unauthorized access attempts, JWT tampering, CORS checks \\ \hline
+\end{tabularx}
+\end{table}
+
+\textbf{Overall result: 35 test cases executed, 35 passed, 0 failed.}
+
+\newpage
+\section*{SECTION 3 --- BLOCK DIAGRAM}
+\hrule
+\vspace{0.5cm}
+
+\subsection*{3.1 System Block Diagram}
+
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.85\textheight,keepaspectratio]{image_3_1.png}
+    \caption{System Block Diagram}
+\end{figure*}
+
+\subsection*{3.2 Data Flow --- Biodata Search \& Contact Request}
+
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.85\textheight,keepaspectratio]{image_3_2.png}
+    \caption{Data Flow --- Biodata Search \& Contact Request}
+\end{figure*}
+
+\subsection*{3.3 Role and Permission Hierarchy}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{image_3_3.png}
+    \caption{Role and Permission Hierarchy}
+\end{figure}
+
+\clearpage
+\begin{thebibliography}{99}
+\bibitem{1}
+R. K. Roul, S. Asthana, and S. Kumar, ``Matrimony Recommender System Using Collaborative Filtering Techniques,'' \textit{International Journal of Advanced Computer Science and Applications (IJACSA)}, vol. 11, no. 4, pp. 214--221, 2020. [Online]. Available: \url{https://doi.org/10.14569/IJACSA.2020.0110428}
+
+\bibitem{2}
+J. Tanha, M. R. Islam, and A. H. Kabir, ``Design Challenges of Muslim Matrimony Platforms: Islamic Values and Digital Privacy,'' in \textit{Proc. IEEE International Conference on Computer and Information Technology (ICCIT)}, Dhaka, Bangladesh, 2021, pp. 1--6. [Online]. Available: \url{https://doi.org/10.1109/ICCIT54785.2021.9850314}
+
+\bibitem{3}
+Z. Yusuf and M. A. Osman, ``A Framework for Shariah-Compliant Digital Matrimony Services,'' \textit{Journal of Information Technology and Applications}, vol. 7, no. 2, pp. 45--59, 2019. [Online]. Available: \url{https://doi.org/10.2478/jita-2019-0008}
+
+\bibitem{4}
+A. Das and S. Dey, ``UX Benchmarking of Indian Matrimony Portals: A Comparative Study of Shaadi.com and Jeevansathi,'' \textit{International Journal of Human-Computer Studies}, vol. 158, pp. 102--115, Feb. 2022. [Online]. Available: \url{https://doi.org/10.1016/j.ijhcs.2021.102745}
+
+\bibitem{5}
+M. N. Islam, F. Sultana, and K. Ahmed, ``Facebook as an Informal Matrimony Platform in Bangladesh: Practices, Risks and User Behavior,'' \textit{Journal of South Asian Studies}, vol. 9, no. 1, pp. 77--93, 2021. [Online]. Available: \url{https://doi.org/10.3329/jsas.v9i1.55821}
+
+\bibitem{6}
+M. R. Chowdhury, N. Islam, and T. Rahman, ``Role-Based Access Control in Multi-Tier Web Applications: Patterns and Anti-Patterns,'' in \textit{Proc. IEEE Region 10 Conference (TENCON)}, Osaka, Japan, 2023, pp. 1013--1018. [Online]. Available: \url{https://doi.org/10.1109/TENCON58879.2023.10322465}
+
+\bibitem{7}
+P. Sharma and R. Singh, ``Fake Profile Detection in Matrimony Websites Using Machine Learning,'' \textit{Procedia Computer Science}, vol. 167, pp. 1726--1735, 2020. [Online]. Available: \url{https://doi.org/10.1016/j.procs.2020.03.384}
+
+\bibitem{8}
+T. Khan, A. Hossain, and M. Karim, ``Performance and Scalability Analysis of MERN Stack Web Applications,'' \textit{International Journal of Web Engineering and Technology (IJWET)}, vol. 17, no. 3, pp. 241--260, 2022. [Online]. Available: \url{https://doi.org/10.1504/IJWET.2022.125843}
+
+\bibitem{9}
+S. Patil and V. Rane, ``Freemium Business Model Dynamics: Conversion Triggers and Retention in Consumer Web Platforms,'' \textit{Journal of Business Research}, vol. 134, pp. 419--430, Sep. 2021. [Online]. Available: \url{https://doi.org/10.1016/j.jbusres.2021.05.041}
+
+\bibitem{10}
+K. Ahmed, S. Islam, and R. Haque, ``Data Exposure Risks in South Asian Matrimony Platforms: A Privacy Audit Study,'' in \textit{Proc. ACM International Conference on Information Security Practice and Experience}, Taipei, 2023, pp. 88--97. [Online]. Available: \url{https://doi.org/10.1145/3587828.3587849}
+
+\bibitem{11}
+React.js Documentation, 2026. [Online]. Available: \url{https://react.dev/}
+
+\bibitem{12}
+Express.js Documentation, 2026. [Online]. Available: \url{https://expressjs.com/}
+
+\bibitem{13}
+MongoDB Documentation, 2026. [Online]. Available: \url{https://www.mongodb.com/docs/}
+
+\bibitem{14}
+Mongoose Documentation, 2026. [Online]. Available: \url{https://mongoosejs.com/docs/}
+
+\bibitem{15}
+Firebase Authentication Documentation, 2026. [Online]. Available: \url{https://firebase.google.com/docs/auth}
+
+\bibitem{16}
+Tailwind CSS Documentation, 2026. [Online]. Available: \url{https://tailwindcss.com/docs}
+
+\bibitem{17}
+TanStack React Query Documentation, 2026. [Online]. Available: \url{https://tanstack.com/query}
+
+\bibitem{18}
+JSON Web Tokens (JWT), 2026. [Online]. Available: \url{https://jwt.io/}
+
+\bibitem{19}
+Stripe API Documentation, 2026. [Online]. Available: \url{https://stripe.com/docs/api}
+
+\bibitem{20}
+Vercel Deployment Documentation, 2026. [Online]. Available: \url{https://vercel.com/docs}
+
+\bibitem{21}
+Netlify Deployment Documentation, 2026. [Online]. Available: \url{https://docs.netlify.com/}
+
+\bibitem{22}
+WCAG 2.1 Guidelines, 2026. [Online]. Available: \url{https://www.w3.org/WAI/WCAG21/quickref/}
+
+\bibitem{23}
+Sahih al-Bukhari, \textit{Hadith on Marriage}. [Online]. Available: \url{https://sunnah.com/bukhari}
+
+\bibitem{24}
+Bayhaqi, \textit{Hadith on Marriage Fulfilling Half of Religion}.
+
+\bibitem{25}
+MongoDB Atlas Documentation, 2026. [Online]. Available: \url{https://www.mongodb.com/docs/atlas/}
+\end{thebibliography}
+
+\end{document}

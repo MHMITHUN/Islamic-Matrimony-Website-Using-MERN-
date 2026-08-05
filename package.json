@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "docx": "^9.7.1",
+    "markdown-docx": "^1.6.0",
+    "marked": "^18.0.5",
+    "pandoc": "^0.2.0"
+  }
+}
