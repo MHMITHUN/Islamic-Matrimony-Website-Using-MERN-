@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
     Home, Pencil, Eye, Mail, Heart, HeartHandshake, LogOut, Menu, Crown,
     Users, CheckCircle2, PieChart, ListChecks, ArrowLeft, History, Activity,
@@ -27,6 +27,7 @@ const DashboardLayout = () => {
     const { user, logout, isAdmin, isPremium } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const { data: pendingRequests = [] } = useQuery({
         queryKey: ['premiumRequests'],
@@ -218,7 +219,7 @@ const DashboardLayout = () => {
                     </div>
                 </header>
 
-                <main className="p-4 md:p-6 lg:p-8">
+                <main key={pathname} className="p-4 md:p-6 lg:p-8 animate-in fade-in-50 duration-200">
                     <Outlet />
                 </main>
             </div>
