@@ -110,7 +110,21 @@ router.get('/admin/:email', verifyToken, async (req, res) => {
 
         const user = await User.findOne({ email });
 
-        res.json({ isAdmin: user?.role === 'admin' });
+        // Admin status is determined by ADMIN_EMAILS env variable, not just DB role
+        const adminEmails = getAdminEmails();
+        const isEnvAdmin = adminEmails.includes(email.toLowerCase());
+
+        // Sync DB role if out of sync with env
+        if (user && isEnvAdmin && user.role !== 'admin') {
+            user.role = 'admin';
+            user.isPremium = true;
+            await user.save();
+        } else if (user && !isEnvAdmin && user.role === 'admin') {
+            user.role = 'user';
+            await user.save();
+        }
+
+        res.json({ isAdmin: isEnvAdmin });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
