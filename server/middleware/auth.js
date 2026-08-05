@@ -46,8 +46,22 @@ const verifyAdmin = async (req, res, next) => {
     try {
         const user = await User.findOne({ email: req.user.email });
 
-        if (!user || user.role !== 'admin') {
+        // Check admin status from both database role and env-configured admin emails
+        const adminEmails = (process.env.ADMIN_EMAILS || '')
+            .split(',')
+            .map(e => e.trim().toLowerCase())
+            .filter(Boolean);
+        const isEnvAdmin = adminEmails.includes(req.user.email.toLowerCase());
+
+        if (!user || (user.role !== 'admin' && !isEnvAdmin)) {
             return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+        }
+
+        // Sync database role if env says admin but DB doesn't
+        if (isEnvAdmin && user.role !== 'admin') {
+            user.role = 'admin';
+            user.isPremium = true;
+            await user.save();
         }
 
         next();

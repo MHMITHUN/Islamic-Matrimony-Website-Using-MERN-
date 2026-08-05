@@ -20,9 +20,11 @@ const seedData = async () => {
         await ContactMessage.deleteMany({});
 
         console.log('👤 Creating admin user...');
+        const adminEmail = (process.env.ADMIN_EMAILS || 'admin@islamicmatrimony.com')
+            .split(',')[0].trim();
         const admin = await User.create({
             name: 'Admin',
-            email: 'admin@islamicmatrimony.com',
+            email: adminEmail,
             photoURL: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
             role: 'admin',
             isPremium: true,
@@ -326,7 +328,7 @@ const seedData = async () => {
 
         console.log('✅ Seed data created successfully!');
         console.log('📊 Summary:');
-        console.log(`   - Admin: admin@islamicmatrimony.com`);
+        console.log(`   - Admin: ${adminEmail}`);
         console.log(`   - Users: ${createdUsers.length}`);
         console.log(`   - Male Biodatas: 50`);
         console.log(`   - Female Biodatas: 50`);

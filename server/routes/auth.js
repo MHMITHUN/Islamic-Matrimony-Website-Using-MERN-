@@ -5,6 +5,12 @@ const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Get admin emails from environment variable
+const getAdminEmails = () => {
+    const raw = process.env.ADMIN_EMAILS || '';
+    return raw.split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+};
+
 // Create or update user and get JWT token
 router.post('/jwt', async (req, res) => {
     try {
@@ -14,42 +20,32 @@ router.post('/jwt', async (req, res) => {
             return res.status(400).json({ message: 'Email is required' });
         }
 
-        // Security: Prevent registration with admin email
-        const ADMIN_EMAIL = 'admin@islamicmatrimony.com';
-        const isAdminEmail = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+        const adminEmails = getAdminEmails();
+        const isAdminEmail = adminEmails.includes(email.toLowerCase());
 
         // Find or create user
         let user = await User.findOne({ email });
 
         if (!user) {
-            // Prevent anyone from registering with the admin email
-            if (isAdminEmail) {
-                return res.status(403).json({
-                    message: 'This email is reserved. Please contact support if you are the administrator.'
-                });
-            }
-
             user = new User({
                 email,
                 name: name || 'Anonymous',
                 photoURL: photoURL || '',
-                role: 'user' // Explicitly set role to 'user' for new registrations
+                role: isAdminEmail ? 'admin' : 'user',
+                isPremium: isAdminEmail
             });
             await user.save();
         } else {
-            // Protect existing admin accounts from being modified
-            if (user.role === 'admin') {
-                // Admin account exists, only update if it's the same admin logging in
-                // Don't allow role changes through this endpoint
-                if (name && name !== user.name) user.name = name;
-                if (photoURL && photoURL !== user.photoURL) user.photoURL = photoURL;
-                await user.save();
-            } else {
-                // Update regular user info if provided
-                if (name) user.name = name;
-                if (photoURL) user.photoURL = photoURL;
-                await user.save();
+            // Sync admin role from env configuration
+            if (isAdminEmail && user.role !== 'admin') {
+                user.role = 'admin';
+                user.isPremium = true;
+            } else if (!isAdminEmail && user.role === 'admin') {
+                user.role = 'user';
             }
+            if (name && name !== user.name) user.name = name;
+            if (photoURL && photoURL !== user.photoURL) user.photoURL = photoURL;
+            await user.save();
         }
 
         // Generate JWT token

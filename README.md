@@ -207,6 +207,7 @@ PORT=5000
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/nikah_db
 JWT_SECRET=your_super_secret_jwt_key
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+ADMIN_EMAILS=admin@yourdomain.com,another-admin@gmail.com
 ```
 
 #### Client `.env` (`/client/.env`)
