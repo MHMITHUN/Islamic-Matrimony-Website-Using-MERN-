@@ -1,0 +1,353 @@
+/* ===================================================================
+   NIKAH — Premium Design System
+   Refined Emerald + Gold, shadcn/ui token architecture
+   =================================================================== */
+
+/* ===== FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BANGLA FONT ===== */
+.font-bangla {
+  font-family: 'Noto Sans Bengali', sans-serif;
+}
+
+/* ===================================================================
+   DESIGN TOKENS  (HSL channel triplets for use with hsl(var(--token)))
+   =================================================================== */
+@layer base {
+  :root {
+    /* Surfaces — clean white / warm-tinted */
+    --background: 0 0% 100%;
+    --foreground: 165 30% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 165 30% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 165 30% 9%;
+
+    /* Brand — Deep Emerald */
+    --primary: 160 84% 24%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary — soft warm cream */
+    --secondary: 40 44% 94%;
+    --secondary-foreground: 28 47% 22%;
+
+    --muted: 150 16% 96%;
+    --muted-foreground: 160 8% 42%;
+
+    /* Accent — champagne gold tint */
+    --accent: 38 60% 90%;
+    --accent-foreground: 32 55% 24%;
+
+    --destructive: 0 80% 58%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 150 16% 90%;
+    --input: 150 16% 88%;
+    --ring: 160 84% 30%;
+
+    /* Gold accent token */
+    --gold: 38 74% 48%;
+    --gold-foreground: 0 0% 100%;
+
+    /* Charts */
+    --chart-1: 160 84% 30%;
+    --chart-2: 38 80% 52%;
+    --chart-3: 173 58% 39%;
+    --chart-4: 280 55% 60%;
+    --chart-5: 340 70% 58%;
+
+    --radius: 0.75rem;
+
+    /* Legacy brand swatches (kept for back-compat with existing pages) */
+    --brand-primary: #047857;
+    --brand-primary-light: #10b981;
+    --brand-gold: #f59e0b;
+  }
+
+  .dark {
+    /* Surfaces — deep green-charcoal */
+    --background: 168 32% 5%;
+    --foreground: 150 20% 95%;
+
+    --card: 166 28% 7%;
+    --card-foreground: 150 20% 95%;
+
+    --popover: 166 28% 7%;
+    --popover-foreground: 150 20% 95%;
+
+    /* Brand — brighter emerald for dark */
+    --primary: 158 72% 42%;
+    --primary-foreground: 168 40% 6%;
+
+    --secondary: 165 18% 12%;
+    --secondary-foreground: 150 20% 95%;
+
+    --muted: 165 16% 13%;
+    --muted-foreground: 150 10% 64%;
+
+    --accent: 38 38% 16%;
+    --accent-foreground: 42 75% 88%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 165 16% 16%;
+    --input: 165 16% 18%;
+    --ring: 158 72% 46%;
+
+    --gold: 42 82% 60%;
+    --gold-foreground: 168 40% 6%;
+
+    --chart-1: 158 72% 50%;
+    --chart-2: 42 82% 60%;
+    --chart-3: 173 48% 52%;
+    --chart-4: 280 55% 68%;
+    --chart-5: 340 65% 66%;
+  }
+}
+
+/* ===================================================================
+   BASE STYLES
+   =================================================================== */
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.18);
+    color: hsl(var(--foreground));
+  }
+}
+
+/* ===================================================================
+   SCROLLBAR
+   =================================================================== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.35);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
+  background-clip: content-box;
+}
+
+/* ===================================================================
+   LEGACY UTILITY CLASSES (preserved — existing pages depend on these)
+   =================================================================== */
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .gradient-islamic {
+    background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
+  }
+  .gradient-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  }
+  .text-gradient-islamic {
+    background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #d4a547 0%, #f5c869 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Spinner */
+  .spinner {
+    @apply inline-block w-10 h-10 rounded-full animate-spin;
+    border: 3px solid hsl(var(--muted));
+    border-top-color: hsl(var(--primary));
+  }
+  .spinner-lg {
+    @apply inline-block w-14 h-14 rounded-full animate-spin;
+    border: 3px solid hsl(var(--muted));
+    border-top-color: hsl(var(--primary));
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: hsl(var(--primary));
+    color: #fff;
+    padding: 8px 16px;
+    z-index: 100;
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+}
+
+/* ===================================================================
+   PREMIUM UTILITIES
+   =================================================================== */
+@layer components {
+  /* Glassmorphism */
+  .glass {
+    background: hsl(var(--background) / 0.72);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+  .glass-nav {
+    background: hsl(var(--background) / 0.78);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+  }
+  .dark .glass-nav {
+    background: hsl(168 32% 5% / 0.8);
+  }
+  .glass-card {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Brand gradients (token-aware) */
+  .bg-gradient-brand {
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(173 58% 39%) 100%);
+  }
+  .bg-gradient-gold-soft {
+    background-image: linear-gradient(135deg, hsl(var(--gold) / 0.16) 0%, hsl(var(--gold) / 0.04) 100%);
+  }
+  .text-gradient-brand {
+    background-image: linear-gradient(120deg, hsl(var(--primary)) 0%, hsl(173 58% 39%) 55%, hsl(var(--gold)) 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Decorative backgrounds */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .bg-dots {
+    background-image: radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .bg-aurora {
+    background:
+      radial-gradient(60% 60% at 15% 10%, hsl(var(--primary) / 0.16) 0%, transparent 60%),
+      radial-gradient(50% 50% at 90% 20%, hsl(var(--gold) / 0.14) 0%, transparent 55%),
+      radial-gradient(55% 55% at 50% 100%, hsl(173 58% 39% / 0.12) 0%, transparent 60%);
+  }
+
+  /* Card lift on hover */
+  .card-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Shimmer skeleton text */
+  .shimmer-text {
+    background: linear-gradient(90deg,
+      hsl(var(--muted-foreground) / 0.3) 0%,
+      hsl(var(--muted-foreground) / 0.6) 50%,
+      hsl(var(--muted-foreground) / 0.3) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    @apply animate-shimmer;
+  }
+
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.6), hsl(var(--gold) / 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* ===================================================================
+   FOCUS STYLES
+   =================================================================== */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

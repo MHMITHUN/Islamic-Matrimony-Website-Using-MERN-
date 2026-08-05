@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nikah - Islamic Matrimony</title>
+    <meta name="description" content="Find your perfect life partner the Islamic way. Nikah Matrimony connects Muslim singles who are serious about marriage." />
+    <meta name="keywords" content="Islamic matrimony, Muslim marriage, halal dating, nikah, Muslim matrimonial" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        document.body.innerHTML = `
+          <div style="padding: 20px; color: red; font-family: monospace; background: #fff0f0; border: 1px solid red; margin: 20px;">
+            <h3>Global Error Caught</h3>
+            <p><strong>Message:</strong> ${message}</p>
+            <p><strong>Source:</strong> ${source}:${lineno}:${colno}</p>
+            <pre>${error ? error.stack : 'No stack trace'}</pre>
+          </div>
+        `;
+      };
+      window.onunhandledrejection = function(event) {
+        document.body.innerHTML = `
+          <div style="padding: 20px; color: red; font-family: monospace; background: #fff0f0; border: 1px solid red; margin: 20px;">
+            <h3>Unhandled Promise Rejection</h3>
+            <p><strong>Reason:</strong> ${event.reason}</p>
+          </div>
+        `;
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

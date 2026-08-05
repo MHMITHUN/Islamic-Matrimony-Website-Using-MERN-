@@ -6,3 +6,9 @@ SDP_Project_Proposal.md
 today latex.tex
 today-sdp.md
 .claude
+node_modules/
+client/node_modules/
+server/node_modules/
+.env
+client/.env
+server/.env
