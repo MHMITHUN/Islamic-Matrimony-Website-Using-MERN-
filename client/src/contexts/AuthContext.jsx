@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebase.config';
 import { authAPI } from '../api/api';
+import { useQueryClient } from '@tanstack/react-query';
 
 const AuthContext = createContext(null);
 
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isPremium, setIsPremium] = useState(false);
+    const queryClient = useQueryClient();
 
     const googleProvider = new GoogleAuthProvider();
 
@@ -61,6 +63,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('access-token');
         setIsAdmin(false);
         setIsPremium(false);
+        queryClient.clear();
         return signOut(auth);
     };
 
@@ -117,12 +120,13 @@ export const AuthProvider = ({ children }) => {
                 setIsAdmin(false);
                 setIsPremium(false);
                 localStorage.removeItem('access-token');
+                queryClient.clear();
             }
             setLoading(false);
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [queryClient]);
 
     const value = {
         user,
