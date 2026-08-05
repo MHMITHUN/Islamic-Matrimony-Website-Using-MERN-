@@ -27,16 +27,41 @@
 
 ## 📸 Screenshots & Visual Tour
 
+### 🌐 User Experience & Public Features
+
 <div align="center">
 
-### 🏠 Home Page (Hero & Quick Search)
+#### 🏠 Home Page (Hero & Quick Search)
 ![Home Page](screenshots/home.png)
 
-### 📋 Verified Biodata Directory & Filters
-![Biodatas Page](screenshots/biodatas.png)
+#### 📋 Verified Biodata Directory & Filters
+![Biodatas Directory](screenshots/biodatas.png)
 
-### 💍 Real Success Stories
+#### 👤 Biodata Profile Details
+![Biodata Details](screenshots/biodata_details.png)
+
+#### 💳 Secure Checkout & Payment Processing
+![Checkout Page](screenshots/checkout.png)
+
+#### 💍 Real Success Stories
 ![Success Stories](screenshots/stories.png)
+
+</div>
+
+---
+
+### 👨‍💼 Admin Management Panel
+
+<div align="center">
+
+#### 📊 Admin Real-time Analytics & Dashboard Metrics
+![Admin Analytics](screenshots/admin_analytics.png)
+
+#### 👑 Approved Premium Members & Requests
+![Admin Premium](screenshots/admin_premium.png)
+
+#### 💳 Approved Contact Requests & Approvals
+![Admin Contact Requests](screenshots/admin_contacts.png)
 
 </div>
 
