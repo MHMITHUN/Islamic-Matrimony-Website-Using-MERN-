@@ -49,24 +49,24 @@ export function useRecentlyViewed() {
     const items = user ? dbItems : localItems;
 
     // Mutations for authenticated users
-    const addMutation = useMutation({
+    const { mutate: addViewMutation } = useMutation({
         mutationFn: (biodataId) => recentlyViewedAPI.add(biodataId),
         onSuccess: () => queryClient.invalidateQueries(['recentlyViewed'])
     });
 
-    const removeMutation = useMutation({
+    const { mutate: removeViewMutation } = useMutation({
         mutationFn: (biodataId) => recentlyViewedAPI.remove(biodataId),
         onSuccess: () => queryClient.invalidateQueries(['recentlyViewed'])
     });
 
-    const clearMutation = useMutation({
+    const { mutate: clearViewsMutation } = useMutation({
         mutationFn: () => recentlyViewedAPI.clearAll(),
         onSuccess: () => queryClient.invalidateQueries(['recentlyViewed'])
     });
 
     const addView = useCallback((biodata) => {
         if (user) {
-            addMutation.mutate(biodata.biodataId);
+            addViewMutation(biodata.biodataId);
         } else {
             setLocalItems(prev => {
                 const filtered = prev.filter(item => item.biodataId !== biodata.biodataId);
@@ -85,24 +85,24 @@ export function useRecentlyViewed() {
                 ].slice(0, MAX_ITEMS);
             });
         }
-    }, [user, addMutation]);
+    }, [user, addViewMutation]);
 
     const removeItem = useCallback((biodataId) => {
         if (user) {
-            removeMutation.mutate(biodataId);
+            removeViewMutation(biodataId);
         } else {
             setLocalItems(prev => prev.filter(item => item.biodataId !== biodataId));
         }
-    }, [user, removeMutation]);
+    }, [user, removeViewMutation]);
 
     const clearAll = useCallback(() => {
         if (user) {
-            clearMutation.mutate();
+            clearViewsMutation();
         } else {
             setLocalItems([]);
             localStorage.removeItem(STORAGE_KEY);
         }
-    }, [user, clearMutation]);
+    }, [user, clearViewsMutation]);
 
     return { items, addView, removeItem, clearAll };
 }
