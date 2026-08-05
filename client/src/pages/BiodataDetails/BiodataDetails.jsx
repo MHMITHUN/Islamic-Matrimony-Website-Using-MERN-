@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -9,6 +9,8 @@ import { FaMale, FaFemale } from 'react-icons/fa';
 import { biodataAPI, favoritesAPI } from '../../api/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
+import { profileViewAPI } from '../../api/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,6 +24,7 @@ const BiodataDetails = () => {
     const { t } = useLanguage();
     const queryClient = useQueryClient();
     const [isFavorited, setIsFavorited] = useState(false);
+    const { addView } = useRecentlyViewed();
 
     const translateEnum = (type, value) => {
         if (!value) return t('biodata.details.notSpecified');
@@ -55,6 +58,18 @@ const BiodataDetails = () => {
         queryFn: async () => { const response = await favoritesAPI.check(id); setIsFavorited(response.data.isFavorited); return response.data; },
         enabled: !!user,
     });
+
+    useEffect(() => {
+        if (biodata) {
+            // Add to local Recently Viewed for the current user's browser
+            addView(biodata);
+
+            // Record Profile View in backend for the viewed user's dashboard
+            if (user && biodata.userEmail !== user.email) {
+                profileViewAPI.record(biodata.biodataId).catch((err) => console.log('Error recording view:', err));
+            }
+        }
+    }, [biodata, user, addView]);
 
     const addToFavorites = useMutation({
         mutationFn: () => favoritesAPI.add(parseInt(id)),
