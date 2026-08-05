@@ -17,6 +17,14 @@ export function useRecentlyViewed() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     }, [items]);
 
+    useEffect(() => {
+        const handleClear = () => {
+            setItems([]);
+        };
+        window.addEventListener('clear-recently-viewed', handleClear);
+        return () => window.removeEventListener('clear-recently-viewed', handleClear);
+    }, []);
+
     const addView = useCallback((biodata) => {
         setItems(prev => {
             const filtered = prev.filter(item => item.biodataId !== biodata.biodataId);

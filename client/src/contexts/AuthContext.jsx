@@ -61,38 +61,49 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         setLoading(true);
         localStorage.removeItem('access-token');
+        localStorage.removeItem('nikah-recently-viewed');
+        window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
         setIsAdmin(false);
         setIsPremium(false);
         queryClient.clear();
         return signOut(auth);
     };
 
-    // Get JWT token and save to localStorage
+    // Update profile
+    const updateUserProfile = (name, photo) => {
+        return updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: photo
+        });
+    };
+
+    // Get JWT Token
     const getJWTToken = async (userData) => {
         try {
-            const response = await authAPI.getToken(userData);
-            const { token, user: dbUser } = response.data;
-            localStorage.setItem('access-token', token);
-            setIsAdmin(dbUser.role === 'admin');
-            setIsPremium(dbUser.isPremium || false);
-            return token;
+            const { data } = await authAPI.getToken(userData);
+            if (data.token) {
+                localStorage.setItem('access-token', data.token);
+            }
+            return data.token;
         } catch (error) {
-            console.error('Error getting JWT token:', error);
-            throw error;
+            console.error('Error getting JWT:', error);
+            return null;
         }
     };
 
-    // Check user status from database
+    // Check user status
     const checkUserStatus = async (email) => {
         try {
             const [adminRes, premiumRes] = await Promise.all([
-                authAPI.checkAdmin(email),
-                authAPI.checkPremium(email)
+                authAPI.checkAdmin(email).catch(() => ({ data: { admin: false } })),
+                authAPI.checkPremium(email).catch(() => ({ data: { isPremium: false } }))
             ]);
-            setIsAdmin(adminRes.data.isAdmin);
-            setIsPremium(premiumRes.data.isPremium);
+            setIsAdmin(adminRes.data?.admin || false);
+            setIsPremium(premiumRes.data?.isPremium || false);
         } catch (error) {
             console.error('Error checking user status:', error);
+            setIsAdmin(false);
+            setIsPremium(false);
         }
     };
 
@@ -120,6 +131,8 @@ export const AuthProvider = ({ children }) => {
                 setIsAdmin(false);
                 setIsPremium(false);
                 localStorage.removeItem('access-token');
+                localStorage.removeItem('nikah-recently-viewed');
+                window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
                 queryClient.clear();
             }
             setLoading(false);
