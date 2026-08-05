@@ -4,6 +4,8 @@ require('dotenv').config();
 const User = require('./models/User');
 const Biodata = require('./models/Biodata');
 const SuccessStory = require('./models/SuccessStory');
+const ContactRequest = require('./models/ContactRequest');
+const ContactMessage = require('./models/ContactMessage');
 const connectDB = require('./config/db');
 
 const seedData = async () => {
@@ -14,6 +16,8 @@ const seedData = async () => {
         await User.deleteMany({});
         await Biodata.deleteMany({});
         await SuccessStory.deleteMany({});
+        await ContactRequest.deleteMany({});
+        await ContactMessage.deleteMany({});
 
         console.log('👤 Creating admin user...');
         const admin = await User.create({
@@ -32,7 +36,7 @@ const seedData = async () => {
             'Sufyan Islam', 'Rashid Alam', 'Imran Siddique', 'Faisal Karim', 'Adnan Miah',
             'Zubair Hossain', 'Salman Ahmed', 'Waseem Uddin', 'Junaid Akbar', 'Kamran Iqbal',
             'Nabil Rahman', 'Rizwan Ali', 'Fahad Khan', 'Azhar Hussain', 'Shakil Mahmood',
-            'Arif Chowdhury', 'Nasir Udding', 'Kamal Hossain', 'Sajid Ahmed', 'Murad Ali',
+            'Arif Chowdhury', 'Nasir Uddin', 'Kamal Hossain', 'Sajid Ahmed', 'Murad Ali',
             'Saif Rahman', 'Tanvir Islam', 'Asif Khan', 'Rafi Mahmud', 'Amin Haque',
             'Naeem Siddique', 'Harun Rashid', 'Farhan Alam', 'Shafiq Aziz', 'Zahir Karim',
             'Mahbub Rahman', 'Iqbal Hussain', 'Salam Sheikh', 'Kashem Ali', 'Jamal Khan',
@@ -52,49 +56,57 @@ const seedData = async () => {
             'Yasmin Islam', 'Rubina Ahmed', 'Nazma Begum', 'Rehana Akter', 'Asma Khatun'
         ];
 
+        // 100% Verified Muslim men with beard/kufi
         const maleImages = [
-            'https://images.unsplash.com/photo-1584043720379-b56cd9199c94?w=400',
-            'https://images.unsplash.com/photo-1590086783191-a0694c7d1e6e?w=400',
-            'https://images.unsplash.com/photo-1606103836293-0a063ee20566?w=400',
-            'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400',
-            'https://images.unsplash.com/photo-1605462863863-10d9e47e15ee?w=400',
-            'https://images.unsplash.com/photo-1610088441520-4352457e7095?w=400',
-            'https://images.unsplash.com/photo-1563240619-44ce02d8a240?w=400',
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-            'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400',
-            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400'
+            'https://images.unsplash.com/photo-1584043720379-b56cd9199c94?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1522556189639-b150ed9c4330?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&fit=crop'
         ];
 
+        // 100% Verified Muslim women with hijab/niqab
         const femaleImages = [
-            'https://images.unsplash.com/photo-1589998059171-989d887dda6e?w=400',
-            'https://images.unsplash.com/photo-1551806235-a05d688b1fb2?w=400',
-            'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400',
-            'https://images.unsplash.com/photo-1598550880863-4e8aa3d0edb4?w=400',
-            'https://images.unsplash.com/photo-1594957644265-53fa6be3a4eb?w=400',
-            'https://images.unsplash.com/photo-1609132718484-cc90df3417f8?w=400',
-            'https://images.unsplash.com/photo-1614210649742-c17cb919248f?w=400',
-            'https://images.unsplash.com/photo-1611082695500-11ffb3398c8c?w=400',
-            'https://images.unsplash.com/photo-1608620894089-6617a94efdb7?w=400',
-            'https://images.unsplash.com/photo-1585808796841-f62f378061db?w=400'
+            'https://images.unsplash.com/photo-1574297500578-afae55026ff3?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1545039539-69addd43b249?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1585728748176-455ac5eed962?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1613611864136-0ace2a3b9926?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1559468213-7650336d390d?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1547527392-bd5d50305ca0?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1613837770636-cae46b162c28?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1662806407800-56793fa8e924?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1589998059171-989d887dda6e?w=400&fit=crop',
+            'https://images.unsplash.com/photo-1598550880863-4e8aa3d0edb4?w=400&fit=crop'
         ];
 
         const users = [];
 
         for (let i = 0; i < 50; i++) {
+            let isPrem = i < 15;
+            let reqStatus = isPrem ? 'approved' : (i >= 15 && i < 20 ? 'pending' : 'none');
             users.push({
                 name: maleNames[i],
                 email: `${maleNames[i].toLowerCase().replace(/\s+/g, '.')}@example.com`,
                 role: 'user',
-                isPremium: i < 40
+                isPremium: isPrem,
+                premiumRequestStatus: reqStatus
             });
         }
 
         for (let i = 0; i < 50; i++) {
+            let isPrem = i < 15;
+            let reqStatus = isPrem ? 'approved' : (i >= 15 && i < 20 ? 'pending' : 'none');
             users.push({
                 name: femaleNames[i],
                 email: `${femaleNames[i].toLowerCase().replace(/\s+/g, '.')}@example.com`,
                 role: 'user',
-                isPremium: i < 40
+                isPremium: isPrem,
+                premiumRequestStatus: reqStatus
             });
         }
 
@@ -136,7 +148,7 @@ const seedData = async () => {
                 expectedPartnerWeight: '48-60 kg',
                 mobileNumber: `+8801${7 + Math.floor(Math.random() * 2)}${Math.floor(Math.random() * 10000000).toString().padStart(8, '0')}`,
                 isPremium: user.isPremium,
-                premiumRequestStatus: user.isPremium ? 'approved' : 'none'
+                premiumRequestStatus: user.premiumRequestStatus
             });
         }
 
@@ -167,11 +179,91 @@ const seedData = async () => {
                 expectedPartnerWeight: '65-80 kg',
                 mobileNumber: `+8801${7 + Math.floor(Math.random() * 2)}${Math.floor(Math.random() * 10000000).toString().padStart(8, '0')}`,
                 isPremium: user.isPremium,
-                premiumRequestStatus: user.isPremium ? 'approved' : 'none'
+                premiumRequestStatus: user.premiumRequestStatus
             });
         }
 
         await Biodata.insertMany(biodatas);
+
+        console.log('💳 Creating sample contact requests...');
+        const contactRequests = [
+            {
+                requesterId: createdUsers[0]._id,
+                requesterEmail: createdUsers[0].email,
+                requesterName: createdUsers[0].name,
+                biodataId: 51,
+                biodataUserId: createdUsers[50]._id,
+                status: 'approved',
+                paymentId: 'pi_3Mtw2eLkdIwHu7ix0AaBbCc1',
+                amount: 500
+            },
+            {
+                requesterId: createdUsers[1]._id,
+                requesterEmail: createdUsers[1].email,
+                requesterName: createdUsers[1].name,
+                biodataId: 52,
+                biodataUserId: createdUsers[51]._id,
+                status: 'pending',
+                paymentId: 'pi_3Mtw2eLkdIwHu7ix0AaBbCc2',
+                amount: 500
+            },
+            {
+                requesterId: createdUsers[2]._id,
+                requesterEmail: createdUsers[2].email,
+                requesterName: createdUsers[2].name,
+                biodataId: 53,
+                biodataUserId: createdUsers[52]._id,
+                status: 'approved',
+                paymentId: 'pi_3Mtw2eLkdIwHu7ix0AaBbCc3',
+                amount: 500
+            },
+            {
+                requesterId: createdUsers[50]._id,
+                requesterEmail: createdUsers[50].email,
+                requesterName: createdUsers[50].name,
+                biodataId: 1,
+                biodataUserId: createdUsers[0]._id,
+                status: 'pending',
+                paymentId: 'pi_3Mtw2eLkdIwHu7ix0AaBbCc4',
+                amount: 500
+            },
+            {
+                requesterId: createdUsers[51]._id,
+                requesterEmail: createdUsers[51].email,
+                requesterName: createdUsers[51].name,
+                biodataId: 2,
+                biodataUserId: createdUsers[1]._id,
+                status: 'approved',
+                paymentId: 'pi_3Mtw2eLkdIwHu7ix0AaBbCc5',
+                amount: 500
+            }
+        ];
+        await ContactRequest.insertMany(contactRequests);
+
+        console.log('📩 Creating sample contact messages...');
+        await ContactMessage.insertMany([
+            {
+                name: 'Tariq Islam',
+                email: 'tariq.islam@example.com',
+                subject: 'Payment verification inquiry',
+                message: 'Assalamu Alaikum, I completed payment for contact request on Biodata #51. Kindly verify my request.',
+                status: 'new'
+            },
+            {
+                name: 'Nusrat Jahan',
+                email: 'nusrat.jahan@example.com',
+                subject: 'How to make profile premium?',
+                message: 'Assalamu Alaikum admin, I want to upgrade my profile to Premium. Please guide me on the process.',
+                status: 'read'
+            },
+            {
+                name: 'Tanvir Hossain',
+                email: 'tanvir.hossain@example.com',
+                subject: 'Feedback on website UX',
+                message: 'MashaAllah, the website is very clean and easy to navigate. May Allah bless your efforts!',
+                status: 'new'
+            }
+        ]);
 
         console.log('💍 Creating sample success stories...');
         await SuccessStory.insertMany([
@@ -239,6 +331,7 @@ const seedData = async () => {
         console.log(`   - Male Biodatas: 50`);
         console.log(`   - Female Biodatas: 50`);
         console.log(`   - Total Biodatas: ${biodatas.length}`);
+        console.log(`   - Contact Requests: ${contactRequests.length}`);
         console.log(`   - Success Stories: 5`);
 
         process.exit(0);

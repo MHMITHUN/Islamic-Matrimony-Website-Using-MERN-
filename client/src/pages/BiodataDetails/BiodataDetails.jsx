@@ -129,16 +129,20 @@ const BiodataDetails = () => {
                                             {biodata.profileImage ? <AvatarImage src={biodata.profileImage} alt="Profile" /> : null}
                                             <AvatarFallback className="rounded-2xl bg-primary/10 text-primary"><User className="h-10 w-10" /></AvatarFallback>
                                         </Avatar>
-                                        {biodata.isPremium && (
-                                            <Badge className="absolute -top-2 -right-2 gap-1 bg-gradient-gold border-transparent text-white shadow-sm"><Crown className="h-3 w-3" /> {t('biodata.details.premium')}</Badge>
-                                        )}
                                     </div>
                                     <div className="flex-1 text-center md:text-left pt-2 md:pt-4">
                                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
                                             <Badge variant="outline" className={cn('gap-1', isMale ? 'border-sky-500/30 bg-sky-500/10 text-sky-600' : 'border-rose-500/30 bg-rose-500/10 text-rose-600')}>
                                                 {isMale ? <FaMale /> : <FaFemale />} {translateEnum('biodataType', biodata.biodataType)}
                                             </Badge>
-                                            <span className="text-xs text-muted-foreground tabular-nums">ID: #{biodata.biodataId}</span>
+                                            {biodata.isPremium && (
+                                                <Badge className="gap-1 bg-gradient-gold border-transparent text-white shadow-sm">
+                                                    <Crown className="h-3.5 w-3.5" /> {t('biodata.details.premium')}
+                                                </Badge>
+                                            )}
+                                            <Badge variant="secondary" className="text-xs font-semibold tabular-nums">
+                                                ID: {biodata.biodataId}
+                                            </Badge>
                                         </div>
                                         <h1 className="font-heading text-xl md:text-2xl font-bold text-foreground mb-1.5">{biodata.name}</h1>
                                         <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-1.5 text-sm"><Briefcase className="h-3.5 w-3.5 text-primary" /> {translateEnum('occupation', biodata.occupation)}</p>
