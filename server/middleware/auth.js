@@ -15,12 +15,22 @@ const verifyToken = async (req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             req.user = decoded;
 
-            // Get fresh user data from database
-            const user = await User.findOne({ email: decoded.email });
+            // Get fresh user data from database or auto-create if missing
+            let user = await User.findOne({ email: decoded.email });
+            if (!user && decoded.email) {
+                user = await User.create({
+                    name: decoded.name || decoded.email.split('@')[0],
+                    email: decoded.email,
+                    role: 'user',
+                    isPremium: false
+                });
+            }
+
             if (user) {
                 req.user.role = user.role;
                 req.user.isPremium = user.isPremium;
                 req.user._id = user._id;
+                req.user.name = user.name || decoded.name;
             }
 
             next();

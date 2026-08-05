@@ -38,30 +38,39 @@ router.get('/my-requests', verifyToken, async (req, res) => {
 router.post('/', verifyToken, async (req, res) => {
     try {
         const { biodataId, paymentId } = req.body;
+        const numBiodataId = Number(biodataId);
+
+        let user = await User.findOne({ email: req.user.email });
+        if (!user) {
+            user = await User.create({
+                name: req.user.name || req.user.email.split('@')[0],
+                email: req.user.email,
+                role: 'user',
+                isPremium: false
+            });
+        }
 
         // Check if request already exists
         const existingRequest = await ContactRequest.findOne({
             requesterEmail: req.user.email,
-            biodataId
+            biodataId: numBiodataId
         });
 
         if (existingRequest) {
             return res.status(400).json({ message: 'Contact request already exists for this biodata' });
         }
 
-        const biodata = await Biodata.findOne({ biodataId });
+        const biodata = await Biodata.findOne({ biodataId: numBiodataId });
 
         if (!biodata) {
             return res.status(404).json({ message: 'Biodata not found' });
         }
 
-        const user = await User.findOne({ email: req.user.email });
-
         const contactRequest = new ContactRequest({
             requesterId: user._id,
             requesterEmail: req.user.email,
-            requesterName: user.name,
-            biodataId,
+            requesterName: user.name || req.user.email.split('@')[0],
+            biodataId: numBiodataId,
             biodataUserId: biodata.userId,
             paymentId,
             status: 'pending'
@@ -71,6 +80,7 @@ router.post('/', verifyToken, async (req, res) => {
 
         res.status(201).json({ message: 'Contact request submitted successfully', contactRequest });
     } catch (error) {
+        console.error('Contact request error:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });

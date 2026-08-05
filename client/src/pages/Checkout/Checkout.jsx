@@ -34,9 +34,12 @@ const Checkout = () => {
             const paymentResponse = await paymentAPI.createPaymentIntent(500);
             const { paymentId } = paymentResponse.data;
             await paymentAPI.confirmPayment(paymentId);
-            await createRequest.mutateAsync(paymentId);
+            await contactRequestAPI.create({ biodataId: parseInt(biodataId), paymentId });
+            toast.success(t('toast.contactRequested'));
+            navigate('/dashboard/contact-requests');
         } catch (error) {
-            toast.error(t('toast.paymentFailed'));
+            const errorMsg = error.response?.data?.message || t('toast.paymentFailed');
+            toast.error(errorMsg);
         } finally { setProcessing(false); }
     };
 
