@@ -18,6 +18,30 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
+const InfoItem = ({ icon: Icon, label, value }) => {
+    const { t } = useLanguage();
+    return (
+        <div className="flex items-start gap-3 rounded-xl border border-border bg-card/50 p-3.5 hover:border-primary/30 hover:bg-primary/[0.03] transition-colors">
+            <span className="grid place-items-center h-9 w-9 rounded-lg bg-primary/10 text-primary shrink-0"><Icon className="h-4 w-4" /></span>
+            <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
+                <p className="font-semibold text-foreground text-sm mt-0.5 truncate">{value || t('biodata.details.notSpecified')}</p>
+            </div>
+        </div>
+    );
+};
+
+const Section = ({ title, icon: Icon, children, accent = 'text-primary' }) => (
+    <Card>
+        <CardContent className="p-5 md:p-6">
+            <h2 className="flex items-center gap-2.5 text-base font-bold font-heading text-foreground mb-4">
+                <Icon className={cn('h-5 w-5', accent)} /> {title}
+            </h2>
+            {children}
+        </CardContent>
+    </Card>
+);
+
 const BiodataDetails = () => {
     const { id } = useParams();
     const { user, isPremium } = useAuth();
