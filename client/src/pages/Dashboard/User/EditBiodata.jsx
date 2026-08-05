@@ -20,6 +20,20 @@ const races = ['Fair', 'Light Brown', 'Brown', 'Dark'];
 const heights = ["4'5\"", "4'6\"", "4'7\"", "4'8\"", "4'9\"", "4'10\"", "4'11\"", "5'0\"", "5'1\"", "5'2\"", "5'3\"", "5'4\"", "5'5\"", "5'6\"", "5'7\"", "5'8\"", "5'9\"", "5'10\"", "5'11\"", "6'0\"", "6'1\"", "6'2\"", "6'3\"", "6'4\""];
 const weights = ['40-45 kg', '45-50 kg', '50-55 kg', '55-60 kg', '60-65 kg', '65-70 kg', '70-75 kg', '75-80 kg', '80-85 kg', '85-90 kg', '90+ kg'];
 
+const Field = ({ label, children, required }) => (
+    <div className="space-y-1.5">
+        <Label>{label} {required && <span className="text-destructive">*</span>}</Label>
+        {children}
+    </div>
+);
+
+const SectionCard = ({ title, icon: Icon, accent = 'text-primary', children }) => (
+    <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Icon className={cn('h-4 w-4', accent)} /> {title}</CardTitle></CardHeader>
+        <CardContent>{children}</CardContent>
+    </Card>
+);
+
 const EditBiodata = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
@@ -69,20 +83,6 @@ const EditBiodata = () => {
     if (isLoading) return <div className="flex flex-col items-center justify-center py-20"><Loader2 className="h-10 w-10 animate-spin text-primary" /><p className="mt-3 text-muted-foreground text-sm">{t('dashboard.editBiodata.loading')}</p></div>;
 
     const isEdit = !!existingBiodata;
-
-    const Field = ({ label, children, required }) => (
-        <div className="space-y-1.5">
-            <Label>{label} {required && <span className="text-destructive">*</span>}</Label>
-            {children}
-        </div>
-    );
-
-    const SectionCard = ({ title, icon: Icon, accent = 'text-primary', children }) => (
-        <Card>
-            <CardHeader><CardTitle className="text-base flex items-center gap-2"><Icon className={cn('h-4 w-4', accent)} /> {title}</CardTitle></CardHeader>
-            <CardContent>{children}</CardContent>
-        </Card>
-    );
 
     return (
         <div className="space-y-6">
