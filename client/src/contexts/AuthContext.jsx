@@ -128,6 +128,15 @@ export const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, [queryClient]);
 
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            console.warn('Session expired (401 Unauthorized), logging out...');
+            logout();
+        };
+        window.addEventListener('unauthorized', handleUnauthorized);
+        return () => window.removeEventListener('unauthorized', handleUnauthorized);
+    }, []);
+
     const value = {
         user,
         loading,

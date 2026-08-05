@@ -13,6 +13,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
+const FieldLabel = ({ icon: Icon, children }) => (
+    <Label className="flex items-center gap-2 mb-2"><Icon className="h-4 w-4 text-primary" />{children}</Label>
+);
+
 const GotMarried = () => {
     const navigate = useNavigate();
     const { t } = useLanguage();
@@ -38,9 +42,7 @@ const GotMarried = () => {
         submitMutation.mutate({ ...formData, selfBiodataId: parseInt(formData.selfBiodataId), partnerBiodataId: parseInt(formData.partnerBiodataId), reviewStar: parseInt(formData.reviewStar) });
     };
 
-    const FieldLabel = ({ icon: Icon, children }) => (
-        <Label className="flex items-center gap-2 mb-2"><Icon className="h-4 w-4 text-primary" />{children}</Label>
-    );
+
 
     return (
         <div className="space-y-6">

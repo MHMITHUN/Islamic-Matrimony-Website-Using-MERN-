@@ -15,6 +15,31 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
+const RequestCard = ({ item, pending, onApprove, isLoadingApprove }) => (
+    <Card className="card-lift hover:border-primary/30">
+        <CardContent className="p-4">
+            <div className="flex items-center gap-3 mb-3">
+                <Avatar className="h-10 w-10">
+                    <AvatarFallback className={cn('text-white', pending ? 'bg-amber-500' : 'bg-emerald-600')}>{item.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground text-sm truncate">{item.name}</h3>
+                    <span className={cn('text-[10px] font-medium', pending ? 'text-amber-600' : 'text-emerald-600')}>{pending ? 'Wants Premium' : 'Premium Member'}</span>
+                </div>
+            </div>
+            <div className="space-y-1.5 mb-3">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground"><Mail className="h-3 w-3" /><span className="truncate">{item.userEmail}</span></div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground"><Hash className="h-3 w-3" /><span className="tabular-nums">Biodata #{item.biodataId}</span></div>
+            </div>
+            {pending ? (
+                <Button onClick={() => onApprove(item)} disabled={isLoadingApprove} variant="gold" className="w-full"><Check className="h-4 w-4" /> Approve Premium</Button>
+            ) : (
+                <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active Member</div>
+            )}
+        </CardContent>
+    </Card>
+);
+
 const ApprovedPremium = () => {
     const [activeTab, setActiveTab] = useState('pending');
     const queryClient = useQueryClient();
@@ -47,30 +72,7 @@ const ApprovedPremium = () => {
     const data = activeTab === 'pending' ? pendingRequests : approvedMembers;
     const refetch = activeTab === 'pending' ? refetchPending : refetchHistory;
 
-    const RequestCard = ({ item, pending }) => (
-        <Card className="card-lift hover:border-primary/30">
-            <CardContent className="p-4">
-                <div className="flex items-center gap-3 mb-3">
-                    <Avatar className="h-10 w-10">
-                        <AvatarFallback className={cn('text-white', pending ? 'bg-amber-500' : 'bg-emerald-600')}>{item.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground text-sm truncate">{item.name}</h3>
-                        <span className={cn('text-[10px] font-medium', pending ? 'text-amber-600' : 'text-emerald-600')}>{pending ? 'Wants Premium' : 'Premium Member'}</span>
-                    </div>
-                </div>
-                <div className="space-y-1.5 mb-3">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground"><Mail className="h-3 w-3" /><span className="truncate">{item.userEmail}</span></div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground"><Hash className="h-3 w-3" /><span className="tabular-nums">Biodata #{item.biodataId}</span></div>
-                </div>
-                {pending ? (
-                    <Button onClick={() => handleApprove(item)} disabled={approveMutation.isLoading} variant="gold" className="w-full"><Check className="h-4 w-4" /> Approve Premium</Button>
-                ) : (
-                    <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active Member</div>
-                )}
-            </CardContent>
-        </Card>
-    );
+
 
     return (
         <>
@@ -102,7 +104,7 @@ const ApprovedPremium = () => {
                         ) : pendingRequests.length === 0 ? (
                             <EmptyState icon={Clock} title="No pending requests" description="When users request premium, they will appear here." />
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{pendingRequests.map((item) => <RequestCard key={item._id} item={item} pending />)}</div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{pendingRequests.map((item) => <RequestCard key={item._id} item={item} pending onApprove={handleApprove} isLoadingApprove={approveMutation.isLoading} />)}</div>
                         )}
                     </TabsContent>
 

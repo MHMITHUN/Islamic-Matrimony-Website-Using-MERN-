@@ -13,6 +13,23 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
+const InfoItem = ({ icon: Icon, label, value, tint = 'bg-primary/10 text-primary', t }) => (
+    <div className="flex items-start gap-3 rounded-xl border bg-card/50 p-3.5 hover:border-primary/30 transition-colors">
+        <span className={cn('grid place-items-center h-9 w-9 rounded-lg shrink-0', tint)}><Icon className="h-4 w-4" /></span>
+        <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
+            <p className="font-semibold text-foreground break-words mt-0.5">{value || (t ? t('dashboard.viewBiodata.na') : 'N/A')}</p>
+        </div>
+    </div>
+);
+
+const Section = ({ title, icon: Icon, children, accent = 'text-primary' }) => (
+    <div>
+        <h3 className="flex items-center gap-2 font-heading font-bold text-foreground mb-3"><Icon className={cn('h-5 w-5', accent)} /> {title}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{children}</div>
+    </div>
+);
+
 const ViewBiodata = () => {
     const { isPremium } = useAuth();
     const { t } = useLanguage();
@@ -45,22 +62,7 @@ const ViewBiodata = () => {
         </CardContent></Card>
     );
 
-    const InfoItem = ({ icon: Icon, label, value, tint = 'bg-primary/10 text-primary' }) => (
-        <div className="flex items-start gap-3 rounded-xl border bg-card/50 p-3.5 hover:border-primary/30 transition-colors">
-            <span className={cn('grid place-items-center h-9 w-9 rounded-lg shrink-0', tint)}><Icon className="h-4 w-4" /></span>
-            <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
-                <p className="font-semibold text-foreground break-words mt-0.5">{value || t('dashboard.viewBiodata.na')}</p>
-            </div>
-        </div>
-    );
 
-    const Section = ({ title, icon: Icon, children, accent = 'text-primary' }) => (
-        <div>
-            <h3 className="flex items-center gap-2 font-heading font-bold text-foreground mb-3"><Icon className={cn('h-5 w-5', accent)} /> {title}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{children}</div>
-        </div>
-    );
 
     return (
         <div className="space-y-6">
