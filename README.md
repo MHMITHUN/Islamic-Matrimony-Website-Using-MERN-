@@ -245,15 +245,6 @@ npm run dev
 
 ---
 
-## 🔑 Admin Credentials (Demo Testing)
-
-You can explore the full administrative features (Approval workflows, Analytics, User Management) using these seed credentials:
-
-- **Email**: `admin@islamicmatrimony.com`
-- **Password**: `Admin@123`
-
----
-
 ## 🔌 Key API Endpoints Overview
 
 | Method | Endpoint | Access Level | Description |
