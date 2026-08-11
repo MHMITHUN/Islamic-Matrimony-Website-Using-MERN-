@@ -516,11 +516,12 @@ const seedData = async () => {
         for (let i = 0; i < sukoonMaleIndices.length; i++) {
             const idx = sukoonMaleIndices[i];
             if (idx < biodatas.length) {
-                await Biodata.findByIdAndUpdate(biodatas[idx]._id, {
+                const bioId = biodatas[idx].biodataId;
+                await Biodata.findOneAndUpdate({ biodataId: bioId }, {
                     maritalStatus: sukoonMaleStatuses[i],
                     hasChildren: sukoonMaleChildren[i].hasChildren,
                     childrenCount: sukoonMaleChildren[i].childrenCount,
-                    childrenLivingWith: sukoonMaleChildren[i].childrenLivingWith,
+                    childrenLivingWith: sukoonMaleChildren[i].childrenLivingWith || undefined,
                     sukoon: true,
                     sukoonPhotoReveal: 'blurred',
                     religiousCommitment: 'Practicing',
@@ -542,11 +543,12 @@ const seedData = async () => {
         for (let i = 0; i < sukoonFemaleRawIndices.length; i++) {
             const idx = sukoonFemaleRawIndices[i];
             if (idx < biodatas.length) {
-                await Biodata.findByIdAndUpdate(biodatas[idx]._id, {
+                const bioId = biodatas[idx].biodataId;
+                await Biodata.findOneAndUpdate({ biodataId: bioId }, {
                     maritalStatus: sukoonFemaleStatuses[i],
                     hasChildren: sukoonFemaleChildren[i].hasChildren,
                     childrenCount: sukoonFemaleChildren[i].childrenCount,
-                    childrenLivingWith: sukoonFemaleChildren[i].childrenLivingWith,
+                    childrenLivingWith: sukoonFemaleChildren[i].childrenLivingWith || undefined,
                     sukoon: true,
                     sukoonPhotoReveal: 'blurred',
                     religiousCommitment: 'Practicing',
