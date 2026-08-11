@@ -19,6 +19,10 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import VerifiedBadge from '../../components/shared/VerifiedBadge';
+import TazkiyaBadge from '../../components/shared/TazkiyaBadge';
+import EndorseDialog, { ENDORSE_CATEGORIES } from '../../components/shared/EndorseDialog';
+import { endorsementAPI, sukoonAPI, journeyAPI } from '../../api/api';
+import { Leaf, HeartHandshake } from 'lucide-react';
 
 const InfoItem = ({ icon: Icon, label, value }) => {
     const { t } = useLanguage();
@@ -95,6 +99,32 @@ const BiodataDetails = () => {
         enabled: !!user,
     });
 
+    const { data: endorsements = [] } = useQuery({
+        queryKey: ['endorsementsFor', id],
+        queryFn: async () => { const response = await endorsementAPI.getFor(id); return response.data; },
+        enabled: !!biodata,
+    });
+
+    const { data: myBiodata } = useQuery({
+        queryKey: ['myBiodata'],
+        queryFn: async () => { try { const r = await biodataAPI.getMyBiodata(); return r.data; } catch { return null; } },
+        enabled: !!user,
+    });
+
+    // Is there an active marriage journey between me and this profile?
+    const { data: myJourneys = [] } = useQuery({
+        queryKey: ['myJourneys'],
+        queryFn: async () => { try { const r = await journeyAPI.getMine(); return r.data; } catch { return []; } },
+        enabled: !!user,
+    });
+    const linkedJourney = myJourneys.find(j => j.biodataA === Number(id) || j.biodataB === Number(id));
+
+    const revealMut = useMutation({
+        mutationFn: () => sukoonAPI.requestReveal(biodata?.biodataId, {}),
+        onSuccess: () => { queryClient.invalidateQueries(['biodata', id]); toast.success('Identity reveal requested'); },
+        onError: (e) => toast.error(e.response?.data?.message || 'Failed')
+    });
+
     useEffect(() => {
         if (biodata) {
             // Add to local Recently Viewed for the current user's browser
@@ -137,6 +167,7 @@ const BiodataDetails = () => {
     const canViewContact = biodata.canViewContact || isPremium;
     const isOwnBiodata = biodata.userEmail === user?.email;
     const isMale = biodata.biodataType === 'Male';
+    const sukoonHidden = biodata.sukoon && myBiodata && !biodata.sukoonRevealedTo?.includes(myBiodata.biodataId) && !isOwnBiodata;
 
     return (
         <div className="min-h-screen bg-muted/30 pt-20 pb-12">
@@ -155,9 +186,9 @@ const BiodataDetails = () => {
                             <CardContent className="relative px-6 pb-6">
                                 <div className="flex flex-col md:flex-row gap-5">
                                     <div className="relative -mt-14 md:-mt-12 shrink-0">
-                                        <Avatar className="h-32 w-32 md:h-36 md:w-36 rounded-2xl border-4 border-background shadow-premium-lg">
-                                            {biodata.profileImage ? <AvatarImage src={biodata.profileImage} alt="Profile" /> : null}
-                                            <AvatarFallback className="rounded-2xl bg-primary/10 text-primary"><User className="h-10 w-10" /></AvatarFallback>
+                                        <Avatar className={cn('h-32 w-32 md:h-36 md:w-36 rounded-2xl border-4 border-background shadow-premium-lg', sukoonHidden && biodata.profileImage && 'blur-md')}>
+                                            {(!sukoonHidden && biodata.profileImage) ? <AvatarImage src={biodata.profileImage} alt="Profile" /> : null}
+                                            <AvatarFallback className="rounded-2xl bg-primary/10 text-primary">{sukoonHidden ? <Lock className="h-8 w-8" /> : <User className="h-10 w-10" />}</AvatarFallback>
                                         </Avatar>
                                     </div>
                                     <div className="flex-1 text-center md:text-left pt-2 md:pt-4">
@@ -176,9 +207,15 @@ const BiodataDetails = () => {
                                                 </Badge>
                                             )}
                                             <VerifiedBadge verification={biodata.verification} />
+                                            <TazkiyaBadge tier={biodata.tazkiyaTier} score={biodata.trustScore} />
                                             {biodata.waliEnabled && (
                                                 <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
                                                     <ShieldCheck className="h-3.5 w-3.5" /> {t('biodata.details.waliProtected')}
+                                                </Badge>
+                                            )}
+                                            {biodata.sukoon && (
+                                                <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                                                    <Leaf className="h-3.5 w-3.5" /> Sukoon
                                                 </Badge>
                                             )}
                                             <Badge variant="secondary" className="text-xs font-semibold tabular-nums">
@@ -197,6 +234,16 @@ const BiodataDetails = () => {
                                             {!canViewContact && !isOwnBiodata && (
                                                 <Button asChild variant="gold">
                                                     <Link to={`/checkout/${biodata.biodataId}`}><Lock className="h-4 w-4" /> {biodata.waliEnabled ? t('biodata.details.requestContactWali') : t('biodata.details.requestContact')}</Link>
+                                                </Button>
+                                            )}
+                                            {sukoonHidden && (
+                                                <Button variant="outline" className="border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10" onClick={() => revealMut.mutate()} disabled={revealMut.isLoading}>
+                                                    <Lock className="h-4 w-4" /> Request identity reveal
+                                                </Button>
+                                            )}
+                                            {linkedJourney && (
+                                                <Button asChild>
+                                                    <Link to={`/dashboard/journey/${linkedJourney._id}`}><HeartHandshake className="h-4 w-4" /> View our Marriage Journey</Link>
                                                 </Button>
                                             )}
                                         </div>
@@ -237,6 +284,40 @@ const BiodataDetails = () => {
                                 <InfoItem icon={CheckCircle2} label={t('biodata.details.alcoholFree')} value={biodata.alcoholFree ? t('biodata.details.yes') : t('biodata.details.no')} />
                                 {biodata.hasChildren && (
                                     <InfoItem icon={User} label={t('biodata.details.children')} value={`${biodata.childrenCount || 0} (${translateEnum('childrenLivingWith', biodata.childrenLivingWith)})`} />
+                                )}
+                            </div>
+                        </Section>
+
+                        <Section title="Tazkiya — Character Trust" icon={ShieldCheck} accent="text-emerald-500">
+                            <div className="space-y-3">
+                                <p className="text-sm text-muted-foreground">Earned testimonials from verified members and imams — Islamic <em>tazkiya</em>.</p>
+                                {endorsements.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground italic">No endorsements yet.</p>
+                                ) : (
+                                    <div className="space-y-2.5">
+                                        {endorsements.map((en) => (
+                                            <div key={en._id} className="rounded-xl border border-border bg-card/50 p-3">
+                                                <div className="flex items-center gap-2 mb-1.5">
+                                                    <span className="grid place-items-center h-7 w-7 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-bold">{en.endorserName?.charAt(0)?.toUpperCase() || '?'}</span>
+                                                    <span className="text-sm font-semibold text-foreground">{en.endorserName || 'A member'}</span>
+                                                    {en.endorserRole === 'imam' && <Badge className="bg-emerald-600 text-white text-[10px]">Imam</Badge>}
+                                                </div>
+                                                <div className="flex flex-wrap gap-1 mb-1">
+                                                    {en.categories.map((c) => (
+                                                        <Badge key={c} variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
+                                                            {ENDORSE_CATEGORIES.find(x => x.key === c)?.label || c}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                                {en.note && <p className="text-xs text-muted-foreground italic">“{en.note}”</p>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {!isOwnBiodata && user && (
+                                    <div className="pt-1">
+                                        <EndorseDialog biodataId={biodata.biodataId} />
+                                    </div>
                                 )}
                             </div>
                         </Section>

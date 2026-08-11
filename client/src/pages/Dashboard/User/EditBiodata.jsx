@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Save, User as UserIcon, Phone, MapPin, Heart, Star, Loader2, FileText, Moon, ShieldCheck } from 'lucide-react';
+import { Save, User as UserIcon, Phone, MapPin, Heart, Star, Loader2, FileText, Moon, ShieldCheck, Leaf } from 'lucide-react';
 import { FaMale, FaFemale } from 'react-icons/fa';
 import { biodataAPI } from '../../../api/api';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -55,7 +55,7 @@ const EditBiodata = () => {
     const { t } = useLanguage();
     const queryClient = useQueryClient();
 
-    const [formData, setFormData] = useState({ biodataType: '', name: '', profileImage: '', dateOfBirth: '', height: '', weight: '', age: '', occupation: '', race: '', fathersName: '', mothersName: '', permanentDivision: '', presentDivision: '', expectedPartnerAge: '', expectedPartnerHeight: '', expectedPartnerWeight: '', mobileNumber: '', maritalStatus: '', sect: '', religiousCommitment: '', prayerFrequency: '', modesty: '', revert: false, religiousEducation: '', mahrPreference: '', alcoholFree: true, smoking: '', diet: 'Halal only', hasChildren: false, childrenCount: 0, childrenLivingWith: '', waliEnabled: false, waliName: '', waliRelation: '', waliContact: '', waliEmail: '' });
+    const [formData, setFormData] = useState({ biodataType: '', name: '', profileImage: '', dateOfBirth: '', height: '', weight: '', age: '', occupation: '', race: '', fathersName: '', mothersName: '', permanentDivision: '', presentDivision: '', expectedPartnerAge: '', expectedPartnerHeight: '', expectedPartnerWeight: '', mobileNumber: '', maritalStatus: '', sect: '', religiousCommitment: '', prayerFrequency: '', modesty: '', revert: false, religiousEducation: '', mahrPreference: '', alcoholFree: true, smoking: '', diet: 'Halal only', hasChildren: false, childrenCount: 0, childrenLivingWith: '', waliEnabled: false, waliName: '', waliRelation: '', waliContact: '', waliEmail: '', sukoon: false, sukoonPhotoReveal: 'blurred' });
 
     const { data: existingBiodata, isLoading } = useQuery({
         queryKey: ['myBiodata'],
@@ -83,6 +83,8 @@ const EditBiodata = () => {
                 waliEnabled: existingBiodata.waliEnabled || false, waliName: existingBiodata.waliName || '',
                 waliRelation: existingBiodata.waliRelation || '', waliContact: existingBiodata.waliContact || '',
                 waliEmail: existingBiodata.waliEmail || '',
+                sukoon: existingBiodata.sukoon || false,
+                sukoonPhotoReveal: existingBiodata.sukoonPhotoReveal || 'blurred',
             });
         }
     }, [existingBiodata]);
@@ -251,6 +253,26 @@ const EditBiodata = () => {
                         <Field label={t('dashboard.editBiodata.mobileNumber')} required><Input name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} placeholder={t('dashboard.editBiodata.mobilePlaceholder')} required /></Field>
                     </div>
                 </SectionCard>
+
+                {priorMarriageStatuses.includes(formData.maritalStatus) && (
+                    <SectionCard title="Sukoon — Second Marriage" icon={Leaf} accent="text-emerald-500">
+                        <div className="space-y-4">
+                            <div className="flex items-start gap-2">
+                                <Checkbox id="sukoon" checked={formData.sukoon} onCheckedChange={(c) => handleCheckbox('sukoon', c)} />
+                                <Label htmlFor="sukoon" className="cursor-pointer text-sm">List me in the Sukoon channel (extra-private, dignified second-marriage matching)</Label>
+                            </div>
+                            {formData.sukoon && (
+                                <Field label="Photo reveal rule">
+                                    <Select value={formData.sukoonPhotoReveal} onValueChange={(v) => handleSelect('sukoonPhotoReveal', v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>
+                                        <SelectItem value="blurred">Blurred until I approve a reveal</SelectItem>
+                                        <SelectItem value="verified_only">Only verified members may see</SelectItem>
+                                        <SelectItem value="full">Visible normally</SelectItem>
+                                    </SelectContent></Select>
+                                </Field>
+                            )}
+                        </div>
+                    </SectionCard>
+                )}
 
                 <SectionCard title="Wali (Guardian)" icon={ShieldCheck} accent="text-emerald-500">
                     <div className="space-y-4">

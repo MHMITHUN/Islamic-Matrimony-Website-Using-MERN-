@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
             occupation,
             minAge,
             maxAge,
+            channel,
             sort = 'asc'
         } = req.query;
 
@@ -23,6 +24,12 @@ router.get('/', async (req, res) => {
 
         if (biodataType) {
             query.biodataType = biodataType;
+        }
+
+        if (channel === 'sukoon') {
+            query.sukoon = true;
+        } else if (channel === 'main') {
+            query.sukoon = { $ne: true };
         }
 
         if (division) {

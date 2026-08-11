@@ -174,6 +174,13 @@ const biodataSchema = new mongoose.Schema({
     waliContact: { type: String, default: '' },
     waliEmail: { type: String, default: '' },
     waliConsent: { type: String, enum: ['none', 'pending', 'given', 'denied'], default: 'none' },
+    // --- Tazkiya trust (cached mirror of the owning User, denormalized for directory sort/filter) ---
+    trustScore: { type: Number, default: 0 },
+    tazkiyaTier: { type: String, enum: ['none', 'bronze', 'silver', 'gold'], default: 'none' },
+    // --- Sukoon (dignified second-marriage channel) ---
+    sukoon: { type: Boolean, default: false },
+    sukoonPhotoReveal: { type: String, enum: ['blurred', 'verified_only', 'full'], default: 'blurred' },
+    sukoonRevealedTo: { type: [Number], default: [] },
     isPremium: {
         type: Boolean,
         default: false

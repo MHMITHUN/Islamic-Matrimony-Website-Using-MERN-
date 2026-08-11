@@ -58,6 +58,27 @@ import AdminSuccessStories from './pages/Dashboard/Admin/AdminSuccessStories';
 import ContactMessages from './pages/Dashboard/Admin/ContactMessages';
 import ReportedProfiles from './pages/Dashboard/Admin/ReportedProfiles';
 import VerificationRequests from './pages/Dashboard/Admin/VerificationRequests';
+import ManageProviders from './pages/Dashboard/Admin/ManageProviders';
+import ManageJourneys from './pages/Dashboard/Admin/ManageJourneys';
+import GuardianRoute from './components/GuardianRoute';
+import GuardianOverview from './pages/Dashboard/Guardian/GuardianOverview';
+import GuardianWards from './pages/Dashboard/Guardian/GuardianWards';
+import GuardianBrowse from './pages/Dashboard/Guardian/GuardianBrowse';
+import GuardianShortlist from './pages/Dashboard/Guardian/GuardianShortlist';
+import GuardianRequests from './pages/Dashboard/Guardian/GuardianRequests';
+import FamilyChat from './pages/Dashboard/Guardian/FamilyChat';
+import GuardianDecision from './pages/Guardian/GuardianDecision';
+import MyGuardians from './pages/Dashboard/User/MyGuardians';
+import TrustDashboard from './pages/Dashboard/User/TrustDashboard';
+import ImamDashboard from './pages/Dashboard/Imam/ImamDashboard';
+import ImamDirectory from './pages/ImamDirectory/ImamDirectory';
+import KaziDirectory from './pages/KaziDirectory/KaziDirectory';
+import CounselorDirectory from './pages/CounselorDirectory/CounselorDirectory';
+import JourneyList from './pages/Dashboard/User/JourneyList';
+import JourneyTracker from './pages/Dashboard/User/JourneyTracker';
+import PremaritalCourse from './pages/Dashboard/User/PremaritalCourse';
+import Sukoon from './pages/Sukoon/Sukoon';
+import SukoonRequests from './pages/Dashboard/User/SukoonRequests';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +109,11 @@ const router = createBrowserRouter([
       { path: 'wali/approve/:token', element: <WaliDecision /> },
       { path: 'guidance', element: <GuidanceHub /> },
       { path: 'guidance/:slug', element: <GuidanceArticle /> },
+      { path: 'imams', element: <ImamDirectory /> },
+      { path: 'kazi', element: <KaziDirectory /> },
+      { path: 'counselors', element: <CounselorDirectory /> },
+      { path: 'sukoon', element: <Sukoon /> },
+      { path: 'guardian/link/:token', element: <GuardianDecision /> },
       {
         path: 'biodata/:id',
         element: (
@@ -129,6 +155,19 @@ const router = createBrowserRouter([
       { path: 'profile-views', element: <ProfileViews /> },
       { path: 'matches', element: <Matches /> },
       { path: 'wali', element: <WaliPanel /> },
+      { path: 'guardian', element: <GuardianRoute><GuardianOverview /></GuardianRoute> },
+      { path: 'guardian/wards', element: <GuardianRoute><GuardianWards /></GuardianRoute> },
+      { path: 'guardian/browse', element: <GuardianRoute><GuardianBrowse /></GuardianRoute> },
+      { path: 'guardian/shortlist', element: <GuardianRoute><GuardianShortlist /></GuardianRoute> },
+      { path: 'guardian/requests', element: <GuardianRoute><GuardianRequests /></GuardianRoute> },
+      { path: 'guardian/family-chat', element: <GuardianRoute><FamilyChat /></GuardianRoute> },
+      { path: 'my-guardians', element: <MyGuardians /> },
+      { path: 'trust', element: <TrustDashboard /> },
+      { path: 'imam', element: <ImamDashboard /> },
+      { path: 'journey', element: <JourneyList /> },
+      { path: 'journey/:id', element: <JourneyTracker /> },
+      { path: 'course', element: <PremaritalCourse /> },
+      { path: 'sukoon-requests', element: <SukoonRequests /> },
       { path: 'settings', element: <Settings /> },
 
       // Admin Dashboard Routes
@@ -169,6 +208,22 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <VerificationRequests />
+          </AdminRoute>
+        )
+      },
+      {
+        path: 'admin/providers',
+        element: (
+          <AdminRoute>
+            <ManageProviders />
+          </AdminRoute>
+        )
+      },
+      {
+        path: 'admin/journeys',
+        element: (
+          <AdminRoute>
+            <ManageJourneys />
           </AdminRoute>
         )
       },

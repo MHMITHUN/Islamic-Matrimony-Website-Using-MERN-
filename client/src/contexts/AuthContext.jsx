@@ -27,6 +27,10 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isPremium, setIsPremium] = useState(false);
+    const [role, setRole] = useState('user');
+    const [isGuardian, setIsGuardian] = useState(false);
+    const [isImam, setIsImam] = useState(false);
+    const [trustTier, setTrustTier] = useState('none');
     const queryClient = useQueryClient();
 
     const googleProvider = new GoogleAuthProvider();
@@ -65,6 +69,10 @@ export const AuthProvider = ({ children }) => {
         window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
         setIsAdmin(false);
         setIsPremium(false);
+        setRole('user');
+        setIsGuardian(false);
+        setIsImam(false);
+        setTrustTier('none');
         setUser(null);
         queryClient.clear();
         try {
@@ -124,19 +132,24 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Check user status
+    // Check user status (single /auth/me call — derives role, guardian/imam, premium, trust)
     const checkUserStatus = async (email) => {
         try {
-            const [adminRes, premiumRes] = await Promise.all([
-                authAPI.checkAdmin(email).catch(() => ({ data: { isAdmin: false } })),
-                authAPI.checkPremium(email).catch(() => ({ data: { isPremium: false } }))
-            ]);
-            setIsAdmin(adminRes.data?.isAdmin || adminRes.data?.admin || false);
-            setIsPremium(premiumRes.data?.isPremium || false);
+            const { data } = await authAPI.getCurrentUser();
+            const r = data.role || 'user';
+            setRole(r);
+            setIsAdmin(r === 'admin');
+            setIsPremium(data.isPremium || r === 'admin');
+            setIsGuardian(r === 'guardian');
+            setIsImam(r === 'imam');
+            setTrustTier(data.tazkiyaTier || 'none');
         } catch (error) {
             console.error('Error checking user status:', error);
+            setRole('user');
             setIsAdmin(false);
             setIsPremium(false);
+            setIsGuardian(false);
+            setIsImam(false);
         }
     };
 
@@ -171,10 +184,16 @@ export const AuthProvider = ({ children }) => {
                                 email: data.email,
                                 displayName: data.name,
                                 photoURL: data.photoURL,
-                                uid: data._id
+                                uid: data._id,
+                                role: data.role
                             });
-                            setIsAdmin(data.role === 'admin');
-                            setIsPremium(data.isPremium || data.role === 'admin');
+                            const r = data.role || 'user';
+                            setRole(r);
+                            setIsAdmin(r === 'admin');
+                            setIsPremium(data.isPremium || r === 'admin');
+                            setIsGuardian(r === 'guardian');
+                            setIsImam(r === 'imam');
+                            setTrustTier(data.tazkiyaTier || 'none');
                             restored = true;
                         }
                     } catch (err) {
@@ -186,6 +205,10 @@ export const AuthProvider = ({ children }) => {
                     setUser(null);
                     setIsAdmin(false);
                     setIsPremium(false);
+                    setRole('user');
+                    setIsGuardian(false);
+                    setIsImam(false);
+                    setTrustTier('none');
                     localStorage.removeItem('access-token');
                     localStorage.removeItem('nikah-recently-viewed');
                     window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
@@ -212,6 +235,10 @@ export const AuthProvider = ({ children }) => {
         loading,
         isAdmin,
         isPremium,
+        role,
+        isGuardian,
+        isImam,
+        trustTier,
         register,
         login,
         loginWithGoogle,

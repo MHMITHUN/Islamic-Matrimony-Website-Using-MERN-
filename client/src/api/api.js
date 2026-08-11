@@ -44,7 +44,8 @@ export const authAPI = {
     adminLogin: (credentials) => api.post('/auth/admin-login', credentials),
     getCurrentUser: () => api.get('/auth/me'),
     checkAdmin: (email) => api.get(`/auth/admin/${email}`),
-    checkPremium: (email) => api.get(`/auth/premium/${email}`)
+    checkPremium: (email) => api.get(`/auth/premium/${email}`),
+    setRole: (data) => api.patch('/auth/role', data)
 };
 
 export const biodataAPI = {
@@ -80,6 +81,8 @@ export const successStoryAPI = {
 export const adminAPI = {
     getUsers: (search) => api.get('/admin/users', { params: { search } }),
     makeAdmin: (id) => api.patch(`/admin/users/${id}/make-admin`),
+    makeGuardian: (id, data) => api.patch(`/auth/make-guardian/${id}`, data),
+    makeImam: (id, data) => api.patch(`/auth/make-imam/${id}`, data),
     makePremium: (id) => api.patch(`/admin/users/${id}/make-premium`),
     removePremium: (id) => api.patch(`/admin/users/${id}/remove-premium`),
     getPremiumRequests: () => api.get('/admin/premium-requests'),
@@ -172,4 +175,71 @@ export const waliAPI = {
     resend: (contactRequestId) => api.post(`/wali/resend/${contactRequestId}`),
     getDecisionByToken: (token) => api.get(`/wali/request/${token}`),
     submitDecision: (token, data) => api.post(`/wali/decision/${token}`, data)
+};
+
+export const endorsementAPI = {
+    canEndorse: (biodataId) => api.get(`/endorsements/can-endorse/${biodataId}`),
+    create: (data) => api.post('/endorsements', data),
+    getReceived: () => api.get('/endorsements/received'),
+    getGiven: () => api.get('/endorsements/given'),
+    getFor: (biodataId) => api.get(`/endorsements/for/${biodataId}`),
+    revoke: (id) => api.delete(`/endorsements/${id}`)
+};
+
+export const providerAPI = {
+    getAll: (params) => api.get('/providers', { params }),
+    getById: (id) => api.get(`/providers/${id}`),
+    create: (data) => api.post('/providers', data),
+    verify: (id) => api.patch(`/providers/${id}/verify`),
+    attest: (biodataId, data) => api.post(`/providers/attest/${biodataId}`, data)
+};
+
+export const journeyAPI = {
+    getMine: () => api.get('/journey/mine'),
+    getById: (id) => api.get(`/journey/${id}`),
+    advance: (id, data) => api.post(`/journey/advance/${id}`, data),
+    getAdminAll: () => api.get('/journey/admin/all')
+};
+
+export const bookingAPI = {
+    getMine: () => api.get('/bookings/mine'),
+    create: (data) => api.post('/bookings', data),
+    complete: (id) => api.patch(`/bookings/${id}/complete`),
+    getAll: () => api.get('/bookings')
+};
+
+export const mahrAPI = {
+    getByJourney: (journeyId) => api.get(`/mahr/by-journey/${journeyId}`),
+    save: (data) => api.put('/mahr', data),
+    confirm: (id) => api.post(`/mahr/${id}/confirm`)
+};
+
+export const courseAPI = {
+    getProgress: () => api.get('/course/progress'),
+    linkJourney: (journeyId) => api.post(`/course/link-journey/${journeyId}`),
+    completeModule: (n) => api.post(`/course/module/${n}/complete`)
+};
+
+export const guardianAPI = {
+    inviteWard: (data) => api.post('/guardian/wards/invite', data),
+    getMyGuardians: () => api.get('/guardian/my-guardians'),
+    getLinkByToken: (token) => api.get(`/guardian/link/${token}`),
+    decideLink: (token, data) => api.post(`/guardian/link/${token}/decide`, data),
+    getMyWards: () => api.get('/guardian/my-wards'),
+    revokeWard: (id) => api.delete(`/guardian/wards/${id}`),
+    browseWard: (wardBiodataId) => api.get(`/guardian/browse/${wardBiodataId}`),
+    getShortlist: (wardBiodataId) => api.get(`/guardian/shortlist/${wardBiodataId}`),
+    addShortlist: (data) => api.post('/guardian/shortlist', data),
+    removeShortlist: (id) => api.delete(`/guardian/shortlist/${id}`),
+    getWardRequests: (wardBiodataId) => api.get(`/guardian/requests/${wardBiodataId}`),
+    getFamilyThreads: () => api.get('/guardian/family-threads'),
+    getFamilyMessages: (threadId) => api.get(`/guardian/family-threads/${threadId}/messages`),
+    sendFamilyMessage: (data) => api.post('/guardian/family-threads', data)
+};
+
+export const sukoonAPI = {
+    getProfiles: (params) => api.get('/sukoon/profiles', { params }),
+    requestReveal: (biodataId, data) => api.post(`/sukoon/reveal-request/${biodataId}`, data),
+    decideReveal: (id, data) => api.post(`/sukoon/reveal-request/${id}/decide`, data),
+    getRevealRequests: () => api.get('/sukoon/reveal-requests')
 };

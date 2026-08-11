@@ -6,6 +6,57 @@
 
 ---
 
+## 🏆 THE 4 FLAGSHIPS (the "unique thoughts" — lead with these)
+
+The earlier Islamic features (deen matching, wali, verification, guidance) are
+**table-stakes** — necessary but not enough to beat Biyeta. To win, Nikah
+**reframes the product category** itself with four flagship platforms. Each is
+a distinct category where Nikah is the FIRST mover. Lead the defense with these.
+
+### Flagship 1 — Family-First (Guardian-Led)
+> *"Biyeta connects two singles. Nikah connects two families."*
+Marriage in BD Muslim culture is between families. Guardians get their OWN
+portal (login + approved ward link), browse/shortlist on behalf of the ward,
+view the ward's contact requests, and run family-to-family chat. No competitor
+is family-first. **Demo:** guardian invites ward → ward approves via magic link
+→ guardian browses matches for the ward → shortlists → family chat.
+
+### Flagship 2 — Tazkiya Trust Network
+> *"Biyeta verifies an ID. Nikah verifies a character."*
+Trust is the #1 pain (fake profiles). Members earn a trust score via character
+endorsements from verified members + imam attestations (Islamic *tazkiya*).
+Tiers: bronze → silver → gold. Imam endorsements carry the highest weight.
+Trust is a moat: defensible, viral (invite to vouch), monetizable.
+**Demo:** endorse a profile → tier rises → imam attests → big jump → revoke →
+recompute.
+
+### Flagship 3 — Nikah Completion Platform (headline business model)
+> *"Biyeta gets you a chat. Nikah gets you a nikah."*
+Every app stops at "match + chat." Nikah takes you all the way: an auto-started
+**marriage journey** tracker (Connected → Intro → Counseling → Mahr → Kazi →
+Nikah), with a **marketplace** of kazi + counselors to book, a **mahr
+agreement** module (both-party confirm), and a **premarital course** + badge.
+Captures the whole wedding economy, not just a subscription.
+**Demo:** approve a contact → journey auto-starts → stepper advances through
+each stage with real bookings + mahr + course → nikah registered + certificate.
+
+### Flagship 4 — Sukoon (Dignified Second-Marriage Channel)
+> *"Everyone serves the first marriage. Nikah serves the ones Islam doesn't forget."*
+A private, dignity-first channel for divorcees, widows and those seeking
+polygyny — a huge, underserved, stigmatized market. Extra privacy: photos
+blurred + identity hidden until a member-approved reveal. Islam dignifies
+remarriage; this channel gives it a respectable home.
+**Demo:** enable Sukoon → blurred browse → request reveal → member approves →
+identity unlocks.
+
+### Business model (one line per flagship)
+1. Family accounts + premium guardian tier.
+2. Premium Tazkiya-verified tier + imam partnerships.
+3. Counselor/kazi commissions + document services + premium journey tier.
+4. Premium Sukoon tier for a high-intent, under-served segment.
+
+---
+
 ## The one-line thesis (memorize this)
 
 > **"Other platforms are matrimony sites that happen to allow Muslims.

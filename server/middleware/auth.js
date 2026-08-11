@@ -85,4 +85,16 @@ const verifyPremium = async (req, res, next) => {
     }
 };
 
-module.exports = { verifyToken, verifyAdmin, verifyPremium };
+// Role guard factory — admin is always included so the env-admin can demo every flow.
+const verifyRole = (...roles) => (req, res, next) => {
+    if (!req.user) return res.status(401).json({ message: 'Access denied. No token provided.' });
+    const allowed = roles.includes('admin') ? roles : [...roles, 'admin'];
+    return allowed.includes(req.user.role)
+        ? next()
+        : res.status(403).json({ message: 'Forbidden: insufficient role.' });
+};
+
+const verifyGuardian = verifyRole('guardian');
+const verifyImam = verifyRole('imam');
+
+module.exports = { verifyToken, verifyAdmin, verifyPremium, verifyRole, verifyGuardian, verifyImam };

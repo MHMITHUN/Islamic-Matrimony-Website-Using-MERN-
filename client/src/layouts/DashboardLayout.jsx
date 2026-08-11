@@ -3,7 +3,7 @@ import {
     Home, Pencil, Eye, Mail, Heart, HeartHandshake, LogOut, Menu, Crown,
     Users, CheckCircle2, PieChart, ListChecks, ArrowLeft, History, Activity,
     Settings, Flag, Bell, Scale, MessageSquare, User as UserIcon, ChevronLeft,
-    ShieldCheck,
+    ShieldCheck, BookOpen,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
 
 const DashboardLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { user, logout, isAdmin, isPremium } = useAuth();
+    const { user, logout, isAdmin, isPremium, isGuardian, isImam } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
     const { pathname } = useLocation();
@@ -56,6 +56,7 @@ const DashboardLayout = () => {
         { path: '/dashboard/view-biodata', icon: Eye, label: t('dashboard.sidebar.viewBiodata') },
         { path: '/dashboard/matches', icon: Scale, label: 'Matches' },
         { path: '/dashboard/wali', icon: ShieldCheck, label: t('dashboard.sidebar.wali') },
+        { path: '/dashboard/my-guardians', icon: Users, label: 'My Guardians' },
         { path: '/dashboard/messages', icon: MessageSquare, label: 'Messages' },
         { path: '/dashboard/notifications', icon: Bell, label: 'Notifications' },
         { path: '/dashboard/contact-requests', icon: Mail, label: t('dashboard.sidebar.myContactRequests') },
@@ -64,7 +65,15 @@ const DashboardLayout = () => {
         { path: '/dashboard/recently-viewed', icon: History, label: 'Recently Viewed' },
         { path: '/dashboard/activity', icon: Activity, label: 'Activity Feed' },
         { path: '/dashboard/got-married', icon: HeartHandshake, label: t('dashboard.sidebar.gotMarried') },
+        { path: '/dashboard/journey', icon: HeartHandshake, label: 'Marriage Journey' },
+        { path: '/dashboard/sukoon-requests', icon: HeartHandshake, label: 'Sukoon Requests' },
+        { path: '/dashboard/course', icon: BookOpen, label: 'Premarital Course' },
+        { path: '/dashboard/trust', icon: ShieldCheck, label: 'Tazkiya Trust' },
         { path: '/dashboard/settings', icon: Settings, label: 'Settings' },
+    ];
+
+    const imamLinks = [
+        { path: '/dashboard/imam', icon: ShieldCheck, label: 'Attestation Console' },
     ];
 
     const adminLinks = [
@@ -73,12 +82,23 @@ const DashboardLayout = () => {
         { path: '/dashboard/admin/approved-premium', icon: Crown, label: t('dashboard.sidebar.approvedPremium'), badgeKey: 'premium' },
         { path: '/dashboard/admin/approved-contacts', icon: CheckCircle2, label: t('dashboard.sidebar.approvedContacts') },
         { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: 'Verification Requests' },
+        { path: '/dashboard/admin/providers', icon: ShieldCheck, label: 'Providers' },
+        { path: '/dashboard/admin/journeys', icon: HeartHandshake, label: 'Marriage Journeys' },
         { path: '/dashboard/admin/contact-messages', icon: Mail, label: t('dashboard.sidebar.contactMessages') },
         { path: '/dashboard/admin/success-stories', icon: ListChecks, label: t('dashboard.sidebar.successStories') },
         { path: '/dashboard/admin/reports', icon: Flag, label: 'Reports' },
     ];
 
-    const links = isAdmin ? adminLinks : userLinks;
+    const guardianLinks = [
+        { path: '/dashboard/guardian', icon: Home, label: 'Overview' },
+        { path: '/dashboard/guardian/wards', icon: Users, label: 'My Wards' },
+        { path: '/dashboard/guardian/browse', icon: Eye, label: 'Browse for Ward' },
+        { path: '/dashboard/guardian/shortlist', icon: Heart, label: 'Shortlist' },
+        { path: '/dashboard/guardian/requests', icon: Mail, label: 'Requests' },
+        { path: '/dashboard/guardian/family-chat', icon: MessageSquare, label: 'Family Chats' },
+    ];
+
+    const links = isAdmin ? adminLinks : (isGuardian ? guardianLinks : (isImam ? imamLinks : userLinks));
 
     // When active item mounts, scroll it into view inside the sidebar scrollable area
     const handleActiveRef = (el) => {
@@ -118,6 +138,11 @@ const DashboardLayout = () => {
                                     Admin
                                 </span>
                             )}
+                            {isGuardian && (
+                                <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 bg-sky-500/20 text-sky-200 rounded ring-1 ring-inset ring-sky-500/30">
+                                    Guardian
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -126,7 +151,7 @@ const DashboardLayout = () => {
             {/* Nav */}
             <ScrollArea className="flex-1 px-3">
                 <p className="text-[10px] font-semibold text-emerald-200/40 uppercase tracking-wider mb-2 px-3 pt-2">
-                    {isAdmin ? t('dashboard.sidebar.adminMenu') : t('dashboard.sidebar.navigation')}
+                    {isAdmin ? t('dashboard.sidebar.adminMenu') : isGuardian ? 'Guardian Menu' : t('dashboard.sidebar.navigation')}
                 </p>
                 <ul className="space-y-1 pb-4">
                     {links.map((link) => {
@@ -214,7 +239,7 @@ const DashboardLayout = () => {
                             </Button>
                             <div className="min-w-0">
                                 <h1 className="font-heading text-base md:text-lg font-bold text-foreground truncate">
-                                    {isAdmin ? t('dashboard.sidebar.adminDashboardTitle') : t('dashboard.sidebar.myDashboard')}
+                                    {isAdmin ? t('dashboard.sidebar.adminDashboardTitle') : isGuardian ? 'Guardian Dashboard' : t('dashboard.sidebar.myDashboard')}
                                 </h1>
                                 <p className="text-xs text-muted-foreground hidden sm:block truncate">
                                     {t('dashboard.sidebar.welcome').replace('{name}', user?.displayName?.split(' ')[0] || 'User')}

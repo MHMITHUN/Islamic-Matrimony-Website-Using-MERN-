@@ -6,6 +6,9 @@ const Biodata = require('./models/Biodata');
 const SuccessStory = require('./models/SuccessStory');
 const ContactRequest = require('./models/ContactRequest');
 const ContactMessage = require('./models/ContactMessage');
+const ServiceProvider = require('./models/ServiceProvider');
+const Endorsement = require('./models/Endorsement');
+const { computeTrust } = require('./lib/trust');
 const connectDB = require('./config/db');
 
 const seedData = async () => {
@@ -18,6 +21,8 @@ const seedData = async () => {
         await SuccessStory.deleteMany({});
         await ContactRequest.deleteMany({});
         await ContactMessage.deleteMany({});
+        await ServiceProvider.deleteMany({});
+        await Endorsement.deleteMany({});
 
         console.log('👤 Creating admin user...');
         const adminEmail = (process.env.ADMIN_EMAIL || 'admin@islamicmatrimony.com').trim();
@@ -324,6 +329,62 @@ const seedData = async () => {
                 userId: createdUsers[11]._id
             }
         ]);
+
+        // ===================== FLAGSHIP SEED DATA =====================
+        console.log('🛡️  Seeding flagship data (imam, kazi, counselors, tazkiya, sukoon)...');
+
+        // Imam user + ServiceProvider(imam)
+        const imamUser = await User.create({
+            name: 'Imam Yusuf Ahmad',
+            email: 'imam.yusuf@nikah.demo',
+            photoURL: 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=400',
+            role: 'imam',
+            isPremium: true,
+            imamProfile: { title: 'Imam', organization: 'Jamuna Masjid', city: 'Dhaka', bio: 'Serving the community for 15 years.', verified: true, verifiedAt: new Date() }
+        });
+        await ServiceProvider.create([
+            { name: 'Imam Yusuf Ahmad', userId: imamUser._id, serviceType: 'imam', title: 'Imam', organization: 'Jamuna Masjid', city: 'Dhaka', area: 'Gulshan', phone: '+8801710000001', bio: 'Community imam offering tazkiya attestations.', specialties: ['Tazkiya attestation', 'Marriage guidance'], languages: ['Bangla', 'English', 'Arabic'], yearsExperience: 15, verified: true, active: true, partnerSince: new Date() },
+            { name: 'Kazi Abdul Wahab', serviceType: 'kazi', title: 'Licensed Kazi', organization: 'Dhaka Kazi Office', city: 'Dhaka', area: 'Mirpur', phone: '+8801710000002', fee: 5000, bio: 'Registered marriage officiant.', specialties: ['Nikah registration', 'Marriage license'], languages: ['Bangla'], yearsExperience: 12, verified: true, active: true, partnerSince: new Date() },
+            { name: 'Kazi Rafiq Uddin', serviceType: 'kazi', title: 'Licensed Kazi', city: 'Chattagram', phone: '+8801710000003', fee: 4000, bio: 'Kazi service across Chattogram.', languages: ['Bangla'], yearsExperience: 8, verified: true, active: true, partnerSince: new Date() },
+            { name: 'Counselor Dr. Sarah Karim', serviceType: 'counselor', title: 'Islamic Counselor', organization: 'Barakah Counseling', city: 'Dhaka', phone: '+8801710000004', fee: 2000, bio: 'Premarital counseling grounded in Islamic principles.', specialties: ['Premarital', 'Conflict resolution'], languages: ['Bangla', 'English'], yearsExperience: 10, rating: 4.9, reviewCount: 32, verified: true, active: true, partnerSince: new Date() },
+            { name: 'Counselor Br. Mahmud Hasan', serviceType: 'counselor', title: 'Family Counselor', city: 'Sylhet', phone: '+8801710000005', fee: 1500, bio: 'Family & premarital counseling.', languages: ['Bangla'], yearsExperience: 6, verified: true, active: true, partnerSince: new Date() }
+        ]);
+
+        // Tazkiya endorsements — give a few biodatas earned trust + one imam attestation
+        if (biodatas.length > 10) {
+            const target = biodatas[2];
+            const endorsers = [createdUsers[3], createdUsers[4], createdUsers[5]];
+            for (const e of endorsers) {
+                await Endorsement.create({
+                    endorserId: e._id, endorserEmail: e.email, endorserName: e.name, endorserRole: 'user',
+                    endorserTrustAtSubmit: e.trustScore || 0,
+                    endorsedBiodataId: target.biodataId, endorsedUserId: target.userId, endorsedName: target.name,
+                    categories: ['honest', 'good_character', 'prays_regularly'],
+                    weight: 1, note: 'A trustworthy, practicing brother.'
+                });
+            }
+            // Imam attestation (high weight)
+            await Endorsement.create({
+                endorserId: imamUser._id, endorserEmail: imamUser.email, endorserName: imamUser.name, endorserRole: 'imam',
+                endorserTrustAtSubmit: 0,
+                endorsedBiodataId: target.biodataId, endorsedUserId: target.userId, endorsedName: target.name,
+                categories: ['good_character', 'knowledgeable_deen', 'prays_regularly'],
+                weight: 10, note: 'Attested by a verified Imam — known to the masjid community.'
+            });
+            await computeTrust(target.biodataId);
+        }
+
+        // Mark one biodata as a Sukoon (second-marriage) profile for the demo
+        if (biodatas.length > 20) {
+            const sukoonBio = biodatas[20];
+            sukoonBio.maritalStatus = 'Divorced';
+            sukoonBio.hasChildren = true;
+            sukoonBio.childrenCount = 1;
+            sukoonBio.childrenLivingWith = 'Yes';
+            sukoonBio.sukoon = true;
+            sukoonBio.sukoonPhotoReveal = 'blurred';
+            await sukoonBio.save();
+        }
 
         console.log('✅ Seed data created successfully!');
         console.log('📊 Summary:');

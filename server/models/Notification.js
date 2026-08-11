@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['contact_request', 'contact_approved', 'premium_approved', 'new_message', 'profile_viewed', 'system', 'wali_pending', 'wali_decision', 'wali_consent'],
+        enum: ['contact_request', 'contact_approved', 'premium_approved', 'new_message', 'profile_viewed', 'system', 'wali_pending', 'wali_decision', 'wali_consent', 'guardian_link_request', 'guardian_link_decided', 'endorsement_received', 'family_message', 'journey_stage', 'booking_update', 'mahr_confirmed', 'sukoon_reveal_request', 'sukoon_reveal_decision', 'course_completed'],
         required: true
     },
     title: {

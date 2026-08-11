@@ -227,6 +227,14 @@ router.patch('/approve-contact/:id', verifyToken, verifyAdmin, async (req, res) 
         request.status = 'approved';
         await request.save();
 
+        // Kick off the end-to-end Marriage Journey (F3) on approval
+        try {
+            const { createJourneyFromRequest } = require('../lib/journey');
+            await createJourneyFromRequest(request);
+        } catch (e) {
+            console.error('[JOURNEY] create failed:', e.message);
+        }
+
         res.json({ message: 'Contact request approved', request });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

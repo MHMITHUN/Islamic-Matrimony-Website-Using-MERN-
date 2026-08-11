@@ -43,6 +43,11 @@ const messageSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
+    familyThreadId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'FamilyThread',
+        default: null
+    },
     isTemplateMessage: {
         type: Boolean,
         default: false

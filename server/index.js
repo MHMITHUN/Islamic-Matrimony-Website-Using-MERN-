@@ -74,6 +74,14 @@ app.use('/api/matches', require('./routes/match'));
 app.use('/api/profile-views', require('./routes/profileView'));
 app.use('/api/subscriptions', require('./routes/subscription'));
 app.use('/api/wali', require('./routes/wali'));
+app.use('/api/endorsements', require('./routes/endorsement'));
+app.use('/api/providers', require('./routes/serviceProvider'));
+app.use('/api/journey', require('./routes/marriageJourney'));
+app.use('/api/bookings', require('./routes/booking'));
+app.use('/api/mahr', require('./routes/mahr'));
+app.use('/api/course', require('./routes/course'));
+app.use('/api/guardian', require('./routes/guardian'));
+app.use('/api/sukoon', require('./routes/sukoon'));
 
 // Root route
 app.get('/', (req, res) => {

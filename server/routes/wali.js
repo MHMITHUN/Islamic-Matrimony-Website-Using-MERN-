@@ -6,6 +6,7 @@ const ContactRequest = require('../models/ContactRequest');
 const Biodata = require('../models/Biodata');
 const Notification = require('../models/Notification');
 const { verifyToken } = require('../middleware/auth');
+const { createJourneyFromRequest } = require('../lib/journey');
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
@@ -159,6 +160,11 @@ router.post('/decision/:token', async (req, res) => {
         if (contactRequest) {
             contactRequest.status = decision === 'approved' ? 'approved' : 'rejected';
             await contactRequest.save();
+
+            // On approval, kick off the end-to-end Marriage Journey (F3)
+            if (decision === 'approved') {
+                createJourneyFromRequest(contactRequest).catch((e) => console.error('[JOURNEY] create failed:', e.message));
+            }
 
             // Notify the requester
             if (contactRequest.requesterId) {

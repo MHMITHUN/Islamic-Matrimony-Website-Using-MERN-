@@ -162,8 +162,82 @@ router.get('/me', verifyToken, async (req, res) => {
             photoURL: user.photoURL,
             role: user.role,
             isPremium: user.isPremium,
-            premiumRequestStatus: user.premiumRequestStatus
+            premiumRequestStatus: user.premiumRequestStatus,
+            trustScore: user.trustScore || 0,
+            tazkiyaTier: user.tazkiyaTier || 'none',
+            guardianProfile: user.guardianProfile || null,
+            imamProfile: user.imamProfile || null
         });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Self-select guardian or imam role (for a dedicated non-member Firebase account).
+// Cannot be used to gain 'admin'. Reuses the existing JWT auth machinery.
+router.patch('/role', verifyToken, async (req, res) => {
+    try {
+        const { role, guardianProfile, imamProfile } = req.body;
+        if (!['guardian', 'imam'].includes(role)) {
+            return res.status(400).json({ message: 'Only guardian or imam self-registration is allowed.' });
+        }
+        const user = await User.findOne({ email: req.user.email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Prevent a member account from silently switching into guardian/imam of itself
+        // (a guardian/imam is expected to be a separate account). If the user already owns
+        // a biodata, block the switch to keep ownership clean.
+        const Biodata = require('../models/Biodata');
+        const ownsBiodata = await Biodata.exists({ userEmail: user.email });
+        if (ownsBiodata) {
+            return res.status(400).json({ message: 'This account already owns a biodata. Register a separate account to act as a guardian or imam.' });
+        }
+
+        user.role = role;
+        if (role === 'guardian' && guardianProfile) {
+            user.guardianProfile = { ...user.guardianProfile.toObject?.() ?? {}, ...guardianProfile };
+        }
+        if (role === 'imam' && imamProfile) {
+            user.imamProfile = { ...user.imamProfile.toObject?.() ?? {}, ...imamProfile };
+        }
+        await user.save();
+
+        res.json({
+            message: `Role updated to ${role}`,
+            user: { _id: user._id, email: user.email, role: user.role }
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Admin: promote a user to guardian
+router.patch('/make-guardian/:id', verifyToken, require('../middleware/auth').verifyAdmin, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        user.role = 'guardian';
+        if (req.body.guardianProfile) {
+            user.guardianProfile = { ...user.guardianProfile.toObject?.() ?? {}, ...req.body.guardianProfile };
+        }
+        await user.save();
+        res.json({ message: 'User is now a guardian', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Admin: promote a user to imam
+router.patch('/make-imam/:id', verifyToken, require('../middleware/auth').verifyAdmin, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        user.role = 'imam';
+        if (req.body.imamProfile) {
+            user.imamProfile = { ...user.imamProfile.toObject?.() ?? {}, ...req.body.imamProfile };
+        }
+        await user.save();
+        res.json({ message: 'User is now an imam', user });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
