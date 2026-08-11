@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, Award, Loader2, Plus, Pencil, Trash2, CheckCircle, XCircle, Phone, MapPin, Eye, Search } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { providerAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import Swal from 'sweetalert2';
 
 const ManageProviders = () => {
     const qc = useQueryClient();
+    const { t } = useLanguage();
     const [typeFilter, setTypeFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [search, setSearch] = useState('');
@@ -75,12 +77,12 @@ const ManageProviders = () => {
 
     const handleDelete = async (p) => {
         const r = await Swal.fire({
-            title: 'Delete Service Provider?',
-            text: `Are you sure you want to remove ${p.name} from the directory?`,
+            title: t('fp.providers.deleteTitle'),
+            text: t('fp.providers.deleteText').replace('{name}', p.name),
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Yes, Delete'
+            confirmButtonText: t('fp.providers.deleteConfirm')
         });
         if (r.isConfirmed) deleteMut.mutate(p._id);
     };
@@ -106,11 +108,11 @@ const ManageProviders = () => {
 
     return (
         <>
-            <Helmet><title>Manage Service Providers - Admin</title></Helmet>
+            <Helmet><title>{t('fp.providers.manageTitle')} - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Service Providers" description="Manage Imams, Kazis & Counselors in the directory" icon={ShieldCheck}>
+                <PageHeader title={t('fp.providers.manageTitle')} description={t('fp.providers.manageDesc')} icon={ShieldCheck}>
                     <Button onClick={() => setIsCreateOpen(true)} className="gap-2 shadow-glow">
-                        <Plus className="h-4 w-4" /> Add Provider
+                        <Plus className="h-4 w-4" /> {t('fp.providers.add')}
                     </Button>
                 </PageHeader>
 
@@ -122,32 +124,32 @@ const ManageProviders = () => {
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search by name or city..."
+                                placeholder={t('fp.providers.searchPh')}
                                 className="pl-9"
                             />
                         </div>
                         <Select value={typeFilter} onValueChange={setTypeFilter}>
-                            <SelectTrigger className="w-36"><SelectValue placeholder="All Types" /></SelectTrigger>
+                            <SelectTrigger className="w-36"><SelectValue placeholder={t('fp.providers.allTypes')} /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="">All Types</SelectItem>
-                                <SelectItem value="imam">Imam</SelectItem>
-                                <SelectItem value="kazi">Kazi</SelectItem>
-                                <SelectItem value="counselor">Counselor</SelectItem>
+                                <SelectItem value="">{t('fp.providers.allTypes')}</SelectItem>
+                                <SelectItem value="imam">{t('fp.nav.imams')}</SelectItem>
+                                <SelectItem value="kazi">{t('fp.nav.kazi')}</SelectItem>
+                                <SelectItem value="counselor">{t('fp.nav.counselors')}</SelectItem>
                             </SelectContent>
                         </Select>
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger className="w-36"><SelectValue placeholder="All Status" /></SelectTrigger>
+                            <SelectTrigger className="w-36"><SelectValue placeholder={t('fp.providers.allStatus')} /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">All Status</SelectItem>
-                                <SelectItem value="pending">Pending Approval</SelectItem>
-                                <SelectItem value="verified">Verified</SelectItem>
-                                <SelectItem value="inactive">Inactive</SelectItem>
+                                <SelectItem value="all">{t('fp.providers.allStatus')}</SelectItem>
+                                <SelectItem value="pending">{t('fp.providers.pendingApproval')}</SelectItem>
+                                <SelectItem value="verified">{t('fp.common.verified')}</SelectItem>
+                                <SelectItem value="inactive">{t('fp.providers.inactive')}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="text-xs text-muted-foreground font-medium">
-                        Showing {filteredProviders.length} of {providers.length} providers
+                        {t('fp.providers.showing').replace('{shown}', filteredProviders.length).replace('{total}', providers.length)}
                     </div>
                 </div>
 
@@ -156,17 +158,17 @@ const ManageProviders = () => {
                     {isLoading ? (
                         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                     ) : filteredProviders.length === 0 ? (
-                        <EmptyState icon={ShieldCheck} title="No providers found" description="Try adjusting your filters or click 'Add Provider' to create one." />
+                        <EmptyState icon={ShieldCheck} title={t('fp.providers.noProviders')} description={t('fp.providers.noProvidersDesc')} />
                     ) : (
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Provider</TableHead>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead className="hidden md:table-cell">City / Area</TableHead>
-                                    <TableHead className="hidden sm:table-cell">Contact</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
+                                    <TableHead>{t('fp.providers.colProvider')}</TableHead>
+                                    <TableHead>{t('fp.providers.colType')}</TableHead>
+                                    <TableHead className="hidden md:table-cell">{t('fp.providers.colCity')}</TableHead>
+                                    <TableHead className="hidden sm:table-cell">{t('fp.providers.colContact')}</TableHead>
+                                    <TableHead>{t('fp.providers.colStatus')}</TableHead>
+                                    <TableHead className="text-right">{t('fp.providers.colActions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -178,7 +180,7 @@ const ManageProviders = () => {
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant="outline" className="capitalize">
-                                                {p.serviceType}
+                                                {p.serviceType === 'imam' ? t('fp.nav.imams') : p.serviceType === 'kazi' ? t('fp.nav.kazi') : t('fp.nav.counselors')}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="hidden md:table-cell text-muted-foreground text-xs">
@@ -190,18 +192,18 @@ const ManageProviders = () => {
                                         <TableCell>
                                             <div className="flex flex-col gap-1 items-start">
                                                 {p.verified ? (
-                                                    <Badge className="bg-emerald-600 text-white gap-1 text-[10px]"><Award className="h-2.5 w-2.5" /> Verified</Badge>
+                                                    <Badge className="bg-emerald-600 text-white gap-1 text-[10px]"><Award className="h-2.5 w-2.5" /> {t('fp.common.verified')}</Badge>
                                                 ) : (
-                                                    <Badge variant="secondary" className="text-[10px]">Pending Approval</Badge>
+                                                    <Badge variant="secondary" className="text-[10px]">{t('fp.providers.pendingApproval')}</Badge>
                                                 )}
-                                                {!p.active && <Badge variant="destructive" className="text-[10px]">Inactive</Badge>}
+                                                {!p.active && <Badge variant="destructive" className="text-[10px]">{t('fp.providers.inactive')}</Badge>}
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex items-center justify-end gap-1.5">
                                                 {!p.verified && (
                                                     <Button size="sm" variant="outline" className="h-8 text-xs text-emerald-600 border-emerald-600/30 hover:bg-emerald-500/10" onClick={() => verifyMut.mutate(p._id)} disabled={verifyMut.isLoading}>
-                                                        <CheckCircle className="h-3.5 w-3.5 mr-1" /> Approve
+                                                        <CheckCircle className="h-3.5 w-3.5 mr-1" /> {t('fp.providers.approve')}
                                                     </Button>
                                                 )}
                                                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditingProvider({ ...p })}>
@@ -223,33 +225,33 @@ const ManageProviders = () => {
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
-                            <DialogTitle>Add New Service Provider</DialogTitle>
+                            <DialogTitle>{t('fp.providers.addTitle')}</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4 pt-2">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="space-y-1.5"><Label>Name *</Label><Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
+                                <div className="space-y-1.5"><Label>{t('fp.providers.fName')} *</Label><Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
                                 <div className="space-y-1.5">
-                                    <Label>Type *</Label>
+                                    <Label>{t('fp.providers.fType')} *</Label>
                                     <Select value={form.serviceType} onValueChange={v => setForm(f => ({ ...f, serviceType: v }))}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
-                                        <SelectContent><SelectItem value="imam">Imam</SelectItem><SelectItem value="kazi">Kazi</SelectItem><SelectItem value="counselor">Counselor</SelectItem></SelectContent>
+                                        <SelectContent><SelectItem value="imam">{t('fp.apply.optImam')}</SelectItem><SelectItem value="kazi">{t('fp.apply.optKazi')}</SelectItem><SelectItem value="counselor">{t('fp.apply.optCounselor')}</SelectItem></SelectContent>
                                     </Select>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="space-y-1.5"><Label>Title</Label><Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Senior Khatib" /></div>
-                                <div className="space-y-1.5"><Label>Organization</Label><Input value={form.organization} onChange={e => setForm(f => ({ ...f, organization: e.target.value }))} placeholder="Central Mosque" /></div>
+                                <div className="space-y-1.5"><Label>{t('fp.providers.fTitle')}</Label><Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Senior Khatib" /></div>
+                                <div className="space-y-1.5"><Label>{t('fp.providers.fOrganization')}</Label><Input value={form.organization} onChange={e => setForm(f => ({ ...f, organization: e.target.value }))} placeholder="Central Mosque" /></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="space-y-1.5"><Label>City</Label><Input value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} /></div>
-                                <div className="space-y-1.5"><Label>Phone *</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} required /></div>
+                                <div className="space-y-1.5"><Label>{t('fp.providers.fCity')}</Label><Input value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} /></div>
+                                <div className="space-y-1.5"><Label>{t('fp.providers.fPhone')} *</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} required /></div>
                             </div>
-                            <div className="space-y-1.5"><Label>Bio</Label><textarea className="w-full rounded-md border border-input p-2 text-sm bg-background" rows={2} value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} /></div>
+                            <div className="space-y-1.5"><Label>{t('fp.providers.fBio')}</Label><textarea className="w-full rounded-md border border-input p-2 text-sm bg-background" rows={2} value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} /></div>
                         </div>
                         <DialogFooter className="mt-4">
-                            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
+                            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>{t('fp.common.cancel')}</Button>
                             <Button onClick={() => createMut.mutate(form)} disabled={createMut.isLoading || !form.name || !form.phone}>
-                                {createMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Create
+                                {createMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} {t('fp.common.create')}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
@@ -260,49 +262,49 @@ const ManageProviders = () => {
                     <Dialog open={!!editingProvider} onOpenChange={(open) => !open && setEditingProvider(null)}>
                         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
-                                <DialogTitle>Edit Service Provider</DialogTitle>
+                                <DialogTitle>{t('fp.providers.editTitle')}</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={handleSaveEdit} className="space-y-4 pt-2">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div className="space-y-1.5"><Label>Name</Label><Input value={editingProvider.name} onChange={e => setEditingProvider(p => ({ ...p, name: e.target.value }))} required /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fName')}</Label><Input value={editingProvider.name} onChange={e => setEditingProvider(p => ({ ...p, name: e.target.value }))} required /></div>
                                     <div className="space-y-1.5">
-                                        <Label>Type</Label>
+                                        <Label>{t('fp.providers.fType')}</Label>
                                         <Select value={editingProvider.serviceType} onValueChange={v => setEditingProvider(p => ({ ...p, serviceType: v }))}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
-                                            <SelectContent><SelectItem value="imam">Imam</SelectItem><SelectItem value="kazi">Kazi</SelectItem><SelectItem value="counselor">Counselor</SelectItem></SelectContent>
+                                            <SelectContent><SelectItem value="imam">{t('fp.apply.optImam')}</SelectItem><SelectItem value="kazi">{t('fp.apply.optKazi')}</SelectItem><SelectItem value="counselor">{t('fp.apply.optCounselor')}</SelectItem></SelectContent>
                                         </Select>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div className="space-y-1.5"><Label>Title</Label><Input value={editingProvider.title || ''} onChange={e => setEditingProvider(p => ({ ...p, title: e.target.value }))} /></div>
-                                    <div className="space-y-1.5"><Label>Organization</Label><Input value={editingProvider.organization || ''} onChange={e => setEditingProvider(p => ({ ...p, organization: e.target.value }))} /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fTitle')}</Label><Input value={editingProvider.title || ''} onChange={e => setEditingProvider(p => ({ ...p, title: e.target.value }))} /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fOrganization')}</Label><Input value={editingProvider.organization || ''} onChange={e => setEditingProvider(p => ({ ...p, organization: e.target.value }))} /></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div className="space-y-1.5"><Label>City</Label><Input value={editingProvider.city || ''} onChange={e => setEditingProvider(p => ({ ...p, city: e.target.value }))} /></div>
-                                    <div className="space-y-1.5"><Label>Phone</Label><Input value={editingProvider.phone || ''} onChange={e => setEditingProvider(p => ({ ...p, phone: e.target.value }))} /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fCity')}</Label><Input value={editingProvider.city || ''} onChange={e => setEditingProvider(p => ({ ...p, city: e.target.value }))} /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fPhone')}</Label><Input value={editingProvider.phone || ''} onChange={e => setEditingProvider(p => ({ ...p, phone: e.target.value }))} /></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div className="space-y-1.5"><Label>Fee (BDT)</Label><Input type="number" value={editingProvider.fee || 0} onChange={e => setEditingProvider(p => ({ ...p, fee: Number(e.target.value) }))} /></div>
-                                    <div className="space-y-1.5"><Label>Experience (Years)</Label><Input type="number" value={editingProvider.yearsExperience || 0} onChange={e => setEditingProvider(p => ({ ...p, yearsExperience: Number(e.target.value) }))} /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fFee')}</Label><Input type="number" value={editingProvider.fee || 0} onChange={e => setEditingProvider(p => ({ ...p, fee: Number(e.target.value) }))} /></div>
+                                    <div className="space-y-1.5"><Label>{t('fp.providers.fExperience')}</Label><Input type="number" value={editingProvider.yearsExperience || 0} onChange={e => setEditingProvider(p => ({ ...p, yearsExperience: Number(e.target.value) }))} /></div>
                                 </div>
-                                <div className="space-y-1.5"><Label>Bio</Label><textarea className="w-full rounded-md border border-input p-2 text-sm bg-background" rows={3} value={editingProvider.bio || ''} onChange={e => setEditingProvider(p => ({ ...p, bio: e.target.value }))} /></div>
+                                <div className="space-y-1.5"><Label>{t('fp.providers.fBio')}</Label><textarea className="w-full rounded-md border border-input p-2 text-sm bg-background" rows={3} value={editingProvider.bio || ''} onChange={e => setEditingProvider(p => ({ ...p, bio: e.target.value }))} /></div>
 
                                 <div className="flex items-center justify-between pt-2 border-t border-border">
                                     <div className="flex items-center gap-4">
                                         <label className="flex items-center gap-2 text-sm cursor-pointer">
                                             <input type="checkbox" checked={editingProvider.verified} onChange={e => setEditingProvider(p => ({ ...p, verified: e.target.checked }))} className="rounded" />
-                                            Verified
+                                            {t('fp.common.verified')}
                                         </label>
                                         <label className="flex items-center gap-2 text-sm cursor-pointer">
                                             <input type="checkbox" checked={editingProvider.active} onChange={e => setEditingProvider(p => ({ ...p, active: e.target.checked }))} className="rounded" />
-                                            Active
+                                            {t('fp.common.active')}
                                         </label>
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <Button variant="outline" type="button" onClick={() => setEditingProvider(null)}>Cancel</Button>
+                                    <Button variant="outline" type="button" onClick={() => setEditingProvider(null)}>{t('fp.common.cancel')}</Button>
                                     <Button type="submit" disabled={updateMut.isLoading}>
-                                        {updateMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+                                        {updateMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('fp.providers.saveChanges')}
                                     </Button>
                                 </DialogFooter>
                             </form>

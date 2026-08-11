@@ -51,7 +51,7 @@ const PremaritalCourse = () => {
         <>
             <Helmet><title>Premarital Course - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Premarital Readiness Course" description="Prepare for a blessed, lasting marriage" icon={BookOpen} />
+                <PageHeader title={t('fp.course.title')} description={t('fp.course.desc')} icon={BookOpen} />
 
                 {isLoading ? (
                     <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
@@ -60,7 +60,7 @@ const PremaritalCourse = () => {
                         <Card>
                             <CardContent className="p-5 flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-semibold text-foreground">Progress</p>
+                                    <p className="text-sm font-semibold text-foreground">{t('fp.course.progress')}</p>
                                     <p className="text-xs text-muted-foreground">{enroll?.completedModules?.length || 0} / {premaritalCourse.length} modules</p>
                                 </div>
                                 {completed
@@ -75,7 +75,7 @@ const PremaritalCourse = () => {
                                     <Award className="h-14 w-14 text-emerald-600 mx-auto mb-3" />
                                     <h2 className="font-heading text-xl font-bold text-foreground mb-1">Marriage-Readiness Certificate</h2>
                                     <p className="text-sm text-muted-foreground mb-4">You completed all modules. This badge appears on your journey.</p>
-                                    <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print certificate</Button>
+                                    <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4" /> {t('fp.course.printCert')}</Button>
                                 </CardContent>
                             </Card>
                         )}
@@ -123,7 +123,7 @@ const PremaritalCourse = () => {
                                                     </label>
                                                 ))}
                                                 <Button size="sm" onClick={() => submit(i)} disabled={completeMut.isLoading} className="bg-emerald-600 hover:bg-emerald-700">
-                                                    {completeMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />} Complete module
+                                                    {completeMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />} {t('fp.course.completeModule')}
                                                 </Button>
                                             </div>
                                         )}

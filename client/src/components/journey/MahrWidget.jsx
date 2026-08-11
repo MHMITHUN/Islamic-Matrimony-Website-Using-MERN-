@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Gift, Loader2, CheckCircle2 } from 'lucide-react';
 import { mahrAPI } from '../../api/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,7 @@ const AMOUNT_TYPES = [
 
 const MahrWidget = ({ journeyId, agreement }) => {
     const qc = useQueryClient();
+    const { t } = useLanguage();
     const [amount, setAmount] = useState('');
     const [amountType, setAmountType] = useState('to_discuss');
     const [description, setDescription] = useState('');
@@ -47,38 +49,38 @@ const MahrWidget = ({ journeyId, agreement }) => {
 
     return (
         <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">The mahr is the wife\'s Qur\'anic right (4:4). Agree the terms respectfully before the nikah.</p>
+            <p className="text-sm text-muted-foreground">{t('fp.journey.mahr.desc')}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="space-y-1.5">
-                    <Label>Amount (BDT)</Label>
+                    <Label>{t('fp.journey.mahr.amount')}</Label>
                     <Input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="e.g. 100000" disabled={agreed} />
                 </div>
                 <div className="space-y-1.5">
-                    <Label>Type</Label>
+                    <Label>{t('fp.journey.mahr.type')}</Label>
                     <Select value={amountType} onValueChange={setAmountType} disabled={agreed}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>{AMOUNT_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
+                        <SelectContent>{AMOUNT_TYPES.map(tt => <SelectItem key={tt.value} value={tt.value}>{t('fp.journey.mahr.' + tt.value)}</SelectItem>)}</SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-1.5">
-                    <Label>Status</Label>
+                    <Label>{t('fp.journey.mahr.status')}</Label>
                     <div className="h-9 flex items-center"><Badge variant="outline" className="capitalize">{agreement?.status || 'draft'}</Badge></div>
                 </div>
             </div>
             <div className="space-y-1.5">
-                <Label>Notes / description</Label>
+                <Label>{t('fp.journey.mahr.notes')}</Label>
                 <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} disabled={agreed} />
             </div>
             <div className="flex flex-wrap gap-2">
                 <Button variant="outline" onClick={() => saveMut.mutate({ journeyId, amount, amountType, description })} disabled={agreed || saveMut.isLoading}>
-                    {saveMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gift className="h-4 w-4" />} Save terms
+                    {saveMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gift className="h-4 w-4" />} {t('fp.journey.mahr.saveTerms')}
                 </Button>
                 {!agreed && agreement?._id && (
                     <Button onClick={() => confirmMut.mutate(agreement._id)} disabled={confirmMut.isLoading} className="bg-emerald-600 hover:bg-emerald-700">
-                        {confirmMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />} I confirm these terms
+                        {confirmMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />} {t('fp.journey.mahr.confirm')}
                     </Button>
                 )}
-                {agreed && <Badge className="bg-emerald-600 text-white gap-1"><CheckCircle2 className="h-3 w-3" /> Both confirmed</Badge>}
+                {agreed && <Badge className="bg-emerald-600 text-white gap-1"><CheckCircle2 className="h-3 w-3" /> {t('fp.journey.mahr.bothConfirmed')}</Badge>}
             </div>
         </div>
     );

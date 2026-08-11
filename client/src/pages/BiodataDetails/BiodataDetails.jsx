@@ -238,12 +238,12 @@ const BiodataDetails = () => {
                                             )}
                                             {sukoonHidden && (
                                                 <Button variant="outline" className="border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10" onClick={() => revealMut.mutate()} disabled={revealMut.isLoading}>
-                                                    <Lock className="h-4 w-4" /> Request identity reveal
+                                                    <Lock className="h-4 w-4" /> {t('fp.sukoon.requestReveal')}
                                                 </Button>
                                             )}
                                             {linkedJourney && (
                                                 <Button asChild>
-                                                    <Link to={`/dashboard/journey/${linkedJourney._id}`}><HeartHandshake className="h-4 w-4" /> View our Marriage Journey</Link>
+                                                    <Link to={`/dashboard/journey/${linkedJourney._id}`}><HeartHandshake className="h-4 w-4" /> {t('fp.sidebar.marriageJourney')}</Link>
                                                 </Button>
                                             )}
                                         </div>
@@ -288,11 +288,11 @@ const BiodataDetails = () => {
                             </div>
                         </Section>
 
-                        <Section title="Tazkiya — Character Trust" icon={ShieldCheck} accent="text-emerald-500">
+                        <Section title={t('fp.tazkiya.sectionTitle')} icon={ShieldCheck} accent="text-emerald-500">
                             <div className="space-y-3">
-                                <p className="text-sm text-muted-foreground">Earned testimonials from verified members and imams — Islamic <em>tazkiya</em>.</p>
+                                <p className="text-sm text-muted-foreground">{t('fp.tazkiya.sectionDesc')}</p>
                                 {endorsements.length === 0 ? (
-                                    <p className="text-sm text-muted-foreground italic">No endorsements yet.</p>
+                                    <p className="text-sm text-muted-foreground italic">{t('fp.tazkiya.noEndorsementsYet')}</p>
                                 ) : (
                                     <div className="space-y-2.5">
                                         {endorsements.map((en) => (
@@ -305,7 +305,7 @@ const BiodataDetails = () => {
                                                 <div className="flex flex-wrap gap-1 mb-1">
                                                     {en.categories.map((c) => (
                                                         <Badge key={c} variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
-                                                            {ENDORSE_CATEGORIES.find(x => x.key === c)?.label || c}
+                                                            {t('fp.endorseCat.' + c)}
                                                         </Badge>
                                                     ))}
                                                 </div>

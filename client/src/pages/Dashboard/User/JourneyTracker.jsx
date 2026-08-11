@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { journeyAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ const STAGES = [
 const JourneyTracker = () => {
     const { id } = useParams();
     const qc = useQueryClient();
+    const { t } = useLanguage();
 
     const { data: journey, isLoading } = useQuery({
         queryKey: ['journey', id],
@@ -51,9 +53,9 @@ const JourneyTracker = () => {
             <Helmet><title>Marriage Journey - Nikah</title></Helmet>
             <div className="space-y-6">
                 <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
-                    <Link to="/dashboard/journey"><ArrowLeft className="h-4 w-4" /> All journeys</Link>
+                    <Link to="/dashboard/journey"><ArrowLeft className="h-4 w-4" /> {t('fp.journey.allJourneys')}</Link>
                 </Button>
-                <PageHeader title="Marriage Journey" description={`Biodata #${journey.biodataA} ↔ #${journey.biodataB}`} icon={HeartHandshake} />
+                <PageHeader title={t('fp.journey.trackerTitle')} description={t('fp.journey.pair').replace('{a}', journey.biodataA).replace('{b}', journey.biodataB)} icon={HeartHandshake} />
 
                 {/* Stepper */}
                 <Card>
@@ -70,7 +72,7 @@ const JourneyTracker = () => {
                                                 done ? 'bg-emerald-600 border-emerald-600 text-white' : current ? 'border-emerald-600 text-emerald-600 bg-emerald-500/10' : 'border-border text-muted-foreground')}>
                                                 <Icon className="h-5 w-5" />
                                             </span>
-                                            <span className={cn('text-[10px] md:text-xs font-medium leading-tight', done || current ? 'text-foreground' : 'text-muted-foreground')}>{s.label}</span>
+                                            <span className={cn('text-[10px] md:text-xs font-medium leading-tight', done || current ? 'text-foreground' : 'text-muted-foreground')}>{t('fp.journey.stages.' + s.key)}</span>
                                         </div>
                                         {i < STAGES.length - 1 && <div className={cn('h-0.5 w-6 md:w-10 rounded', i < currentIndex || completed ? 'bg-emerald-600' : 'bg-border')} />}
                                     </div>
@@ -85,10 +87,10 @@ const JourneyTracker = () => {
                     <Card className="border-emerald-500/30">
                         <CardContent className="p-8 text-center">
                             <Award className="h-14 w-14 text-emerald-600 mx-auto mb-3" />
-                            <h2 className="font-heading text-xl font-bold text-foreground mb-1">Mabrouk — your nikah journey is complete!</h2>
-                            <p className="text-sm text-muted-foreground mb-1">Nikah date: {journey.nikahDate ? new Date(journey.nikahDate).toLocaleDateString() : '—'}</p>
-                            <p className="text-sm text-muted-foreground mb-5">May Allah bless your union with barakah.</p>
-                            <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print certificate</Button>
+                            <h2 className="font-heading text-xl font-bold text-foreground mb-1">{t('fp.journey.completeTitle')}</h2>
+                            <p className="text-sm text-muted-foreground mb-1">{t('fp.journey.completeNikahDate').replace('{date}', journey.nikahDate ? new Date(journey.nikahDate).toLocaleDateString() : '—')}</p>
+                            <p className="text-sm text-muted-foreground mb-5">{t('fp.journey.completeMsg')}</p>
+                            <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4" /> {t('fp.journey.printCert')}</Button>
                         </CardContent>
                     </Card>
                 ) : (
@@ -96,50 +98,50 @@ const JourneyTracker = () => {
                         <CardContent className="p-6 space-y-4">
                             <div className="flex items-center gap-2">
                                 {(() => { const Icon = STAGES[currentIndex].icon; return <Icon className="h-5 w-5 text-emerald-600" />; })()}
-                                <h3 className="font-heading font-bold text-foreground">Current step: {STAGES[currentIndex].label}</h3>
+                                <h3 className="font-heading font-bold text-foreground">{t('fp.journey.currentStep').replace('{stage}', t('fp.journey.stages.' + STAGES[currentIndex].key))}</h3>
                             </div>
 
                             {/* Stage-specific content — the work for each stage is done IN that stage */}
                             {journey.currentStage === 'connected' && (
                                 <>
-                                    <p className="text-sm text-muted-foreground">Your contact request was approved. Begin the supervised intro phase — involve your wali and exchange respectful messages through the platform.</p>
+                                    <p className="text-sm text-muted-foreground">{t('fp.journey.s_connected')}</p>
                                     <Button onClick={() => advanceMut.mutate({ id, stage: 'supervised_intro' })} disabled={advanceMut.isLoading} className="bg-emerald-600 hover:bg-emerald-700">
-                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} Begin supervised intro
+                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} {t('fp.journey.btn_connected')}
                                     </Button>
                                 </>
                             )}
                             {journey.currentStage === 'supervised_intro' && (
                                 <>
-                                    <p className="text-sm text-muted-foreground">You're in the supervised intro phase. When you're ready, proceed to premarital counseling.</p>
+                                    <p className="text-sm text-muted-foreground">{t('fp.journey.s_supervised')}</p>
                                     <Button onClick={() => advanceMut.mutate({ id, stage: 'counseling' })} disabled={advanceMut.isLoading} className="bg-emerald-600 hover:bg-emerald-700">
-                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} Proceed to counseling
+                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} {t('fp.journey.btn_supervised')}
                                     </Button>
                                 </>
                             )}
                             {journey.currentStage === 'counseling' && (
                                 <>
-                                    <p className="text-sm text-muted-foreground">Complete a premarital counseling session, then proceed to the mahr stage.</p>
+                                    <p className="text-sm text-muted-foreground">{t('fp.journey.s_counseling')}</p>
                                     <BookingWidget journeyId={id} serviceType="counselor" existing={journey.counselingBooking} />
                                     <Button onClick={() => advanceMut.mutate({ id, stage: 'mahr_agreed' })} disabled={advanceMut.isLoading || journey.counselingBooking?.status !== 'completed'} className="bg-emerald-600 hover:bg-emerald-700">
-                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} {journey.counselingBooking?.status === 'completed' ? 'Counseling done — proceed to mahr' : 'Complete counseling to proceed'}
+                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} {journey.counselingBooking?.status === 'completed' ? t('fp.journey.btn_counseling_done') : t('fp.journey.btn_counseling_locked')}
                                     </Button>
                                 </>
                             )}
                             {journey.currentStage === 'mahr_agreed' && (
                                 <>
-                                    <p className="text-sm text-muted-foreground">Agree the mahr terms. Both parties must confirm before booking the kazi.</p>
+                                    <p className="text-sm text-muted-foreground">{t('fp.journey.s_mahr')}</p>
                                     <MahrWidget journeyId={id} agreement={journey.mahr} />
                                     <Button onClick={() => advanceMut.mutate({ id, stage: 'kazi_booked' })} disabled={advanceMut.isLoading || journey.mahr?.status !== 'agreed'} className="bg-emerald-600 hover:bg-emerald-700">
-                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} {journey.mahr?.status === 'agreed' ? 'Mahr agreed — proceed to kazi' : 'Both must confirm mahr to proceed'}
+                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />} {journey.mahr?.status === 'agreed' ? t('fp.journey.btn_mahr_done') : t('fp.journey.btn_mahr_locked')}
                                     </Button>
                                 </>
                             )}
                             {journey.currentStage === 'kazi_booked' && (
                                 <>
-                                    <p className="text-sm text-muted-foreground">Book a kazi (officiant) to conduct and register the nikah.</p>
+                                    <p className="text-sm text-muted-foreground">{t('fp.journey.s_kazi')}</p>
                                     <BookingWidget journeyId={id} serviceType="kazi" existing={journey.kaziBooking} />
                                     <Button onClick={() => advanceMut.mutate({ id, stage: 'nikah_registered' })} disabled={advanceMut.isLoading || journey.kaziBooking?.status !== 'confirmed'} className="bg-emerald-600 hover:bg-emerald-700">
-                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Award className="h-4 w-4" />} {journey.kaziBooking?.status === 'confirmed' ? 'Register the nikah' : 'Confirm kazi booking to register'}
+                                        {advanceMut.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Award className="h-4 w-4" />} {journey.kaziBooking?.status === 'confirmed' ? t('fp.journey.btn_kazi_done') : t('fp.journey.btn_kazi_locked')}
                                     </Button>
                                 </>
                             )}

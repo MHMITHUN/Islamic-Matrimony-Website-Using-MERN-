@@ -2,12 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { ShieldCheck, MapPin, Award, Loader2, Phone } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { providerAPI } from '../../api/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ApplyProviderModal from '../../components/shared/ApplyProviderModal';
 
 const ImamDirectory = () => {
+    const { t } = useLanguage();
     const { data: imams = [], isLoading } = useQuery({
         queryKey: ['imamDirectory'],
         queryFn: async () => { const r = await providerAPI.getAll({ serviceType: 'imam' }); return r.data; }
@@ -15,24 +17,24 @@ const ImamDirectory = () => {
 
     return (
         <>
-            <Helmet><title>Imam Directory - Nikah</title></Helmet>
+            <Helmet><title>{t('fp.imam.dirTitle')} - Nikah</title></Helmet>
             <div className="min-h-screen bg-muted/30 pt-20 pb-12">
                 <div className="container-custom">
                     <div className="text-center max-w-2xl mx-auto mb-8 space-y-3">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
-                            <ShieldCheck className="h-3.5 w-3.5" /> Tazkiya Partners
+                            <ShieldCheck className="h-3.5 w-3.5" /> {t('fp.imam.dirBadge')}
                         </span>
-                        <h1 className="font-heading text-3xl font-bold text-foreground">Verified Imams</h1>
-                        <p className="text-muted-foreground">Imams who can attest a member's character and deen — the highest-weighted Tazkiya endorsement.</p>
+                        <h1 className="font-heading text-3xl font-bold text-foreground">{t('fp.imam.dirTitle')}</h1>
+                        <p className="text-muted-foreground">{t('fp.imam.dirSub')}</p>
                         <div className="pt-2">
-                            <ApplyProviderModal defaultType="imam" triggerText="Join Directory as an Imam" />
+                            <ApplyProviderModal defaultType="imam" triggerText={t('fp.imam.joinImam')} />
                         </div>
                     </div>
 
                     {isLoading ? (
                         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                     ) : imams.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-16">No imams listed yet.</p>
+                        <p className="text-center text-muted-foreground py-16">{t('fp.imam.noImams')}</p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {imams.map((im) => (
@@ -46,7 +48,7 @@ const ImamDirectory = () => {
                                             <div className="min-w-0">
                                                 <div className="flex items-center gap-1.5">
                                                     <h3 className="font-semibold text-foreground truncate">{im.name}</h3>
-                                                    {im.verified && <Badge className="bg-emerald-600 text-white text-[10px] gap-0.5"><Award className="h-2.5 w-2.5" />Verified</Badge>}
+                                                    {im.verified && <Badge className="bg-emerald-600 text-white text-[10px] gap-0.5"><Award className="h-2.5 w-2.5" />{t('fp.common.verified')}</Badge>}
                                                 </div>
                                                 <p className="text-xs text-muted-foreground truncate">{im.title}{im.organization ? ` · ${im.organization}` : ''}</p>
                                             </div>
@@ -55,7 +57,7 @@ const ImamDirectory = () => {
                                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                                             {im.city && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{im.city}</span>}
                                             {im.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{im.phone}</span>}
-                                            {im.yearsExperience > 0 && <span>{im.yearsExperience} yrs experience</span>}
+                                            {im.yearsExperience > 0 && <span>{t('fp.providers.yearsExp').replace('{n}', im.yearsExperience)}</span>}
                                         </div>
                                         {im.specialties?.length > 0 && (
                                             <div className="flex flex-wrap gap-1 mt-3">

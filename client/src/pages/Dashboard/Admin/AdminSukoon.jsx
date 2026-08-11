@@ -4,6 +4,7 @@ import { Leaf, Eye, Search, Loader2, ShieldCheck, Heart, User, Sparkles } from '
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { adminAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +15,7 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@
 
 const AdminSukoon = () => {
     const [search, setSearch] = useState('');
+    const { t } = useLanguage();
 
     const { data: sukoonProfiles = [], isLoading } = useQuery({
         queryKey: ['adminSukoonProfiles'],
@@ -35,8 +37,8 @@ const AdminSukoon = () => {
             <Helmet><title>Sukoon Channel Administration - Admin</title></Helmet>
             <div className="space-y-6">
                 <PageHeader
-                    title="Sukoon Channel Overview"
-                    description="Oversight of second marriage & remarriage privacy profiles"
+                    title={t('fp.sidebar.sukoonChannel')}
+                    description={t('fp.sukoon.desc')}
                     icon={Leaf}
                 />
 
@@ -93,7 +95,7 @@ const AdminSukoon = () => {
                     {isLoading ? (
                         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                     ) : filtered.length === 0 ? (
-                        <EmptyState icon={Leaf} title="No Sukoon profiles found" description="No profiles currently listed under the Sukoon channel match your search." />
+                        <EmptyState icon={Leaf} title={t('fp.sukoon.noProfiles')} description={t('fp.sukoon.desc')} />
                     ) : (
                         <Table>
                             <TableHeader>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Users, Heart, Mail, MessageSquare, ShieldCheck, ArrowRight, UserPlus } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import { guardianAPI } from '../../../api/api';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
@@ -12,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 
 const GuardianOverview = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const { data: wards = [] } = useQuery({
         queryKey: ['guardianWards'],
         queryFn: async () => { const r = await guardianAPI.getMyWards(); return r.data; }
@@ -37,23 +39,23 @@ const GuardianOverview = () => {
         <>
             <Helmet><title>Guardian Dashboard - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Guardian Dashboard" description="Help your ward find a righteous spouse" icon={Users}>
-                    <Button asChild><Link to="/dashboard/guardian/wards"><UserPlus className="h-4 w-4" /> Invite ward</Link></Button>
+                <PageHeader title={t('fp.guardian.dashTitle')} description={t('fp.guardian.dashDesc')} icon={Users}>
+                    <Button asChild><Link to="/dashboard/guardian/wards"><UserPlus className="h-4 w-4" /> {t('fp.guardian.inviteWard')}</Link></Button>
                 </PageHeader>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-emerald-600 mb-1"><Users className="h-4 w-4" /><span className="text-xs text-muted-foreground">Approved wards</span></div><p className="text-2xl font-bold text-foreground">{approved.length}</p></CardContent></Card>
-                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-amber-600 mb-1"><Mail className="h-4 w-4" /><span className="text-xs text-muted-foreground">Pending invites</span></div><p className="text-2xl font-bold text-foreground">{wards.filter(w => w.status === 'pending').length}</p></CardContent></Card>
-                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-rose-500 mb-1"><Heart className="h-4 w-4" /><span className="text-xs text-muted-foreground">Shortlisted</span></div><p className="text-2xl font-bold text-foreground">{shortlistCount}</p></CardContent></Card>
-                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-sky-500 mb-1"><MessageSquare className="h-4 w-4" /><span className="text-xs text-muted-foreground">Family chats</span></div><p className="text-2xl font-bold text-foreground">{threads.length}</p></CardContent></Card>
+                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-emerald-600 mb-1"><Users className="h-4 w-4" /><span className="text-xs text-muted-foreground">{t('fp.guardian.statApprovedWards')}</span></div><p className="text-2xl font-bold text-foreground">{approved.length}</p></CardContent></Card>
+                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-amber-600 mb-1"><Mail className="h-4 w-4" /><span className="text-xs text-muted-foreground">{t('fp.guardian.statPending')}</span></div><p className="text-2xl font-bold text-foreground">{wards.filter(w => w.status === 'pending').length}</p></CardContent></Card>
+                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-rose-500 mb-1"><Heart className="h-4 w-4" /><span className="text-xs text-muted-foreground">{t('fp.guardian.statShortlisted')}</span></div><p className="text-2xl font-bold text-foreground">{shortlistCount}</p></CardContent></Card>
+                    <Card><CardContent className="p-4"><div className="flex items-center gap-2 text-sky-500 mb-1"><MessageSquare className="h-4 w-4" /><span className="text-xs text-muted-foreground">{t('fp.guardian.statFamilyChats')}</span></div><p className="text-2xl font-bold text-foreground">{threads.length}</p></CardContent></Card>
                 </div>
 
                 <Card>
                     <CardContent className="p-6">
-                        <h3 className="font-heading font-bold text-foreground mb-3">Your wards</h3>
+                        <h3 className="font-heading font-bold text-foreground mb-3">{t('fp.guardian.yourWards')}</h3>
                         {approved.length === 0 ? (
-                            <EmptyState icon={Users} title="No approved wards yet" description="Invite your son/daughter by email — they approve the link, then you can browse on their behalf."
-                                action={<Button asChild><Link to="/dashboard/guardian/wards"><UserPlus className="h-4 w-4" /> Invite a ward</Link></Button>} />
+                            <EmptyState icon={Users} title={t('fp.guardian.noWardsTitle')} description={t('fp.guardian.noWardsDesc')}
+                                action={<Button asChild><Link to="/dashboard/guardian/wards"><UserPlus className="h-4 w-4" /> {t('fp.guardian.inviteWard')}</Link></Button>} />
                         ) : (
                             <div className="space-y-2">
                                 {approved.map(w => (

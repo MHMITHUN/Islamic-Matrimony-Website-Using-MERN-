@@ -51,29 +51,29 @@ const DashboardLayout = () => {
     };
 
     const userLinks = [
-        { path: '/dashboard/overview', icon: Home, label: 'Overview' },
+        { path: '/dashboard/overview', icon: Home, label: t('fp.sidebar.overview') },
         { path: '/dashboard/edit-biodata', icon: Pencil, label: t('dashboard.sidebar.editBiodata') },
         { path: '/dashboard/view-biodata', icon: Eye, label: t('dashboard.sidebar.viewBiodata') },
-        { path: '/dashboard/matches', icon: Scale, label: 'Matches' },
+        { path: '/dashboard/matches', icon: Scale, label: t('fp.sidebar.matches') },
         { path: '/dashboard/wali', icon: ShieldCheck, label: t('dashboard.sidebar.wali') },
-        { path: '/dashboard/my-guardians', icon: Users, label: 'My Guardians' },
-        { path: '/dashboard/messages', icon: MessageSquare, label: 'Messages' },
-        { path: '/dashboard/notifications', icon: Bell, label: 'Notifications' },
+        { path: '/dashboard/my-guardians', icon: Users, label: t('fp.sidebar.myGuardians') },
+        { path: '/dashboard/messages', icon: MessageSquare, label: t('fp.sidebar.messages') },
+        { path: '/dashboard/notifications', icon: Bell, label: t('fp.sidebar.notifications') },
         { path: '/dashboard/contact-requests', icon: Mail, label: t('dashboard.sidebar.myContactRequests') },
         { path: '/dashboard/favorites', icon: Heart, label: t('dashboard.sidebar.favouritesBiodata') },
-        { path: '/dashboard/profile-views', icon: Eye, label: 'Profile Views' },
-        { path: '/dashboard/recently-viewed', icon: History, label: 'Recently Viewed' },
-        { path: '/dashboard/activity', icon: Activity, label: 'Activity Feed' },
+        { path: '/dashboard/profile-views', icon: Eye, label: t('fp.sidebar.profileViews') },
+        { path: '/dashboard/recently-viewed', icon: History, label: t('fp.sidebar.recentlyViewed') },
+        { path: '/dashboard/activity', icon: Activity, label: t('fp.sidebar.activity') },
         { path: '/dashboard/got-married', icon: HeartHandshake, label: t('dashboard.sidebar.gotMarried') },
-        { path: '/dashboard/journey', icon: HeartHandshake, label: 'Marriage Journey' },
-        { path: '/dashboard/sukoon-requests', icon: HeartHandshake, label: 'Sukoon Requests' },
-        { path: '/dashboard/course', icon: BookOpen, label: 'Premarital Course' },
-        { path: '/dashboard/trust', icon: ShieldCheck, label: 'Tazkiya Trust' },
-        { path: '/dashboard/settings', icon: Settings, label: 'Settings' },
+        { path: '/dashboard/journey', icon: HeartHandshake, label: t('fp.sidebar.marriageJourney') },
+        { path: '/dashboard/sukoon-requests', icon: HeartHandshake, label: t('fp.sidebar.sukoonRequests') },
+        { path: '/dashboard/course', icon: BookOpen, label: t('fp.sidebar.premaritalCourse') },
+        { path: '/dashboard/trust', icon: ShieldCheck, label: t('fp.sidebar.tazkiyaTrust') },
+        { path: '/dashboard/settings', icon: Settings, label: t('fp.sidebar.settings') },
     ];
 
     const imamLinks = [
-        { path: '/dashboard/imam', icon: ShieldCheck, label: 'Attestation Console' },
+        { path: '/dashboard/imam', icon: ShieldCheck, label: t('fp.sidebar.attestationConsole') },
     ];
 
     const adminLinks = [
@@ -81,22 +81,22 @@ const DashboardLayout = () => {
         { path: '/dashboard/admin/manage-users', icon: Users, label: t('dashboard.sidebar.manageUsers') },
         { path: '/dashboard/admin/approved-premium', icon: Crown, label: t('dashboard.sidebar.approvedPremium'), badgeKey: 'premium' },
         { path: '/dashboard/admin/approved-contacts', icon: CheckCircle2, label: t('dashboard.sidebar.approvedContacts'), badgeKey: 'contacts' },
-        { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: 'Verification Requests', badgeKey: 'verifications' },
-        { path: '/dashboard/admin/providers', icon: ShieldCheck, label: 'Providers', badgeKey: 'providers' },
-        { path: '/dashboard/admin/sukoon', icon: Leaf, label: 'Sukoon Channel' },
-        { path: '/dashboard/admin/journeys', icon: HeartHandshake, label: 'Marriage Journeys' },
+        { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: t('fp.sidebar.verificationRequests'), badgeKey: 'verifications' },
+        { path: '/dashboard/admin/providers', icon: ShieldCheck, label: t('fp.sidebar.providers'), badgeKey: 'providers' },
+        { path: '/dashboard/admin/sukoon', icon: Leaf, label: t('fp.sidebar.sukoonChannel') },
+        { path: '/dashboard/admin/journeys', icon: HeartHandshake, label: t('fp.sidebar.marriageJourneys') },
         { path: '/dashboard/admin/contact-messages', icon: Mail, label: t('dashboard.sidebar.contactMessages') },
         { path: '/dashboard/admin/success-stories', icon: ListChecks, label: t('dashboard.sidebar.successStories') },
         { path: '/dashboard/admin/reports', icon: Flag, label: 'Reports', badgeKey: 'reports' },
     ];
 
     const guardianLinks = [
-        { path: '/dashboard/guardian', icon: Home, label: 'Overview' },
-        { path: '/dashboard/guardian/wards', icon: Users, label: 'My Wards' },
-        { path: '/dashboard/guardian/browse', icon: Eye, label: 'Browse for Ward' },
-        { path: '/dashboard/guardian/shortlist', icon: Heart, label: 'Shortlist' },
-        { path: '/dashboard/guardian/requests', icon: Mail, label: 'Requests' },
-        { path: '/dashboard/guardian/family-chat', icon: MessageSquare, label: 'Family Chats' },
+        { path: '/dashboard/guardian', icon: Home, label: t('fp.sidebar.gOverview') },
+        { path: '/dashboard/guardian/wards', icon: Users, label: t('fp.sidebar.gMyWards') },
+        { path: '/dashboard/guardian/browse', icon: Eye, label: t('fp.sidebar.gBrowse') },
+        { path: '/dashboard/guardian/shortlist', icon: Heart, label: t('fp.sidebar.gShortlist') },
+        { path: '/dashboard/guardian/requests', icon: Mail, label: t('fp.sidebar.gRequests') },
+        { path: '/dashboard/guardian/family-chat', icon: MessageSquare, label: t('fp.sidebar.gFamilyChats') },
     ];
 
     const links = isAdmin ? adminLinks : (isGuardian ? guardianLinks : (isImam ? imamLinks : userLinks));
@@ -152,7 +152,7 @@ const DashboardLayout = () => {
             {/* Nav */}
             <ScrollArea className="flex-1 px-3">
                 <p className="text-[10px] font-semibold text-emerald-200/40 uppercase tracking-wider mb-2 px-3 pt-2">
-                    {isAdmin ? t('dashboard.sidebar.adminMenu') : isGuardian ? 'Guardian Menu' : t('dashboard.sidebar.navigation')}
+                    {isAdmin ? t('dashboard.sidebar.adminMenu') : isGuardian ? t('fp.sidebar.guardianMenu') : t('dashboard.sidebar.navigation')}
                 </p>
                 <ul className="space-y-1 pb-4">
                     {links.map((link) => {
@@ -240,7 +240,7 @@ const DashboardLayout = () => {
                             </Button>
                             <div className="min-w-0">
                                 <h1 className="font-heading text-base md:text-lg font-bold text-foreground truncate">
-                                    {isAdmin ? t('dashboard.sidebar.adminDashboardTitle') : isGuardian ? 'Guardian Dashboard' : t('dashboard.sidebar.myDashboard')}
+                                    {isAdmin ? t('dashboard.sidebar.adminDashboardTitle') : isGuardian ? t('fp.sidebar.guardianDash') : t('dashboard.sidebar.myDashboard')}
                                 </h1>
                                 <p className="text-xs text-muted-foreground hidden sm:block truncate">
                                     {t('dashboard.sidebar.welcome').replace('{name}', user?.displayName?.split(' ')[0] || 'User')}

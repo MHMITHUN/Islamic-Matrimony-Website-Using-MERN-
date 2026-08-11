@@ -61,10 +61,10 @@ const Navbar = () => {
     ];
 
     const serviceLinks = [
-        { path: '/imams', label: 'Imams' },
-        { path: '/kazi', label: 'Kazi' },
-        { path: '/counselors', label: 'Counselors' },
-        { path: '/sukoon', label: 'Sukoon' },
+        { path: '/imams', label: t('fp.nav.imams') },
+        { path: '/kazi', label: t('fp.nav.kazi') },
+        { path: '/counselors', label: t('fp.nav.counselors') },
+        { path: '/sukoon', label: t('fp.nav.sukoon') },
     ];
 
     const dashboardPath = isAdmin ? '/dashboard/admin' : '/dashboard';
@@ -99,7 +99,7 @@ const Navbar = () => {
                     type="button"
                     className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent/60 rounded-lg outline-none cursor-pointer"
                 >
-                    Services <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                    {t('fp.nav.services')} <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
                 </button>
                 <div className="absolute left-0 top-full pt-1.5 hidden group-hover:block z-50 animate-in fade-in-50 zoom-in-95">
                     <div className="w-48 rounded-lg border border-border bg-popover/95 backdrop-blur-md p-1.5 text-popover-foreground shadow-lg">
@@ -270,7 +270,7 @@ const Navbar = () => {
                                                 {link.label}
                                             </NavLink>
                                         ))}
-                                        <div className="font-semibold text-sm px-3 pt-2">Services</div>
+                                        <div className="font-semibold text-sm px-3 pt-2">{t('fp.nav.services')}</div>
                                         {serviceLinks.map((link) => (
                                             <NavLink
                                                 key={link.path}

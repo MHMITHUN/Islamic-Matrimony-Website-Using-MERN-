@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { HeartHandshake, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { journeyAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +15,7 @@ const STAGE_LABELS = ['Connected', 'Supervised Intro', 'Counseling', 'Mahr Agree
 const stagePct = (stage) => ((STAGE_LABELS.findIndex(l => l.toLowerCase().replace(/ /g, '_') === stage) + 1) / 6) * 100;
 
 const JourneyList = () => {
+    const { t } = useLanguage();
     const { data: journeys = [], isLoading } = useQuery({
         queryKey: ['myJourneys'],
         queryFn: async () => { const r = await journeyAPI.getMine(); return r.data; }
@@ -23,12 +25,12 @@ const JourneyList = () => {
         <>
             <Helmet><title>Marriage Journeys - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Marriage Journeys" description="Your end-to-end path from match to nikah" icon={HeartHandshake} />
+                <PageHeader title={t('fp.journey.listTitle')} description={t('fp.journey.listDesc')} icon={HeartHandshake} />
 
                 {isLoading ? (
                     <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                 ) : journeys.length === 0 ? (
-                    <EmptyState icon={HeartHandshake} title="No journeys yet" description="When a contact request you sent (or received) is approved, a marriage journey starts automatically and appears here." />
+                    <EmptyState icon={HeartHandshake} title={t('fp.journey.emptyTitle')} description={t('fp.journey.emptyDesc')} />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         {journeys.map((j) => {
@@ -42,7 +44,7 @@ const JourneyList = () => {
                                                 <span className="grid place-items-center h-9 w-9 rounded-lg bg-emerald-500/10 text-emerald-600"><HeartHandshake className="h-5 w-5" /></span>
                                                 <div>
                                                     <p className="font-semibold text-foreground text-sm">Biodata #{j.biodataA} ↔ #{j.biodataB}</p>
-                                                    <p className="text-xs text-muted-foreground">Started {new Date(j.createdAt).toLocaleDateString()}</p>
+                                                    <p className="text-xs text-muted-foreground">{t('fp.journey.started')} {new Date(j.createdAt).toLocaleDateString()}</p>
                                                 </div>
                                             </div>
                                             {completed
@@ -51,7 +53,7 @@ const JourneyList = () => {
                                         </div>
                                         <Progress value={stagePct(j.currentStage)} className="h-1.5" indicatorClassName="bg-emerald-500" />
                                         <Button asChild size="sm" variant="outline" className="w-full border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10">
-                                            <Link to={`/dashboard/journey/${j._id}`}>Open journey <ArrowRight className="h-4 w-4" /></Link>
+                                            <Link to={`/dashboard/journey/${j._id}`}>{t('fp.journey.openJourney')} <ArrowRight className="h-4 w-4" /></Link>
                                         </Button>
                                     </CardContent>
                                 </Card>

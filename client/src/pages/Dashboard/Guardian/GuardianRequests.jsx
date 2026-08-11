@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Mail, Loader2, ChevronDown, Clock, CheckCircle2, X } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { guardianAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,6 +14,7 @@ import { cn } from '@/lib/utils';
 const GuardianRequests = () => {
     const [params, setParams] = useSearchParams();
     const wardId = Number(params.get('ward'));
+    const { t } = useLanguage();
     const { data: wards = [] } = useQuery({ queryKey: ['guardianWards'], queryFn: async () => { const r = await guardianAPI.getMyWards(); return r.data; } });
     const { data: requests = [], isLoading } = useQuery({
         queryKey: ['guardianRequests', wardId],
@@ -24,7 +26,7 @@ const GuardianRequests = () => {
         <>
             <Helmet><title>Requests - Guardian</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Contact Requests" description="Incoming requests for your ward" icon={Mail} />
+                <PageHeader title={t('fp.guardian.requestsTitle')} description={t('fp.guardian.requestsDesc')} icon={Mail} />
                 <Card><CardContent className="p-4 flex flex-wrap items-center gap-3">
                     <span className="text-sm text-muted-foreground">Ward:</span>
                     <div className="relative">
@@ -37,9 +39,9 @@ const GuardianRequests = () => {
                     </div>
                 </CardContent></Card>
 
-                {!wardId ? <EmptyState icon={Mail} title="Select a ward" description="Pick a ward to view incoming contact requests." />
+                {!wardId ? <EmptyState icon={Mail} title={t('fp.guardian.selectWardEmpty')} description={t('fp.guardian.requestsTitle')} />
                     : isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-                        : requests.length === 0 ? <EmptyState icon={Mail} title="No requests" description="When someone requests your ward's contact info, it appears here." />
+                        : requests.length === 0 ? <EmptyState icon={Mail} title={t('fp.guardian.requestsEmpty')} description={t('fp.guardian.requestsEmptyDesc')} />
                             : (
                                 <div className="space-y-3">
                                     {requests.map(r => (

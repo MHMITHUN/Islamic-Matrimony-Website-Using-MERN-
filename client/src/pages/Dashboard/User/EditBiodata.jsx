@@ -254,21 +254,21 @@ const EditBiodata = () => {
                     </div>
                 </SectionCard>
 
-                <SectionCard title="Sukoon — Remarriage & Privacy Channel" icon={Leaf} accent="text-emerald-500">
+                <SectionCard title={t('fp.sukoon.sectionTitle')} icon={Leaf} accent="text-emerald-500">
                     <div className="space-y-4">
                         <p className="text-xs text-muted-foreground">
-                            Sukoon is our dignified channel tailored for divorced, widowed, or second marriage seekers with enhanced photo privacy and strict identity reveal controls.
+                            {t('fp.sukoon.desc')}
                         </p>
                         <div className="flex items-start gap-2">
                             <Checkbox id="sukoon" checked={formData.sukoon} onCheckedChange={(c) => handleCheckbox('sukoon', c)} />
-                            <Label htmlFor="sukoon" className="cursor-pointer text-sm font-medium">List my profile in the Sukoon channel</Label>
+                            <Label htmlFor="sukoon" className="cursor-pointer text-sm font-medium">{t('fp.sukoon.editToggle')}</Label>
                         </div>
                         {formData.sukoon && (
-                            <Field label="Photo reveal policy">
+                            <Field label={t('fp.sukoon.photoRule')}>
                                 <Select value={formData.sukoonPhotoReveal} onValueChange={(v) => handleSelect('sukoonPhotoReveal', v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>
-                                    <SelectItem value="blurred">Blurred until I approve a reveal request</SelectItem>
-                                    <SelectItem value="verified_only">Only verified members may see photos</SelectItem>
-                                    <SelectItem value="full">Visible normally to signed-in members</SelectItem>
+                                    <SelectItem value="blurred">{t('fp.sukoon.ruleBlurred')}</SelectItem>
+                                    <SelectItem value="verified_only">{t('fp.sukoon.ruleVerified')}</SelectItem>
+                                    <SelectItem value="full">{t('fp.sukoon.ruleFull')}</SelectItem>
                                 </SelectContent></Select>
                             </Field>
                         )}

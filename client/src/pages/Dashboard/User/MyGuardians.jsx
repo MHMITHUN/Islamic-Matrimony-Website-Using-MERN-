@@ -2,12 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Users, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { guardianAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 const MyGuardians = () => {
+    const { t } = useLanguage();
     const { data: guardians = [] } = useQuery({
         queryKey: ['myGuardians'],
         queryFn: async () => { const r = await guardianAPI.getMyGuardians(); return r.data; }
@@ -17,10 +19,10 @@ const MyGuardians = () => {
         <>
             <Helmet><title>My Guardians - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="My Guardians" description="Family members helping you find a spouse" icon={Users} />
+                <PageHeader title={t('fp.guardian.myGuardiansTitle')} description={t('fp.guardian.myGuardiansDesc')} icon={Users} />
                 <Card><CardContent className="p-6">
                     {guardians.length === 0 ? (
-                        <EmptyState icon={Users} title="No guardian links yet" description="When a family member invites themselves as your guardian, you'll approve the link here (or via the magic link they send you)." />
+                        <EmptyState icon={Users} title={t('fp.guardian.myGuardiansEmpty')} description={t('fp.guardian.myGuardiansEmptyDesc')} />
                     ) : (
                         <div className="space-y-2">
                             {guardians.map(g => (

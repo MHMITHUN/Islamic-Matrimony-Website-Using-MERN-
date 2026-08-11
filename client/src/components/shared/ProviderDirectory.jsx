@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { MapPin, Phone, Loader2, Award } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { providerAPI } from '../../api/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -10,6 +11,7 @@ import ApplyProviderModal from './ApplyProviderModal';
 
 // Reusable public directory for a given ServiceProvider type (kazi / counselor).
 const ProviderDirectory = ({ serviceType, title, subtitle, Icon }) => {
+    const { t } = useLanguage();
     const { data: providers = [], isLoading } = useQuery({
         queryKey: ['providers', serviceType],
         queryFn: async () => { const r = await providerAPI.getAll({ serviceType }); return r.data; }
@@ -27,14 +29,14 @@ const ProviderDirectory = ({ serviceType, title, subtitle, Icon }) => {
                         <h1 className="font-heading text-3xl font-bold text-foreground">{title}</h1>
                         <p className="text-muted-foreground">{subtitle}</p>
                         <div className="pt-2">
-                            <ApplyProviderModal defaultType={serviceType} triggerText={`Join Directory as ${serviceType === 'kazi' ? 'a Kazi' : 'a Counselor'}`} />
+                            <ApplyProviderModal defaultType={serviceType} triggerText={serviceType === 'kazi' ? t('fp.providers.joinKazi') : t('fp.providers.joinCounselor')} />
                         </div>
                     </div>
 
                     {isLoading ? (
                         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                     ) : providers.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-16">No {title.toLowerCase()} listed yet.</p>
+                        <p className="text-center text-muted-foreground py-16">{t('fp.providers.none').replace('{title}', serviceType === 'kazi' ? t('fp.nav.kazi') : t('fp.nav.counselors'))}</p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {providers.map((p) => (
@@ -48,7 +50,7 @@ const ProviderDirectory = ({ serviceType, title, subtitle, Icon }) => {
                                             <div className="min-w-0">
                                                 <div className="flex items-center gap-1.5">
                                                     <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
-                                                    {p.verified && <Badge className="bg-emerald-600 text-white text-[10px] gap-0.5"><Award className="h-2.5 w-2.5" />Verified</Badge>}
+                                                    {p.verified && <Badge className="bg-emerald-600 text-white text-[10px] gap-0.5"><Award className="h-2.5 w-2.5" />{t('fp.common.verified')}</Badge>}
                                                 </div>
                                                 <p className="text-xs text-muted-foreground truncate">{p.title}{p.organization ? ` · ${p.organization}` : ''}</p>
                                             </div>
@@ -57,7 +59,7 @@ const ProviderDirectory = ({ serviceType, title, subtitle, Icon }) => {
                                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                                             {p.city && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{p.city}</span>}
                                             {p.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{p.phone}</span>}
-                                            {p.fee > 0 && <span>৳{p.fee}</span>}
+                                            {p.fee > 0 && <span>{t('fp.providers.fee').replace('{n}', p.fee)}</span>}
                                         </div>
                                         {p.specialties?.length > 0 && (
                                             <div className="flex flex-wrap gap-1 mt-3">

@@ -53,7 +53,7 @@ const TrustDashboard = () => {
         <>
             <Helmet><title>Tazkiya Trust - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Tazkiya — Your Trust Score" description="Earned character trust from members & imams" icon={ShieldCheck} />
+                <PageHeader title={t('fp.tazkiya.title')} description={t('fp.tazkiya.desc')} icon={ShieldCheck} />
 
                 {/* Score card */}
                 <Card>
@@ -71,7 +71,7 @@ const TrustDashboard = () => {
                         </div>
                         <div className="flex-1 text-center md:text-left">
                             <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-                                <h2 className="font-heading text-lg font-bold text-foreground">Your tier</h2>
+                                <h2 className="font-heading text-lg font-bold text-foreground">{t('fp.tazkiya.yourTier')}</h2>
                                 <TazkiyaBadge tier={tier} score={score} />
                             </div>
                             <p className="text-sm text-muted-foreground mb-3">
@@ -87,14 +87,14 @@ const TrustDashboard = () => {
                 {/* Category breakdown */}
                 <Card>
                     <CardContent className="p-6">
-                        <h3 className="font-heading font-bold text-foreground mb-3">Endorsements by category</h3>
+                        <h3 className="font-heading font-bold text-foreground mb-3">{t('fp.tazkiya.byCategory')}</h3>
                         {Object.keys(catCounts).length === 0 ? (
                             <p className="text-sm text-muted-foreground">No endorsements yet.</p>
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {ENDORSE_CATEGORIES.map(c => (
                                     <Badge key={c.key} variant="outline" className="gap-1 border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
-                                        {c.label} <span className="tabular-nums font-bold">{catCounts[c.key] || 0}</span>
+                                        {t('fp.endorseCat.' + c.key)} <span className="tabular-nums font-bold">{catCounts[c.key] || 0}</span>
                                     </Badge>
                                 ))}
                             </div>
@@ -105,18 +105,18 @@ const TrustDashboard = () => {
                 {/* Given endorsements (revoke) */}
                 <Card>
                     <CardContent className="p-6">
-                        <h3 className="font-heading font-bold text-foreground mb-3">Endorsements you've given</h3>
+                        <h3 className="font-heading font-bold text-foreground mb-3">{t('fp.tazkiya.given')}</h3>
                         {isLoading ? (
                             <div className="flex justify-center py-6"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
                         ) : given.length === 0 ? (
-                            <EmptyState icon={ShieldCheck} title="None yet" description="Visit a profile you trust and click 'Endorse (Tazkiya)'." />
+                            <EmptyState icon={ShieldCheck} title={t('fp.tazkiya.givenNone')} description={t('fp.tazkiya.givenNoneDesc')} />
                         ) : (
                             <div className="space-y-2">
                                 {given.map(e => (
                                     <div key={e._id} className="flex items-center justify-between gap-3 rounded-xl border border-border p-3">
                                         <div>
                                             <p className="text-sm font-semibold text-foreground">{e.endorsedName || `Biodata #${e.endorsedBiodataId}`}</p>
-                                            <p className="text-xs text-muted-foreground">{e.categories.map(c => ENDORSE_CATEGORIES.find(x => x.key === c)?.label || c).join(', ')}</p>
+                                            <p className="text-xs text-muted-foreground">{e.categories.map(c => t('fp.endorseCat.' + c)).join(', ')}</p>
                                         </div>
                                         <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => handleRevoke(e._id)} disabled={revokeMutation.isLoading}>
                                             <Trash2 className="h-4 w-4" />

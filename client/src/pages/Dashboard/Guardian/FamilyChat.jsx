@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MessageSquare, Send, Loader2, ArrowLeft } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { guardianAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,6 +16,7 @@ const formatTime = (d) => new Date(d).toLocaleString('en-US', { month: 'short', 
 
 const FamilyChat = () => {
     const qc = useQueryClient();
+    const { t } = useLanguage();
     const [active, setActive] = useState(null);
     const [text, setText] = useState('');
     const [compose, setCompose] = useState({ partnerBiodataId: '', wardBiodataId: '', content: '' });
@@ -45,7 +47,7 @@ const FamilyChat = () => {
         <>
             <Helmet><title>Family Chats - Guardian</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Family Chats" description="Family-to-family conversations between connected guardians" icon={MessageSquare} />
+                <PageHeader title={t('fp.guardian.chatTitle')} description={t('fp.guardian.chatDesc')} icon={MessageSquare} />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* Threads */}

@@ -4,6 +4,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Eye, Heart, Loader2, Scale, Check, X, ChevronDown } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { guardianAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,6 +19,7 @@ const GuardianBrowse = () => {
     const [params, setParams] = useSearchParams();
     const wardId = Number(params.get('ward'));
     const qc = useQueryClient();
+    const { t } = useLanguage();
 
     const { data: wards = [] } = useQuery({ queryKey: ['guardianWards'], queryFn: async () => { const r = await guardianAPI.getMyWards(); return r.data; } });
     const approved = wards.filter(w => w.status === 'approved' && w.wardBiodataId);
@@ -45,7 +47,7 @@ const GuardianBrowse = () => {
         <>
             <Helmet><title>Browse for Ward - Guardian</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Browse for Ward" description="Find compatible matches on behalf of your ward" icon={Eye} />
+                <PageHeader title={t('fp.guardian.browseTitle')} description={t('fp.guardian.browseDesc')} icon={Eye} />
 
                 <Card>
                     <CardContent className="p-4 flex flex-wrap items-center gap-3">
@@ -66,7 +68,7 @@ const GuardianBrowse = () => {
                 </Card>
 
                 {!wardId ? (
-                    <EmptyState icon={Eye} title="Select a ward to begin" description="Choose one of your approved wards to see their compatibility matches." />
+                    <EmptyState icon={Eye} title={t('fp.guardian.selectWardEmpty')} description={t('fp.guardian.selectWardEmptyDesc')} />
                 ) : isLoading ? (
                     <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                 ) : (

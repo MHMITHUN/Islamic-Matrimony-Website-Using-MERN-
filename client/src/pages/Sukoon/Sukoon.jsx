@@ -10,12 +10,14 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import TazkiyaBadge from '../../components/shared/TazkiyaBadge';
 import toast from 'react-hot-toast';
 
 const Sukoon = () => {
     const qc = useQueryClient();
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const { user } = useAuth();
     const [filter, setFilter] = useState({ biodataType: '', division: '' });
 
@@ -48,21 +50,21 @@ const Sukoon = () => {
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-3">
                             <Leaf className="h-3.5 w-3.5" /> Sukoon — Dignified Second-Marriage Channel
                         </span>
-                        <h1 className="font-heading text-3xl font-bold text-foreground mb-2">A respectful path to remarry</h1>
-                        <p className="text-muted-foreground">For divorcees, widows and those seeking a second marriage — with extra privacy. Photos and identity are hidden until the member approves a reveal.</p>
+                        <h1 className="font-heading text-3xl font-bold text-foreground mb-2">{t('fp.sukoon.title')}</h1>
+                        <p className="text-muted-foreground">{t('fp.sukoon.desc')}</p>
                     </div>
 
                     {/* Filters */}
                     <div className="flex flex-wrap gap-3 justify-center mb-6">
                         <select value={filter.biodataType} onChange={(e) => setFilter(f => ({ ...f, biodataType: e.target.value }))}
                             className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
-                            <option value="">Any gender</option>
+                            <option value="">{t('fp.sukoon.anyGender')}</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
                         <select value={filter.division} onChange={(e) => setFilter(f => ({ ...f, division: e.target.value }))}
                             className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
-                            <option value="">Any division</option>
+                            <option value="">{t('fp.sukoon.anyDivision')}</option>
                             {['Dhaka', 'Chattagram', 'Rangpur', 'Barisal', 'Khulna', 'Mymensingh', 'Sylhet'].map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
                     </div>
@@ -70,7 +72,7 @@ const Sukoon = () => {
                     {isLoading ? (
                         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
                     ) : profiles.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-16">No Sukoon profiles yet.</p>
+                        <p className="text-center text-muted-foreground py-16">{t('fp.sukoon.noProfiles')}</p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {profiles.map((p) => (
@@ -96,13 +98,13 @@ const Sukoon = () => {
                                         <p className="text-xs text-muted-foreground">{p.age} yrs · {p.permanentDivision} · {p.maritalStatus}</p>
                                         {p.hasChildren && <p className="text-xs text-muted-foreground">Has {p.childrenCount || 0} child(ren)</p>}
                                         {p.revealed ? (
-                                            <Button asChild size="sm" variant="outline" className="w-full"><Link to={`/biodata/${p.biodataId}`}><Eye className="h-4 w-4" /> View full profile</Link></Button>
+                                            <Button asChild size="sm" variant="outline" className="w-full"><Link to={`/biodata/${p.biodataId}`}><Eye className="h-4 w-4" /> {t('fp.sukoon.viewFull')}</Link></Button>
                                         ) : (
                                             <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={() => handleReveal(p.biodataId)} disabled={revealMut.isLoading}>
-                                                <Lock className="h-4 w-4" /> Request identity reveal
+                                                <Lock className="h-4 w-4" /> {t('fp.sukoon.requestReveal')}
                                             </Button>
                                         )}
-                                        {p.revealed && <p className="text-[11px] text-emerald-600 flex items-center gap-1 justify-center"><CheckCircle2 className="h-3 w-3" /> Identity revealed to you</p>}
+                                        {p.revealed && <p className="text-[11px] text-emerald-600 flex items-center gap-1 justify-center"><CheckCircle2 className="h-3 w-3" /> {t('fp.sukoon.revealedToYou')}</p>}
                                     </CardContent>
                                 </Card>
                             ))}

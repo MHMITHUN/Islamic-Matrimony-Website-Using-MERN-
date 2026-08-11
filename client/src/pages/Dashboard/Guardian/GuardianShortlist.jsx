@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Heart, Loader2, Trash2, ChevronDown } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { guardianAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,6 +33,7 @@ const WardSelect = ({ wards, wardId, setParams }) => (
 
 const GuardianShortlist = () => {
     const qc = useQueryClient();
+    const { t } = useLanguage();
     const { wardId, setParams } = useWardParam();
     const { data: wards = [] } = useQuery({ queryKey: ['guardianWards'], queryFn: async () => { const r = await guardianAPI.getMyWards(); return r.data; } });
     const { data: items = [], isLoading } = useQuery({
@@ -48,11 +50,11 @@ const GuardianShortlist = () => {
         <>
             <Helmet><title>Shortlist - Guardian</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Shortlist" description="Profiles you've saved on behalf of your ward" icon={Heart} />
+                <PageHeader title={t('fp.guardian.shortlistTitle')} description={t('fp.guardian.shortlistDesc')} icon={Heart} />
                 <WardSelect wards={wards} wardId={wardId} setParams={setParams} />
-                {!wardId ? <EmptyState icon={Heart} title="Select a ward" description="Pick a ward to view their shortlist." />
+                {!wardId ? <EmptyState icon={Heart} title={t('fp.guardian.selectWardEmpty')} description={t('fp.guardian.selectWard')} />
                     : isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-                        : items.length === 0 ? <EmptyState icon={Heart} title="Nothing shortlisted yet" description="Browse matches for this ward and save the promising ones." />
+                        : items.length === 0 ? <EmptyState icon={Heart} title={t('fp.guardian.shortlistEmpty')} description={t('fp.guardian.shortlistEmptyDesc')} />
                             : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                     {items.map(it => (

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Leaf, Check, X, Loader2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { sukoonAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +13,7 @@ import toast from 'react-hot-toast';
 
 const SukoonRequests = () => {
     const qc = useQueryClient();
+    const { t } = useLanguage();
     const { data: requests = [], isLoading } = useQuery({
         queryKey: ['sukoonRevealRequests'],
         queryFn: async () => { const r = await sukoonAPI.getRevealRequests(); return r.data; }
@@ -27,9 +29,9 @@ const SukoonRequests = () => {
         <>
             <Helmet><title>Sukoon Reveal Requests - Nikah</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="Sukoon Reveal Requests" description="Members asking to see your identity" icon={Leaf} />
+                <PageHeader title={t('fp.sukoon.requestsTitle')} description={t('fp.sukoon.requestsDesc')} icon={Leaf} />
                 {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-                    : requests.length === 0 ? <EmptyState icon={Leaf} title="No requests" description="When someone requests to reveal your Sukoon identity, it appears here." />
+                    : requests.length === 0 ? <EmptyState icon={Leaf} title={t('fp.sukoon.requestsEmpty')} description={t('fp.sukoon.requestsEmptyDesc')} />
                         : (
                             <div className="space-y-3">
                                 {requests.map(r => (

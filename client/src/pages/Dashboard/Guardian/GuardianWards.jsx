@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Users, Loader2, Copy, Check, Trash2, Mail } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { guardianAPI } from '../../../api/api';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ const RELATIONS = ['Father', 'Mother', 'Brother', 'Uncle', 'Grandfather', 'Son',
 
 const GuardianWards = () => {
     const qc = useQueryClient();
+    const { t } = useLanguage();
     const [email, setEmail] = useState('');
     const [relation, setRelation] = useState('');
     const [copied, setCopied] = useState({});
@@ -52,7 +54,7 @@ const GuardianWards = () => {
         <>
             <Helmet><title>My Wards - Guardian</title></Helmet>
             <div className="space-y-6">
-                <PageHeader title="My Wards" description="Invite and manage the profiles you represent" icon={Users} />
+                <PageHeader title={t('fp.guardian.wardsTitle')} description={t('fp.guardian.wardsDesc')} icon={Users} />
 
                 <Card>
                     <CardContent className="p-6">
