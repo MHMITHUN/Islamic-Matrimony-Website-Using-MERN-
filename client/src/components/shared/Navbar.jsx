@@ -29,7 +29,6 @@ import { cn } from '@/lib/utils';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isServicesOpen, setIsServicesOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { user, logout, isAdmin, isPremium } = useAuth();
     const { t } = useLanguage();
@@ -95,22 +94,26 @@ const Navbar = () => {
                     )}
                 </NavLink>
             ))}
-            <div
-                onMouseEnter={() => setIsServicesOpen(true)}
-                onMouseLeave={() => setIsServicesOpen(false)}
-            >
-                <DropdownMenu open={isServicesOpen} onOpenChange={setIsServicesOpen}>
-                    <DropdownMenuTrigger className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent/60 rounded-lg outline-none">
-                        Services <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isServicesOpen && "rotate-180")} />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-48">
+            <div className="relative group">
+                <button
+                    type="button"
+                    className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent/60 rounded-lg outline-none cursor-pointer"
+                >
+                    Services <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+                <div className="absolute left-0 top-full pt-1.5 hidden group-hover:block z-50 animate-in fade-in-50 zoom-in-95">
+                    <div className="w-48 rounded-lg border border-border bg-popover/95 backdrop-blur-md p-1.5 text-popover-foreground shadow-lg">
                         {serviceLinks.map((link) => (
-                            <DropdownMenuItem key={link.path} asChild onClick={() => setIsServicesOpen(false)}>
-                                <Link to={link.path} className="w-full cursor-pointer">{link.label}</Link>
-                            </DropdownMenuItem>
+                            <Link
+                                key={link.path}
+                                to={link.path}
+                                className="block px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors font-medium"
+                            >
+                                {link.label}
+                            </Link>
                         ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                    </div>
+                </div>
             </div>
             {user && (
                 <NavLink
