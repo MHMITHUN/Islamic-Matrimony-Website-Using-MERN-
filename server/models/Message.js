@@ -42,6 +42,18 @@ const messageSchema = new mongoose.Schema({
     biodataId: {
         type: Number,
         default: null
+    },
+    isTemplateMessage: {
+        type: Boolean,
+        default: false
+    },
+    waliCC: {
+        type: Boolean,
+        default: false
+    },
+    waliCcEmail: {
+        type: String,
+        default: ''
     }
 }, {
     timestamps: true

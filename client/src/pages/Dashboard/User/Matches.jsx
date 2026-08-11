@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Scale, Check, X, MapPin, Briefcase, ArrowRight, Loader2 } from 'lucide-react';
+import { Scale, Check, X, MapPin, Briefcase, ArrowRight, Loader2, Moon } from 'lucide-react';
 import { FaMale, FaFemale } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import { matchAPI } from '../../../api/api';
@@ -76,7 +76,7 @@ const Matches = () => {
                                             <Progress value={match.compatibilityScore} className="h-1.5" indicatorClassName={scoreBar(match.compatibilityScore)} />
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-1.5 mb-4">
+                                        <div className="grid grid-cols-2 gap-1.5 mb-3">
                                             {[
                                                 { label: 'Age', match: match.matchDetails?.ageMatch },
                                                 { label: 'Height', match: match.matchDetails?.heightMatch },
@@ -88,6 +88,15 @@ const Matches = () => {
                                                     <span className={item.match ? 'text-foreground' : 'text-muted-foreground'}>{item.label}</span>
                                                 </div>
                                             ))}
+                                        </div>
+
+                                        <div className={cn('flex items-center gap-1.5 text-xs rounded-lg px-2.5 py-1.5 mb-4 border', match.matchDetails?.deenMatch ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-border bg-muted/30')}>
+                                            {match.matchDetails?.deenMatch
+                                                ? <Moon className="h-3.5 w-3.5 text-emerald-600" />
+                                                : <X className="h-3 w-3 text-muted-foreground/40" />}
+                                            <span className={cn('font-semibold', match.matchDetails?.deenMatch ? 'text-emerald-700 dark:text-emerald-400' : 'text-muted-foreground')}>
+                                                Deen {match.matchDetails?.deenMatch ? 'Match' : '—'}
+                                            </span>
                                         </div>
 
                                         <Button asChild size="sm" className="w-full"><Link to={`/biodata/${match.biodataId}`}>View Profile <ArrowRight className="h-3.5 w-3.5" /></Link></Button>

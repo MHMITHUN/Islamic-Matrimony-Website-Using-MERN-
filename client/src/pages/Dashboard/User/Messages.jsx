@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Mail, Send, Inbox, Trash2, User as UserIcon, Loader2 } from 'lucide-react';
+import { Mail, Send, Inbox, Trash2, User as UserIcon, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { messageAPI } from '../../../api/api';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -14,6 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -32,16 +34,19 @@ const Messages = () => {
     const [newSubject, setNewSubject] = useState('');
     const [showCompose, setShowCompose] = useState(false);
     const [composeEmail, setComposeEmail] = useState('');
+    const [ccWali, setCcWali] = useState(false);
     const { user } = useAuth();
     const queryClient = useQueryClient();
 
     const { data: inboxData = { messages: [], unreadCount: 0 } } = useQuery({ queryKey: ['inbox'], queryFn: async () => { const res = await messageAPI.getInbox(); return res.data; }, refetchInterval: 30000 });
     const { data: sentMessages = [] } = useQuery({ queryKey: ['sentMessages'], queryFn: async () => { const res = await messageAPI.getSent(); return res.data; } });
     const { data: conversation = [] } = useQuery({ queryKey: ['conversation', selectedConversation], queryFn: async () => { const res = await messageAPI.getConversation(selectedConversation); return res.data; }, enabled: !!selectedConversation, refetchInterval: 10000 });
+    const { data: tplData } = useQuery({ queryKey: ['messageTemplates'], queryFn: async () => { const res = await messageAPI.getTemplates(); return res.data; } });
+    const templates = tplData?.templates || [];
 
     const sendMutation = useMutation({
         mutationFn: (data) => messageAPI.send(data),
-        onSuccess: () => { queryClient.invalidateQueries(['inbox']); queryClient.invalidateQueries(['sentMessages']); queryClient.invalidateQueries(['conversation']); setNewMessage(''); setNewSubject(''); toast.success('Message sent'); },
+        onSuccess: () => { queryClient.invalidateQueries(['inbox']); queryClient.invalidateQueries(['sentMessages']); queryClient.invalidateQueries(['conversation']); setNewMessage(''); setNewSubject(''); setCcWali(false); toast.success('Message sent'); },
         onError: (error) => toast.error(error.response?.data?.message || 'Failed to send'),
     });
     const deleteMutation = useMutation({
@@ -51,12 +56,12 @@ const Messages = () => {
 
     const handleSend = () => {
         if (!newMessage.trim()) return;
-        sendMutation.mutate({ receiverEmail: selectedConversation || composeEmail, subject: newSubject, content: newMessage });
+        sendMutation.mutate({ receiverEmail: selectedConversation || composeEmail, subject: newSubject, content: newMessage, waliCC: ccWali, isTemplateMessage: templates.includes(newMessage) });
     };
     const handleCompose = () => {
         if (!composeEmail || !newMessage.trim()) return;
-        sendMutation.mutate({ receiverEmail: composeEmail, subject: newSubject, content: newMessage });
-        setShowCompose(false); setComposeEmail(''); setNewMessage(''); setNewSubject('');
+        sendMutation.mutate({ receiverEmail: composeEmail, subject: newSubject, content: newMessage, waliCC: ccWali, isTemplateMessage: templates.includes(newMessage) });
+        setShowCompose(false); setComposeEmail(''); setNewMessage(''); setNewSubject(''); setCcWali(false);
     };
 
     const messages = tab === 'inbox' ? inboxData.messages : sentMessages;
@@ -124,8 +129,11 @@ const Messages = () => {
                     <Card className="hidden lg:flex flex-1 flex-col overflow-hidden">
                         {selectedConversation ? (
                             <>
-                                <div className="p-3 border-b border-border">
+                                <div className="p-3 border-b border-border space-y-2">
                                     <p className="text-sm font-semibold text-foreground truncate">{selectedConversation}</p>
+                                    <p className="flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 rounded-md px-2 py-1">
+                                        <Sparkles className="h-3 w-3" /> Communicate with adab (etiquette) — keep your wali informed.
+                                    </p>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[50vh]">
                                     {conversation.map((msg) => {
@@ -141,7 +149,11 @@ const Messages = () => {
                                         );
                                     })}
                                 </div>
-                                <div className="p-3 border-t border-border">
+                                <div className="p-3 border-t border-border space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <Checkbox id="ccWaliReply" checked={ccWali} onCheckedChange={setCcWali} className="border-emerald-500/50 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600" />
+                                        <Label htmlFor="ccWaliReply" className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-emerald-600" /> CC their wali</Label>
+                                    </div>
                                     <div className="flex gap-2">
                                         <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder="Type a message..." />
                                         <Button onClick={handleSend} disabled={!newMessage.trim() || sendMutation.isLoading} size="icon"><Send className="h-4 w-4" /></Button>
@@ -166,7 +178,18 @@ const Messages = () => {
                         <div className="space-y-3">
                             <div className="space-y-1.5"><Label>Receiver email</Label><Input type="email" value={composeEmail} onChange={(e) => setComposeEmail(e.target.value)} placeholder="receiver@example.com" /></div>
                             <div className="space-y-1.5"><Label>Subject (optional)</Label><Input value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="Subject" /></div>
+                            <div className="space-y-1.5">
+                                <Label className="flex items-center gap-1"><Sparkles className="h-3 w-3 text-emerald-600" /> Halal message template</Label>
+                                <Select value="" onValueChange={(v) => { setNewMessage(v); }}>
+                                    <SelectTrigger><SelectValue placeholder="Start from a respectful template" /></SelectTrigger>
+                                    <SelectContent>{templates.map((tpl, i) => <SelectItem key={i} value={tpl} className="whitespace-normal leading-relaxed">{tpl.length > 70 ? tpl.substring(0, 70) + '…' : tpl}</SelectItem>)}</SelectContent>
+                                </Select>
+                            </div>
                             <div className="space-y-1.5"><Label>Message</Label><Textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} rows={4} className="resize-none" placeholder="Your message..." /></div>
+                            <div className="flex items-center gap-2">
+                                <Checkbox id="ccWaliCompose" checked={ccWali} onCheckedChange={setCcWali} className="border-emerald-500/50 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600" />
+                                <Label htmlFor="ccWaliCompose" className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-emerald-600" /> CC the recipient's wali (requires their wali oversight enabled)</Label>
+                            </div>
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setShowCompose(false)}>Cancel</Button>

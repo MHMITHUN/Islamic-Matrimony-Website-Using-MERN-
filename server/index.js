@@ -73,6 +73,7 @@ app.use('/api/messages', require('./routes/message'));
 app.use('/api/matches', require('./routes/match'));
 app.use('/api/profile-views', require('./routes/profileView'));
 app.use('/api/subscriptions', require('./routes/subscription'));
+app.use('/api/wali', require('./routes/wali'));
 
 // Root route
 app.get('/', (req, res) => {

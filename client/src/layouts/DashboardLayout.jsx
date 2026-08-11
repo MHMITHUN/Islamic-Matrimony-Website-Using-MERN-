@@ -3,6 +3,7 @@ import {
     Home, Pencil, Eye, Mail, Heart, HeartHandshake, LogOut, Menu, Crown,
     Users, CheckCircle2, PieChart, ListChecks, ArrowLeft, History, Activity,
     Settings, Flag, Bell, Scale, MessageSquare, User as UserIcon, ChevronLeft,
+    ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -54,6 +55,7 @@ const DashboardLayout = () => {
         { path: '/dashboard/edit-biodata', icon: Pencil, label: t('dashboard.sidebar.editBiodata') },
         { path: '/dashboard/view-biodata', icon: Eye, label: t('dashboard.sidebar.viewBiodata') },
         { path: '/dashboard/matches', icon: Scale, label: 'Matches' },
+        { path: '/dashboard/wali', icon: ShieldCheck, label: t('dashboard.sidebar.wali') },
         { path: '/dashboard/messages', icon: MessageSquare, label: 'Messages' },
         { path: '/dashboard/notifications', icon: Bell, label: 'Notifications' },
         { path: '/dashboard/contact-requests', icon: Mail, label: t('dashboard.sidebar.myContactRequests') },
@@ -70,6 +72,7 @@ const DashboardLayout = () => {
         { path: '/dashboard/admin/manage-users', icon: Users, label: t('dashboard.sidebar.manageUsers') },
         { path: '/dashboard/admin/approved-premium', icon: Crown, label: t('dashboard.sidebar.approvedPremium'), badgeKey: 'premium' },
         { path: '/dashboard/admin/approved-contacts', icon: CheckCircle2, label: t('dashboard.sidebar.approvedContacts') },
+        { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: 'Verification Requests' },
         { path: '/dashboard/admin/contact-messages', icon: Mail, label: t('dashboard.sidebar.contactMessages') },
         { path: '/dashboard/admin/success-stories', icon: ListChecks, label: t('dashboard.sidebar.successStories') },
         { path: '/dashboard/admin/reports', icon: Flag, label: 'Reports' },
@@ -132,6 +135,7 @@ const DashboardLayout = () => {
                             <li key={link.path} ref={isActive ? handleActiveRef : null}>
                                 <NavLink
                                     to={link.path}
+                                    end
                                     onClick={() => setSidebarOpen(false)}
                                     className={({ isActive }) =>
                                         cn(

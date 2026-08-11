@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     Heart, Phone, Mail, MapPin, Briefcase, User, CalendarDays, Ruler, Scale,
     Star, Lock, Crown, ArrowLeft, CheckCircle2, ShieldCheck, Sparkles, Loader2,
+    Moon, BookOpen,
 } from 'lucide-react';
 import { FaMale, FaFemale } from 'react-icons/fa';
 import { biodataAPI, favoritesAPI } from '../../api/api';
@@ -17,6 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import VerifiedBadge from '../../components/shared/VerifiedBadge';
 
 const InfoItem = ({ icon: Icon, label, value }) => {
     const { t } = useLanguage();
@@ -57,6 +59,16 @@ const BiodataDetails = () => {
             race: { 'Fair': 'fair', 'Light Brown': 'lightBrown', 'Brown': 'brown', 'Dark': 'dark' },
             division: { 'Dhaka': 'dhaka', 'Chattagram': 'chattagram', 'Rangpur': 'rangpur', 'Barisal': 'barisal', 'Khulna': 'khulna', 'Mymensingh': 'mymensingh', 'Sylhet': 'sylhet' },
             biodataType: { 'Male': 'biodata.filters.male', 'Female': 'biodata.filters.female' },
+            maritalStatus: { 'Never Married': 'neverMarried', 'Divorced': 'divorced', 'Widowed': 'widowed', 'Seeking Polygyny': 'seekingPolygyny' },
+            sect: { 'Sunni-Hanafi': 'sunniHanafi', "Sunni-Shafi'i": 'sunniShafi', 'Sunni-Maliki': 'sunniMaliki', 'Sunni-Hanbali': 'sunniHanbali', 'Shia': 'shia', 'Other': 'other' },
+            religiousCommitment: { 'Practicing': 'practicing', 'Moderate': 'moderate', 'Cultural': 'cultural' },
+            prayerFrequency: { 'Five Daily': 'fiveDaily', 'Sometimes': 'sometimes', 'Rarely': 'rarely' },
+            religiousEducation: { 'General': 'general', 'Madrasa': 'madrasa', 'Hifz': 'hifz', 'Alim': 'alim', 'Other': 'other' },
+            modesty: { 'Hijab': 'hijab', 'Niqab': 'niqab', 'None': 'none', 'Beard': 'beard', 'No Beard': 'noBeard' },
+            smoking: { 'No': 'no', 'Occasionally': 'occasionally', 'Yes': 'yes' },
+            diet: { 'Halal only': 'halalOnly', 'Vegetarian': 'vegetarian', 'Other': 'other' },
+            mahrPreference: { 'Simple': 'simple', 'Moderate': 'moderate', 'As per capability': 'asPerCapability', 'To discuss': 'toDiscuss' },
+            childrenLivingWith: { 'Yes': 'yes', 'No': 'no', 'Shared': 'shared' },
         };
         if (type === 'biodataType') {
             const key = map.biodataType[value];
@@ -158,6 +170,17 @@ const BiodataDetails = () => {
                                                     <Crown className="h-3.5 w-3.5" /> {t('biodata.details.premium')}
                                                 </Badge>
                                             )}
+                                            {biodata.revert && (
+                                                <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                                                    <Moon className="h-3.5 w-3.5" /> {t('biodata.details.revert')}
+                                                </Badge>
+                                            )}
+                                            <VerifiedBadge verification={biodata.verification} />
+                                            {biodata.waliEnabled && (
+                                                <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                                                    <ShieldCheck className="h-3.5 w-3.5" /> {t('biodata.details.waliProtected')}
+                                                </Badge>
+                                            )}
                                             <Badge variant="secondary" className="text-xs font-semibold tabular-nums">
                                                 ID: {biodata.biodataId}
                                             </Badge>
@@ -173,7 +196,7 @@ const BiodataDetails = () => {
                                             )}
                                             {!canViewContact && !isOwnBiodata && (
                                                 <Button asChild variant="gold">
-                                                    <Link to={`/checkout/${biodata.biodataId}`}><Lock className="h-4 w-4" /> {t('biodata.details.requestContact')}</Link>
+                                                    <Link to={`/checkout/${biodata.biodataId}`}><Lock className="h-4 w-4" /> {biodata.waliEnabled ? t('biodata.details.requestContactWali') : t('biodata.details.requestContact')}</Link>
                                                 </Button>
                                             )}
                                         </div>
@@ -197,6 +220,24 @@ const BiodataDetails = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <InfoItem icon={User} label={t('biodata.details.fathersName')} value={biodata.fathersName} />
                                 <InfoItem icon={User} label={t('biodata.details.mothersName')} value={biodata.mothersName} />
+                            </div>
+                        </Section>
+
+                        <Section title={t('biodata.details.deenProfile')} icon={Moon} accent="text-emerald-500">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <InfoItem icon={Heart} label={t('biodata.details.maritalStatus')} value={translateEnum('maritalStatus', biodata.maritalStatus)} />
+                                <InfoItem icon={BookOpen} label={t('biodata.details.sect')} value={translateEnum('sect', biodata.sect)} />
+                                <InfoItem icon={Moon} label={t('biodata.details.religiousCommitment')} value={translateEnum('religiousCommitment', biodata.religiousCommitment)} />
+                                <InfoItem icon={Moon} label={t('biodata.details.prayerFrequency')} value={translateEnum('prayerFrequency', biodata.prayerFrequency)} />
+                                <InfoItem icon={Moon} label={t('biodata.details.modesty')} value={translateEnum('modesty', biodata.modesty)} />
+                                <InfoItem icon={BookOpen} label={t('biodata.details.religiousEducation')} value={translateEnum('religiousEducation', biodata.religiousEducation)} />
+                                <InfoItem icon={Heart} label={t('biodata.details.mahrPreference')} value={translateEnum('mahrPreference', biodata.mahrPreference)} />
+                                <InfoItem icon={Scale} label={t('biodata.details.diet')} value={translateEnum('diet', biodata.diet)} />
+                                <InfoItem icon={Scale} label={t('biodata.details.smoking')} value={translateEnum('smoking', biodata.smoking)} />
+                                <InfoItem icon={CheckCircle2} label={t('biodata.details.alcoholFree')} value={biodata.alcoholFree ? t('biodata.details.yes') : t('biodata.details.no')} />
+                                {biodata.hasChildren && (
+                                    <InfoItem icon={User} label={t('biodata.details.children')} value={`${biodata.childrenCount || 0} (${translateEnum('childrenLivingWith', biodata.childrenLivingWith)})`} />
+                                )}
                             </div>
                         </Section>
 

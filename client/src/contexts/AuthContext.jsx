@@ -160,13 +160,37 @@ export const AuthProvider = ({ children }) => {
                     console.error('Error in auth state change:', error);
                 }
             } else {
-                setUser(null);
-                setIsAdmin(false);
-                setIsPremium(false);
-                localStorage.removeItem('access-token');
-                localStorage.removeItem('nikah-recently-viewed');
-                window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
-                queryClient.clear();
+                // If Firebase user is null, check if there is a valid JWT session token in localStorage (e.g. for dedicated Admin login)
+                const token = localStorage.getItem('access-token');
+                let restored = false;
+                if (token) {
+                    try {
+                        const { data } = await authAPI.getCurrentUser();
+                        if (data && data.email) {
+                            setUser({
+                                email: data.email,
+                                displayName: data.name,
+                                photoURL: data.photoURL,
+                                uid: data._id
+                            });
+                            setIsAdmin(data.role === 'admin');
+                            setIsPremium(data.isPremium || data.role === 'admin');
+                            restored = true;
+                        }
+                    } catch (err) {
+                        console.warn('Failed to restore session from stored token:', err);
+                    }
+                }
+
+                if (!restored) {
+                    setUser(null);
+                    setIsAdmin(false);
+                    setIsPremium(false);
+                    localStorage.removeItem('access-token');
+                    localStorage.removeItem('nikah-recently-viewed');
+                    window.dispatchEvent(new CustomEvent('clear-recently-viewed'));
+                    queryClient.clear();
+                }
             }
             setLoading(false);
         });

@@ -1,9 +1,10 @@
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle2, Clock, XCircle } from 'lucide-react'
+import { CheckCircle2, Clock, XCircle, ShieldCheck } from 'lucide-react'
 
 const MAP = {
     approved: { variant: 'success', icon: CheckCircle2 },
     pending: { variant: 'gold', icon: Clock },
+    wali_pending: { variant: 'gold', icon: ShieldCheck },
     rejected: { variant: 'destructive', icon: XCircle },
     active: { variant: 'success', icon: CheckCircle2 },
     inactive: { variant: 'soft', icon: XCircle },

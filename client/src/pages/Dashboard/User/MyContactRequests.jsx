@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Mail, Trash2, CheckCircle2, Clock, Phone, User, Lock, Loader2 } from 'lucide-react';
+import { Mail, Trash2, CheckCircle2, Clock, Phone, User, Lock, Loader2, ShieldCheck, X } from 'lucide-react';
 import { contactRequestAPI } from '../../../api/api';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import PageHeader from '../../../components/dashboard/PageHeader';
@@ -42,10 +42,13 @@ const MyContactRequests = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {requests.map((request) => {
-                        const approved = request.status === 'approved';
+                        const status = request.status;
+                        const approved = status === 'approved';
+                        const waliPending = status === 'wali_pending';
+                        const rejected = status === 'rejected';
                         return (
                             <Card key={request._id} className="overflow-hidden card-lift hover:border-primary/30">
-                                <div className={cn('p-4 text-white', approved ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-amber-500 to-orange-500')}>
+                                <div className={cn('p-4 text-white', approved ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : rejected ? 'bg-gradient-to-r from-rose-500 to-red-500' : 'bg-gradient-to-r from-amber-500 to-orange-500')}>
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-3 min-w-0">
                                             <span className="grid place-items-center h-10 w-10 rounded-xl bg-white/20 backdrop-blur shrink-0"><User className="h-5 w-5" /></span>
@@ -55,8 +58,8 @@ const MyContactRequests = () => {
                                             </div>
                                         </div>
                                         <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-xs font-bold backdrop-blur shrink-0">
-                                            {approved ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                                            {approved ? t('dashboard.contactRequests.approved') : t('dashboard.contactRequests.pending')}
+                                            {approved ? <CheckCircle2 className="h-3 w-3" /> : waliPending ? <ShieldCheck className="h-3 w-3" /> : rejected ? <X className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                                            {approved ? t('dashboard.contactRequests.approved') : waliPending ? t('dashboard.contactRequests.waliPending') : rejected ? t('dashboard.contactRequests.rejected') : t('dashboard.contactRequests.pending')}
                                         </span>
                                     </div>
                                 </div>
@@ -72,10 +75,15 @@ const MyContactRequests = () => {
                                                 <div className="min-w-0"><p className="text-xs text-muted-foreground">Email</p><p className="font-semibold text-foreground truncate">{request.email}</p></div>
                                             </a>
                                         </>
+                                    ) : rejected ? (
+                                        <div className="flex items-center gap-3 p-4 rounded-xl bg-rose-500/5 border border-rose-500/20">
+                                            <X className="h-4 w-4 text-rose-500 shrink-0" />
+                                            <p className="text-muted-foreground text-sm">The wali declined this request.</p>
+                                        </div>
                                     ) : (
                                         <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/50">
                                             <Lock className="h-4 w-4 text-muted-foreground shrink-0" />
-                                            <p className="text-muted-foreground text-sm">{t('dashboard.contactRequests.locked')}</p>
+                                            <p className="text-muted-foreground text-sm">{waliPending ? 'Contact info unlocks after the wali approves.' : t('dashboard.contactRequests.locked')}</p>
                                         </div>
                                     )}
                                     <Button variant="outline" className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(request._id)} disabled={deleteMutation.isLoading}>

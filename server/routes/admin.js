@@ -147,6 +147,61 @@ router.patch('/approve-premium/:biodataId', verifyToken, verifyAdmin, async (req
     }
 });
 
+// Get pending verification requests
+router.get('/verification-requests', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const biodatas = await Biodata.find({ 'verification.status': 'pending' })
+            .select('biodataId name userEmail age occupation permanentDivision verification');
+
+        res.json(biodatas);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Approve a verification request
+router.patch('/approve-verification/:biodataId', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const biodata = await Biodata.findOne({ biodataId: parseInt(req.params.biodataId) });
+
+        if (!biodata) {
+            return res.status(404).json({ message: 'Biodata not found' });
+        }
+
+        biodata.verification = {
+            ...biodata.verification?.toObject?.() ?? biodata.verification ?? {},
+            status: 'verified',
+            verifiedAt: new Date()
+        };
+        await biodata.save();
+
+        res.json({ message: 'Profile verified', biodata });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Reject a verification request
+router.patch('/reject-verification/:biodataId', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const biodata = await Biodata.findOne({ biodataId: parseInt(req.params.biodataId) });
+
+        if (!biodata) {
+            return res.status(404).json({ message: 'Biodata not found' });
+        }
+
+        biodata.verification = {
+            ...biodata.verification?.toObject?.() ?? biodata.verification ?? {},
+            status: 'rejected'
+        };
+        await biodata.save();
+
+        res.json({ message: 'Verification rejected', biodata });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 // Get all contact requests
 router.get('/contact-requests', verifyToken, verifyAdmin, async (req, res) => {
     try {

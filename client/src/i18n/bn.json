@@ -3,6 +3,7 @@
     "home": "হোম",
     "biodatas": "বায়োডাটা",
     "stories": "সাফল্যের গল্প",
+    "guidance": "গাইডেন্স",
     "about": "আমাদের সম্পর্কে",
     "contact": "যোগাযোগ",
     "dashboard": "ড্যাশবোর্ড",
@@ -244,7 +245,26 @@
       "contactHiddenDesc": "শুধুমাত্র প্রিমিয়াম সদস্যরা সরাসরি যোগাযোগের তথ্য দেখতে পারেন",
       "similarProfiles": "অনুরূপ প্রোফাইল",
       "noSimilar": "কোনো অনুরূপ প্রোফাইল পাওয়া যায়নি",
-      "years": "বছর"
+      "years": "বছর",
+      "deenProfile": "দ্বীন ও ইসলামিক পরিচিতি",
+      "maritalStatus": "বৈবাহিক অবস্থা",
+      "sect": "মজহব",
+      "religiousCommitment": "ধর্মীয় আনুগত্য",
+      "prayerFrequency": "নামাজ",
+      "modesty": "পর্দা (হিজাব / দাড়ি)",
+      "religiousEducation": "ধর্মীয় শিক্ষা",
+      "mahrPreference": "মোহরানা",
+      "smoking": "ধূমপান",
+      "diet": "খাদ্যাভ্যাস",
+      "alcoholFree": "মদমুক্ত",
+      "revert": "নতুন মুসলিম",
+      "children": "সন্তান",
+      "yes": "হ্যাঁ",
+      "no": "না",
+      "verified": "যাচাইকৃত",
+      "verifiedTooltip": "যাচাইকৃত প্রোফাইল (এনআইডি / ইমামের সুপারিশ)",
+      "waliProtected": "ওয়ালি সুরক্ষিত",
+      "requestContactWali": "যোগাযোগের অনুরোধ (ওয়ালির অনুমোদন)"
     }
   },
   "about": {
@@ -360,6 +380,7 @@
       "viewBiodata": "বায়োডাটা দেখুন",
       "myContactRequests": "আমার যোগাযোগ অনুরোধ",
       "favouritesBiodata": "ফেভারিট বায়োডাটা",
+      "wali": "ওয়ালি (অভিভাবক)",
       "gotMarried": "বিবাহিত হয়েছি",
       "adminDashboard": "অ্যাডমিন ড্যাশবোর্ড",
       "manageUsers": "ব্যবহারকারী ব্যবস্থাপনা",
@@ -421,7 +442,33 @@
       "save": "সংরক্ষণ এবং প্রকাশ করুন",
       "saving": "সংরক্ষণ হচ্ছে...",
       "required": "* চিহ্নিত সব ফিল্ড আবশ্যক",
-      "loading": "বায়োডাটা লোড হচ্ছে..."
+      "loading": "বায়োডাটা লোড হচ্ছে...",
+      "deenProfile": "দ্বীন ও ইসলামিক পরিচিতি",
+      "maritalStatus": "বৈবাহিক অবস্থা",
+      "selectMaritalStatus": "বৈবাহিক অবস্থা নির্বাচন করুন",
+      "sect": "মজহব / ফিকহ",
+      "selectSect": "মজহব নির্বাচন করুন",
+      "religiousCommitment": "ধর্মীয় আনুগত্য",
+      "selectCommitment": "মাত্রা নির্বাচন করুন",
+      "prayerFrequency": "নামাজের নিয়মিততা",
+      "selectPrayer": "নির্বাচন করুন",
+      "modesty": "পর্দা (হিজাব / দাড়ি)",
+      "selectModesty": "নির্বাচন করুন",
+      "selectTypeFirst": "প্রথমে বায়োডাটার ধরন নির্বাচন করুন",
+      "religiousEducation": "ধর্মীয় শিক্ষা",
+      "selectRelEducation": "নির্বাচন করুন",
+      "mahrPreference": "মোহরানার পছন্দ",
+      "selectMahr": "নির্বাচন করুন",
+      "smoking": "ধূমপান",
+      "selectSmoking": "নির্বাচন করুন",
+      "diet": "খাদ্যাভ্যাস",
+      "selectDiet": "নির্বাচন করুন",
+      "alcoholFree": "মদমুক্ত জীবনযাপন",
+      "revert": "নতুন মুসলিম (ইসলাম গ্রহণ)",
+      "hasChildren": "আমার সন্তান আছে",
+      "childrenCount": "সন্তানের সংখ্যা",
+      "childrenLivingWith": "সন্তান আপনার সাথে থাকে?",
+      "selectChildrenLivingWith": "নির্বাচন করুন"
     },
     "viewBiodata": {
       "badge": "আমার প্রোফাইল",
@@ -450,6 +497,8 @@
       "deleteConfirm": "হ্যাঁ, মুছুন!",
       "approved": "অনুমোদিত",
       "pending": "অপেক্ষমাণ",
+      "waliPending": "ওয়ালির অপেক্ষায়",
+      "rejected": "প্রত্যাখ্যাত",
       "namePlaceholder": "নাম উপলব্ধ নেই",
       "id": "আইডি:",
       "idHash": "#",
@@ -702,6 +751,65 @@
       "lightBrown": "হালকা বাদামী",
       "brown": "বাদামী",
       "dark": "কালো"
+    },
+    "maritalStatus": {
+      "neverMarried": "অবিবাহিত",
+      "divorced": "তালাকপ্রাপ্ত",
+      "widowed": "বিধবা/বিপত্নী",
+      "seekingPolygyny": "দ্বিতীয় বিবাহ চাই"
+    },
+    "sect": {
+      "sunniHanafi": "সুন্নি - হানাফী",
+      "sunniShafi": "সুন্নি - শাফেয়ী",
+      "sunniMaliki": "সুন্নি - মালেকী",
+      "sunniHanbali": "সুন্নি - হাম্বলী",
+      "shia": "শিয়া",
+      "other": "অন্যান্য"
+    },
+    "religiousCommitment": {
+      "practicing": "অনুশীলনকারী",
+      "moderate": "মাঝারি",
+      "cultural": "সাংস্কৃতিক"
+    },
+    "prayerFrequency": {
+      "fiveDaily": "প্রতিদিন পাঁচ ওয়াক্ত",
+      "sometimes": "মাঝে মাঝে",
+      "rarely": "কদাচিৎ"
+    },
+    "religiousEducation": {
+      "general": "সাধারণ",
+      "madrasa": "মাদ্রাসা",
+      "hifz": "হিফজ (কুরআন মুখস্থ)",
+      "alim": "আলেম",
+      "other": "অন্যান্য"
+    },
+    "modesty": {
+      "hijab": "হিজাব",
+      "niqab": "নিকাব",
+      "none": "পর্দা করে না",
+      "beard": "দাড়ি আছে",
+      "noBeard": "দাড়ি নেই"
+    },
+    "smoking": {
+      "no": "না",
+      "occasionally": "মাঝে মাঝে",
+      "yes": "হ্যাঁ"
+    },
+    "diet": {
+      "halalOnly": "শুধু হালাল",
+      "vegetarian": "নিরামিষ",
+      "other": "অন্যান্য"
+    },
+    "mahrPreference": {
+      "simple": "সাধারণ",
+      "moderate": "মাঝারি",
+      "asPerCapability": "সামর্থ্য অনুযায়ী",
+      "toDiscuss": "আলোচনা সাপেক্ষে"
+    },
+    "childrenLivingWith": {
+      "yes": "হ্যাঁ",
+      "no": "না",
+      "shared": "যৌথভাবে"
     }
   }
 }

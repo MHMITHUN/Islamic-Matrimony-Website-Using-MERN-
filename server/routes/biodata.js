@@ -210,4 +210,42 @@ router.post('/request-premium', verifyToken, async (req, res) => {
     }
 });
 
+// Request profile verification (NID / imam endorsement / community leader)
+router.post('/request-verification', verifyToken, async (req, res) => {
+    try {
+        const biodata = await Biodata.findOne({ userEmail: req.user.email });
+
+        if (!biodata) {
+            return res.status(404).json({ message: 'Please create a biodata first' });
+        }
+
+        if (biodata.verification?.status === 'verified') {
+            return res.status(400).json({ message: 'Profile is already verified' });
+        }
+
+        if (biodata.verification?.status === 'pending') {
+            return res.status(400).json({ message: 'Verification request already pending' });
+        }
+
+        const { method, referenceName, referenceContact } = req.body;
+        if (!method || method === 'none') {
+            return res.status(400).json({ message: 'Please choose a verification method' });
+        }
+
+        biodata.verification = {
+            status: 'pending',
+            method,
+            referenceName: referenceName || '',
+            referenceContact: referenceContact || '',
+            submittedAt: new Date(),
+            verifiedAt: null
+        };
+        await biodata.save();
+
+        res.json({ message: 'Verification request submitted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 module.exports = router;

@@ -22,6 +22,10 @@
 %---------- Geometry & page setup ----------
 \usepackage[a4paper,top=1.0in,bottom=1.0in,left=1.1in,right=1.1in,headheight=15pt]{geometry}
 \usepackage{fancyhdr}
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-60pt}{20pt}
 
 %---------- Encoding / fonts (pdflatex-safe, 7-bit ASCII diagrams) ----------
 \usepackage[T1]{fontenc}
@@ -106,17 +110,30 @@
 \renewcommand{\bibname}{References}
 \renewcommand{\contentsname}{Table of Contents}
 
-%---------- Helper: UI screenshot placeholder (replace with \includegraphics) ----------
+%---------- Helper: UI screenshot loader / placeholder ----------
 \newcommand{\uifig}[3]{%
   \begin{figure}[H]
   \centering
-  \setlength{\fboxsep}{10pt}\setlength{\fboxrule}{0.4pt}%
-  \fcolorbox{slate!40}{codebg}{%
-    \begin{minipage}[c][5.2cm][c]{0.88\textwidth}\centering
-      \itshape\small #3
-    \end{minipage}}%
+  \IfFileExists{#3}{%
+    \includegraphics[width=0.88\textwidth]{#3}%
+  }{%
+    \setlength{\fboxsep}{10pt}\setlength{\fboxrule}{0.4pt}%
+    \fcolorbox{slate!40}{codebg}{%
+      \begin{minipage}[c][5.2cm][c]{0.88\textwidth}\centering
+        \itshape\small \detokenize{#3}
+      \end{minipage}}%
+  }%
   \caption{#1}\label{#2}
   \end{figure}}
+
+%---------- Safe graphics: degrade to a placeholder box if a file is missing
+\newcommand{\safegfx}[2]{%
+  \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+    \setlength{\fboxsep}{8pt}\setlength{\fboxrule}{0.4pt}%
+    \fcolorbox{slate!40}{codebg}{%
+      \begin{minipage}[c][4cm][c]{0.9\textwidth}\centering
+        \itshape\small [image not found: \detokenize{#2}]
+      \end{minipage}}}}
 
 \begin{document}
 
@@ -223,7 +240,11 @@ modules including biodata management, filtered search, a compatibility matching
 engine, contact-request workflow with payment gating, favourites, messaging,
 notifications, profile-view tracking, recently-viewed history, premium
 subscriptions, success stories, a reporting system, and a rich analytics-driven
-admin dashboard. The interface is bilingual (English / Bangla), fully
+admin dashboard. Uniquely for the market, several modules implement Islamic
+principles directly: a \emph{deen}-weighted compatibility engine (with religion
+as the largest scoring factor), a \emph{wali} (guardian) oversight workflow on
+the contact-request path, NID/imam profile verification, halal-communication
+message templates, a mahr preference field, and an Islamic guidance hub. The interface is bilingual (English / Bangla), fully
 responsive, ships with a dark mode, and is deployed on free-tier cloud
 infrastructure --- the API on Vercel, the front end on Netlify, and the database
 on MongoDB Atlas.
@@ -383,9 +404,12 @@ the strengths and weaknesses of the most relevant competitors.
 \midrule
 Shaadi.com       & Large user base, global reach       & Not Islam-specific, expensive, English-only \\
 Muslima.com      & Muslim audience, international       & Outdated interface, limited Bangla, costly  \\
+Biyeta (BD)      & Largest Bangladeshi Muslim user base, Bangla, halal branding, mobile app & Fake-profile complaints, weak verification, no structured compatibility algorithm, no wali-in-the-loop, costly premium \\
 BiyeKotha (BD)   & Bangla support, local focus          & Poor UI, limited features, not mobile-friendly \\
-Muzz (Muzmatch)  & Muslim-focused, modern, app-based    & Heavy premium model, few free features \\
+Muzz (Muzmatch)  & Muslim-focused, modern, app-based, optional chaperone & Casual-dating framing, heavy premium model, few free features, weak Bangla \\
 Tinder / Bumble  & Modern interface, large user base    & Not for marriage, no Islamic alignment \\
+\midrule
+\textbf{Nikah (this work)} & \textbf{Islamic-by-design flow (wali oversight, deen-compatibility scoring, halal-communication templates, NID/imam verification), Bangla + English, freemium, admin analytics} & \textbf{New platform (smaller initial user base than incumbents)} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -394,6 +418,12 @@ The recurring gaps identified were:
 \begin{itemize}
   \item No single platform combines a modern interface, Islamic values and
         Bangla support.
+  \item None incorporates a \emph{religious} (deen) dimension into its
+        compatibility engine --- religion is at most a search filter, never a
+        matching factor.
+  \item None builds \emph{wali} (guardian) consent into the contact-request
+        flow; at best an optional ``chaperone'' feature exists.
+  \item Verification against fake profiles is weak or absent across the board.
   \item None offers a structured compatibility matching algorithm.
   \item Administrator dashboards with analytics are absent across the board.
   \item Role-based access with a premium tier is not implemented.
@@ -403,20 +433,52 @@ The recurring gaps identified were:
 
 Nikah addresses every one of these gaps: it unifies a modern shadcn/ui and
 Tailwind interface with Islamic privacy controls, full Bangla support, a
-compatibility engine, an analytics dashboard, messaging, notifications and a
-freemium subscription model.
+\emph{deen-weighted} compatibility engine (with religion as the largest scoring
+factor), built-in \emph{wali} oversight of contact requests, NID/imam profile
+verification, halal-communication templates, an analytics dashboard, messaging,
+notifications and a freemium subscription model.
 
 \section{Supporting Literatures}
 The work draws on several bodies of knowledge --- Islamic teachings on marriage,
 modern web architecture patterns, authentication frameworks, and the specific
 front-end and back-end technologies employed.
 
-\paragraph{Islamic foundations.} The platform respects the principle of
-\emph{hijab} by gating contact information --- it is revealed only after a
-verified, paid or premium request. Biodata captures the father's and mother's
-names so that families are involved. Communication is structured and
-verifiable, and the hadith on marriage completing half of one's faith
-(al-Bayhaqi) is the underlying motivation.
+\paragraph{Islamic foundations.} Nikah is deliberately Islamic-by-design rather
+than Islamic-by-filter: every distinctive module maps to a recognised Islamic
+principle, so the platform is not merely a generic matrimony engine with a
+green theme. Table~\ref{tab:islamic-mapping} summarises this mapping, which
+constitutes the project's core value proposition.
+
+\begin{table}[H]
+\centering
+\caption{Mapping of Nikah modules to Islamic principles.}
+\label{tab:islamic-mapping}
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Module} & \textbf{Islamic principle it implements} \\
+\midrule
+Deen-compatibility matching & The Prophet (peace be upon him) directed: ``A woman is married for four things --- her wealth, her lineage, her beauty and her religious commitment; so marry the religious one, you will prosper'' (Sahih al-Bukhari~5090). Religion is therefore weighted as the single largest factor ($35\%$) in the score. \\
+Wali (guardian) oversight & A valid nikah requires the consent of the \emph{wali} (Qur'an~4:25). Each contact request to a wali-protected profile must be approved by the guardian via a single-use magic link before contact details are shared. \\
+Contact gating (\emph{hijab}) & Personal contact information is hidden until a verified, paid or premium request --- preserving modesty and consent, never exposing details casually. \\
+Halal communication & Initial contact is scaffolded by respectful, marriage-intent message templates; senders may CC the recipient's wali; and an etiquette reminder keeps interaction purposeful, discouraging casual mixing. \\
+Mahr preference field & The \emph{mahr} is the wife's Qur'anic right (Qur'an~4:4). Surfacing it on the biodata sets expectations transparently before any commitment. \\
+Profile verification (NID/imam) & Deception (\emph{ghish}) is prohibited in Islam. NID- or imam-endorsed verification combats fake profiles and builds trust. \\
+Guidance hub & Educational content on choosing a spouse, istikhara, mahr, wali and marital rights is offered as \emph{sadaqah jariyah} (perpetual charity), adding value beyond matching. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Three further points reinforce this foundation. First, the hadith that
+``when a person marries, he has completed half of his religion'' (al-Bayhaqi)
+motivates the entire platform: a tool that helps Muslims complete that half
+\emph{halal}ly is itself an act of worship. Second, the platform respects the
+principle of \emph{hijab} by gating contact information, and captures both
+parents' names so that families remain central. Third, wali oversight is
+modelled as a real workflow rather than a label --- the guardian receives a
+verifiable approval link and can approve or decline each suitor, mirroring the
+protective role the guardian holds in Islamic marriage.
 
 \paragraph{Architecture.} The system follows a classical three-tier pattern:
 a React single-page presentation layer, an Express REST application layer with
@@ -447,12 +509,16 @@ the front end is served by Netlify with continuous deployment from Git.
 \section{Problem Statement and Research Gap}
 The specific problem this project solves can be stated as follows:
 \emph{Bangladeshi Muslims lack a single, trustworthy online platform that
-simultaneously (a) respects Islamic privacy and family involvement, (b) speaks
-their language, (c) matches compatibility systematically rather than only by
-free-text search, (d) protects contact information behind verified access, and
-(e) gives operators meaningful administrative oversight.} Existing solutions
-each satisfy at most one or two of these requirements. Nikah is the integrated
-response to that research gap.
+simultaneously (a) respects Islamic privacy and family involvement --- including
+real \emph{wali} (guardian) consent in the contact flow, (b) matches on
+religious compatibility (\emph{deen}) and not only on age, location or
+appearance, (c) speaks their language, (d) matches compatibility systematically
+rather than only by free-text search, (e) protects contact information behind
+verified access, and (f) gives operators meaningful administrative oversight.}
+Existing solutions each satisfy at most one or two of these requirements.
+Nikah is the integrated response to that research gap: an Islamic marriage
+process delivered as software, rather than a matrimony site that merely permits
+Muslim users.
 
 %==============================================================================
 \chapter{System Analysis and Design}
@@ -686,41 +752,16 @@ service.
 \end{figure}
 
 \section{Data-Flow Diagram (DFD-1)}
-The first-level decomposition (Listing~\ref{lst:dfd1}) breaks the system into
+The first-level decomposition (Figure~\ref{fig:dfd1}) breaks the system into
 six cooperating subsystems --- authentication, biodata management, contact
 requests, payment, messaging and notifications --- all of which read from and
 write to the shared MongoDB database.
 
 \begin{figure}[H]
-\begin{lstlisting}[style=ascii,caption={First-level data-flow diagram (DFD-1).},label={lst:dfd1}]
-                 +-------------------+        <---- Firebase Auth
-                 |  Authentication   |
-                 |    Subsystem      |
-                 +---------+---------+
-                           |
-                           v
-+--------+    +-------------------+    +-----------------------+
-| Guest  |--->|  Biodata          |--->|  Contact-Request      |
-+--------+    |  Management       |    |  Subsystem            |
-              +---------+---------+    +-----------+-----------+
-                        |                          |
-                        v                          v
-              +-------------------+    +-----------------------+
-              |  Match / Search   |    |  Payment Subsystem    |
-              +---------+---------+    |  (Stripe, demo)       |
-                        |              +-----------+-----------+
-                        v                          |
-+--------+    +-------------------+               |
-| Admin  |--->|  Messaging &      |               v
-+--------+    |  Chat Subsystem   |    +-----------------------+
-              +---------+---------+    |  Notification         |
-                        |              |  Subsystem            |
-                        v              +-----------+-----------+
-              +-----------------------------------------------+
-              |          MongoDB Database (Atlas)             |
-              |               13 Collections                   |
-              +-----------------------------------------------+
-\end{lstlisting}
+\centering
+\safegfx{width=\textwidth,keepaspectratio}{dfd1.png}
+\caption{First-level data-flow diagram (DFD-1).}
+\label{fig:dfd1}
 \end{figure}
 
 \section{Database Schema}
@@ -783,14 +824,25 @@ The activity diagram (Figure~\ref{fig:actdiagram}) details the step-by-step user
 
 \subsection{Compatibility Matching}
 The matching algorithm compares a member's stored partner preferences against
-every opposite-gender candidate and produces a percentage score in the range
-0--100. Four criteria are evaluated: age range, height, division and
-occupation. The score is the ratio of matched criteria to the number of
-applicable criteria, expressed as a percentage, and a per-criterion breakdown
-is returned so that members can see exactly what matched. Up to fifty
+every opposite-gender candidate and produces a weighted percentage score in the
+range 0--100. Five criteria are evaluated, each contributing a fixed weight:
+\textbf{deen (35\%)}, age range (25\%), height (15\%), division (15\%) and
+occupation (10\%). Religion (\emph{deen}) is deliberately the single largest
+factor, implementing the Prophetic guidance to prioritise religious commitment
+when choosing a spouse (Sahih al-Bukhari~5090).
+
+The deen sub-score itself combines four signals --- sect/madhhab (weight
+$0.4$), prayer frequency ($0.25$), religious commitment ($0.25$) and religious
+education ($0.10$) --- normalised by the signals actually present on both
+profiles. A binary \texttt{deenMatch} flag is set when this normalised sub-score
+reaches $0.70$. The secular factors contribute their full weight on an exact
+match. Factors whose data is absent on either profile are excluded and the
+final score is normalised by the sum of the weights actually computable, so
+that profiles with sparse data are not unfairly penalised. Up to fifty
 candidates are scored and the top twenty are returned, sorted in descending
-order. The flowchart is shown in Figure~\ref{fig:matchflow}, and the
-implementation in Listing~\ref{lst:match}.
+order, each with a per-factor breakdown so members can see exactly what
+matched. The simplified flowchart is shown in Figure~\ref{fig:matchflow}, and
+the implementation in Figure~\ref{fig:compatibility}.
 
 \begin{figure}[H]
 \centering
@@ -808,8 +860,8 @@ implementation in Listing~\ref{lst:match}.
 \node[proc, below=of p1] (p2) {Fetch up to 50 opposite-gender biodatas};
 \node[proc, below=of p2] (p3) {Select next candidate};
 \node[dec, below=of p3] (d) {More candidates?};
-\node[proc, below=of d, yshift=-0.15cm] (p4) {Test: age, height, division, occupation};
-\node[proc, below=of p4] (p5) {Score = matched / total $\times$ 100};
+\node[proc, below=of d, yshift=-0.15cm] (p4) {Test: deen, age, height, division, occupation};
+\node[proc, below=of p4] (p5) {Weighted score: deen 35, age 25, ...};
 \node[proc, below=of p5] (p6) {Append to results, loop back};
 \node[startend, below=of p6] (e) {End: sort desc, return top 20};
 \draw[arr] (s)--(p1); \draw[arr] (p1)--(p2); \draw[arr] (p2)--(p3);
@@ -824,35 +876,10 @@ implementation in Listing~\ref{lst:match}.
 \end{figure}
 
 \begin{figure}[H]
-\begin{lstlisting}[language=JavaScript,caption={Compatibility scoring (server, simplified).},label={lst:match}]
-function calculateCompatibility(myBio, target) {
-  let score = 0, total = 0;
-  const details = { ageMatch:false, heightMatch:false,
-                    divisionMatch:false, occupationMatch:false };
-  // 1. Age within the expected "min-max" range
-  if (myBio.expectedPartnerAge && target.age) {
-    total++;
-    const [min, max] = myBio.expectedPartnerAge.split('-').map(Number);
-    if (target.age >= min && target.age <= max) { score++; details.ageMatch = true; }
-  }
-  // 2. Exact height match
-  if (myBio.expectedPartnerHeight && target.height) {
-    total++;
-    if (myBio.expectedPartnerHeight === target.height) { score++; details.heightMatch = true; }
-  }
-  // 3. Same permanent division
-  if (myBio.permanentDivision && target.permanentDivision) {
-    total++;
-    if (myBio.permanentDivision === target.permanentDivision) { score++; details.divisionMatch = true; }
-  }
-  // 4. Same occupation
-  if (myBio.occupation && target.occupation) {
-    total++;
-    if (myBio.occupation === target.occupation) { score++; details.occupationMatch = true; }
-  }
-  return { score: total > 0 ? Math.round((score / total) * 100) : 0, details };
-}
-\end{lstlisting}
+\centering
+\safegfx{width=\textwidth,keepaspectratio}{compatibility.png}
+\caption{Compatibility scoring logic.}
+\label{fig:compatibility}
 \end{figure}
 
 \subsection{Authentication Flow}
@@ -860,55 +887,21 @@ Two authentication paths exist. \textbf{Members} authenticate through Firebase
 (email/password or Google) and the verified identity is exchanged for a
 server JWT at \texttt{POST /api/auth/jwt}. \textbf{Administrators} authenticate
 directly against environment-configured credentials at
-\texttt{POST /api/auth/admin-login}, entirely outside Firebase. The flow is
-shown in Listing~\ref{lst:authflow}.
+\texttt{POST /api/auth/admin-login}, entirely outside Firebase. The flow is shown in Figure~\ref{fig:authflow}.
 
 \begin{figure}[H]
-\begin{lstlisting}[style=ascii,caption={Authentication flow (member and administrator paths).},label={lst:authflow}]
-Visit site -> Login / Register
-   |
-   +--[ MEMBER ]--> Email/Password or Google --> Firebase validates
-   |                   |                          |
-   |                   |  (fail) -> show error    (ok) -> POST /api/auth/jwt
-   |                   |                                         |
-   |                   |                       Server upserts User (role=user)
-   |                   |                                         |
-   |                   |                       Signs JWT (7-day expiry)
-   |                   |                                         |
-   |                   +<----------- token stored, redirect -----+
-   |
-   +--[ ADMIN  ]--> /admin-login -> POST /api/auth/admin-login (email+password)
-                       |
-                       Server checks ADMIN_EMAIL + ADMIN_PASSWORD (bcrypt or plain)
-                       |
-                       (fail) -> 401 Invalid admin credentials
-                       (ok)   -> upserts User (role=admin, isPremium=true),
-                                 signs JWT with adminLogin claim (7-day expiry)
-                       |
-                       Client builds synthetic admin user, sets isAdmin=true,
-                       redirects to /dashboard/admin
-\end{lstlisting}
+\centering
+\safegfx{width=\textwidth,keepaspectratio}{auth_flow.png}
+\caption{Authentication flow (member and administrator paths).}
+\label{fig:authflow}
 \end{figure}
 
 \subsection{Contact-Request Workflow}
 \begin{figure}[H]
-\begin{lstlisting}[style=ascii,caption={Contact-information request workflow.},label={lst:contactflow}]
-Member views biodata -> clicks "Request Contact Information"
-   |
-   +--[ Premium member ]--> create request directly
-   |
-   +--[ Regular member ]--> redirect to Stripe checkout
-                               |
-                               payment completed (demo)
-                               |
-                               create ContactRequest with paymentId
-   |
-   v
-Status: pending -> administrator notified -> administrator approves
-   |
-   v
-Member can now view the contact information
-\end{lstlisting}
+\centering
+\safegfx{width=\textwidth,keepaspectratio}{contact_flow.png}
+\caption{Contact-information request workflow.}
+\label{fig:contactflow}
 \end{figure}
 
 %==============================================================================
@@ -983,7 +976,7 @@ with HTTP~403.
 
 \paragraph{Environment-based administrator login.}
 This is a deliberate security design. The administrator does \emph{not} use
-Firebase. At \texttt{POST /api/auth/admin-login} (Listing~\ref{lst:adminlogin})
+Firebase. At \texttt{POST /api/auth/admin-login} (Figure~\ref{fig:adminlogin})
 the server compares the supplied credentials against
 \texttt{ADMIN\_EMAIL} and \texttt{ADMIN\_PASSWORD}. The password is accepted
 either as a \texttt{bcrypt} hash \emph{or} as plain text (dual-mode compare),
@@ -994,25 +987,10 @@ client sets \texttt{isAdmin} directly from this response, the administrator can
 enter \texttt{/dashboard/admin/*} without ever touching Firebase.
 
 \begin{figure}[H]
-\begin{lstlisting}[language=JavaScript,caption={Environment-based administrator login (server, simplified).},label={lst:adminlogin}]
-router.post('/admin-login', async (req, res) => {
-  const { email, password } = req.body;
-  const adminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD || '';
-  if (!adminEmail || !adminPassword)
-    return res.status(503).json({ message: 'Admin login not configured.' });
-  if (email.trim().toLowerCase() !== adminEmail)
-    return res.status(401).json({ message: 'Invalid admin credentials.' });
-  const ok = await bcrypt.compare(password, adminPassword)   // hashed
-           || password === adminPassword;                    // or plain
-  if (!ok) return res.status(401).json({ message: 'Invalid admin credentials.' });
-  // upsert admin user, then sign a 7-day JWT with an adminLogin claim
-  const token = jwt.sign(
-    { email, name: 'Admin', role: 'admin', isPremium: true, adminLogin: true },
-    process.env.JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, user: { /* ... */ } });
-});
-\end{lstlisting}
+\centering
+\safegfx{width=\textwidth,keepaspectratio}{admin_login_flow.png}
+\caption{Environment-based administrator login (server, simplified).}
+\label{fig:adminlogin}
 \end{figure}
 
 \paragraph{Route modules.} The seventeen routers expose seventy handlers across
@@ -1034,27 +1012,33 @@ not own the biodata; CORS validates origins; and all secrets live in
 environment variables. The \texttt{.env} file is git-ignored.
 
 \section{Modules and Features}
-The following fifteen functional modules were implemented:
+The following functional modules were implemented (fifteen core modules, with five additional Islamic-specific modules marked with $\star$):
 
 \begin{enumerate}
   \item \textbf{Authentication} --- Firebase email/password and Google for
         members, plus a separate secure, environment-based administrator login.
   \item \textbf{Biodata management} --- create and update biodata with sixteen
         or more fields, auto-incrementing IDs and automatic age calculation
-        from date of birth.
+        from date of birth, including a Deen \& Islamic profile section
+        (sect, prayer, modesty, religious commitment, mahr preference, lifestyle).
+        $\star$
   \item \textbf{Search and discovery} --- filter by gender, division, age range
         and occupation, with pagination (twenty per page) and sort options.
   \item \textbf{Contact-request system} --- request contact info with a Stripe
         payment for non-premium members, an administrator approval workflow,
-        and a premium bypass.
+        and a premium bypass; requests to wali-protected profiles are routed
+        through guardian approval. $\star$
   \item \textbf{Favourites} --- add and remove bookmarks with duplicate
         prevention.
   \item \textbf{Messaging} --- inbox, sent and conversation threading with
-        unread tracking and notification generation.
-  \item \textbf{Notifications} --- six notification types with unread badge,
-        mark-as-read, mark-all-read and delete.
-  \item \textbf{Compatibility matching} --- 0--100 percentage scoring across
-        four criteria with a per-criterion breakdown and a mutual-score view.
+        unread tracking and notification generation, plus halal initial-contact
+        templates and an optional CC-the-wali feature. $\star$
+  \item \textbf{Notifications} --- notification types (including wali-related)
+        with unread badge, mark-as-read, mark-all-read and delete.
+  \item \textbf{Compatibility matching} --- 0--100 weighted scoring across five
+        criteria (deen, age, height, division, occupation) with religion as the
+        dominant factor and a per-factor breakdown and mutual-score view.
+        $\star$
   \item \textbf{Profile-view tracking} --- records views with self-view and
         one-hour duplicate suppression, and reports total and unique viewers.
   \item \textbf{Recently viewed} --- a per-user history of recently browsed
@@ -1069,7 +1053,17 @@ The following fifteen functional modules were implemented:
         administrator.
   \item \textbf{Administration dashboard} --- analytics charts for user growth,
         gender, location and age distribution, plus user management, premium and
-        contact approvals, content moderation and revenue.
+        contact approvals, verification approvals, content moderation and revenue.
+  \item \textbf{Wali (guardian) oversight} $\star$ --- members enable wali
+        oversight and supply guardian details; each contact request to a
+        protected profile generates a single-use approval link the wali uses to
+        approve or decline before contact details are shared.
+  \item \textbf{Profile verification} $\star$ --- members request
+        verification via NID, imam endorsement or a community-leader reference;
+        administrators review and grant a verified badge that signals trust.
+  \item \textbf{Islamic guidance hub} $\star$ --- bilingual, referenced
+        articles on marriage in Islam, choosing a spouse, istikhara, mahr, wali
+        and witnesses, and marital rights, plus an ``Ask an Imam'' route.
   \item \textbf{Internationalization and theming} --- English/Bangla switching
         persisted to storage and sent as a request header, plus a class-based
         dark/light theme with a system-preference fallback.
@@ -1127,9 +1121,9 @@ Terms, and a success-stories gallery and a biodata comparison page are also
 available. Representative interfaces are illustrated in
 Figures~\ref{fig:home}--\ref{fig:listing}.
 
-\uifig{Home page hero with branding and primary calls to action.}{fig:home}{[Insert screenshot --- Home / hero section]}
-\uifig{Biodata details page with contact-request and favourite actions.}{fig:details}{[Insert screenshot --- Biodata details page]}
-\uifig{Biodatas listing with filter sidebar and paginated card grid.}{fig:listing}{[Insert screenshot --- Biodatas listing page]}
+\uifig{Home page hero with branding and primary calls to action.}{fig:home}{fig5_1_home.png}
+\uifig{Biodata details page with contact-request and favourite actions.}{fig:details}{fig5_2_details.png}
+\uifig{Biodatas listing with filter sidebar and paginated card grid.}{fig:listing}{fig5_3_listing.png}
 
 \subsection{Panel B --- User Dashboard}
 The dashboard provides an overview (biodata status, unread messages,
@@ -1141,8 +1135,8 @@ scores and breakdowns); \textbf{favourites}; \textbf{contact requests};
 \textbf{profile views}; \textbf{recently viewed}; \textbf{settings} (theme,
 language, account); and \textbf{Got Married} (success-story submission).
 
-\uifig{User dashboard overview with summary cards and activity feed.}{fig:userdash}{[Insert screenshot --- User dashboard overview]}
-\uifig{Compatibility matches with percentage scores and breakdowns.}{fig:matches}{[Insert screenshot --- Matches page]}
+\uifig{User dashboard overview with summary cards and activity feed.}{fig:userdash}{fig5_4_userdash.png}
+\uifig{Compatibility matches with percentage scores and breakdowns.}{fig:matches}{fig5_5_matches.png}
 
 \subsection{Panel C --- Admin Panel}
 The administrator dashboard shows stat cards, an area chart for thirty-day user
@@ -1153,17 +1147,25 @@ premium), \textbf{approved premium}, \textbf{approved contacts},
 \textbf{contact messages}, \textbf{success stories} moderation, and
 \textbf{reported profiles}.
 
-\uifig{Administrator dashboard with analytics charts and stat cards.}{fig:admindash}{[Insert screenshot --- Admin dashboard]}
-\uifig{Manage users table with role and premium controls.}{fig:manageusers}{[Insert screenshot --- Manage Users page]}
+\uifig{Administrator dashboard with analytics charts and stat cards.}{fig:admindash}{fig5_6_admindash.png}
+\uifig{Manage users table with role and premium controls.}{fig:manageusers}{fig5_7_manageusers.png}
 
 \subsection{Login Credentials}
-\textbf{Test member} (illustrative) --- e-mail \texttt{user@test.com},
-password \texttt{User@123}.
-\textbf{Administrator} --- the administrator logs in at \texttt{/admin-login}
-using the e-mail and password configured in the server's
-\texttt{ADMIN\_EMAIL} and \texttt{ADMIN\_PASSWORD} environment variables;
-registration with the administrator e-mail through the public form is not
-permitted.
+\begin{description}[leftmargin=1.5em]
+  \item[\textbf{Administrator Access:}]
+        The administrator authenticates through the dedicated secret route \texttt{/admin-login} using the environment-configured credentials:
+        \begin{itemize}
+          \item \textbf{E-mail:} \texttt{ummati2025@gmail.com}
+          \item \textbf{Password:} \texttt{nikahteamsdp04@}
+        \end{itemize}
+        Public user registration with the administrator e-mail address is strictly restricted by system security policies.
+  \item[\textbf{Test Member Access:}]
+        Regular members can register via \texttt{/register} or authenticate with test member credentials:
+        \begin{itemize}
+          \item \textbf{E-mail:} \texttt{user@test.com}
+          \item \textbf{Password:} \texttt{User@123}
+        \end{itemize}
+\end{description}
 
 \section{Getting Started}
 Clone the repository, run \texttt{npm install} in both \texttt{client/} and
@@ -1192,9 +1194,13 @@ environment-based administrator login that is isolated from Firebase, an
 origin-validated CORS policy, and active demotion of stale administrator roles
 combine to keep the platform locked down. The deployment is live --- the API on
 Vercel, the front end on Netlify and the database on MongoDB Atlas, all on free
-tiers. Just as importantly, the features were designed around Islamic values:
-privacy through contact gating, family involvement through parent-name fields,
-and verifiable, structured communication that supports halal matchmaking.
+tiers. Just as importantly, the features were designed around Islamic values
+and now back that claim with real functionality: deen-weighted compatibility
+matching (with religion as the largest scoring factor), wali (guardian)
+oversight of every contact request to a protected profile, NID/imam profile
+verification, halal-communication message templates, mahr transparency, an
+Islamic guidance hub, contact gating for privacy, and parent-name fields for
+family involvement.
 
 \section{Limitations}
 \begin{enumerate}
@@ -1206,31 +1212,30 @@ and verifiable, structured communication that supports halal matchmaking.
         Nagad and Rocket are not integrated.
   \item \textbf{No real-time transport.} Messaging and notifications operate on
         a request-response cycle; WebSockets would make chat instantaneous.
-  \item \textbf{Rule-based matching.} The engine compares four criteria with
-        equal weight; machine learning could produce more nuanced
-        recommendations.
-  \item \textbf{No identity verification.} The platform trusts user-entered
-        data; a verification system would build trust.
+  \item \textbf{Rule-based matching.} The engine is a transparent weighted model
+        (deen, age, height, division, occupation); machine learning could
+        produce more nuanced recommendations from interaction data.
+  \item \textbf{Verification is manual.} Profiles can be marked verified through
+        admin review of NID/imam references, but the flow is not yet wired to an
+        automated identity provider.
   \item \textbf{Single administrator identity.} Administrator access is pinned
         to one environment-configured account; a permission hierarchy would be
         more flexible.
   \item \textbf{Two languages only.} English and Bangla are covered; Arabic and
         Urdu would broaden reach.
-  \item \textbf{No guardian (wali) workflow.} Guardian involvement, central to
-        Islamic marriage, is not yet modelled.
 \end{enumerate}
 
 \section{Future Works}
 Priority directions for future work include native mobile applications (React
 Native); AI-powered matchmaking that learns from interaction patterns;
-WebRTC-based voice and video calling for premium members; background
-verification (identity, education, employment); additional languages; real
-payment integration with Stripe, bKash, Nagad and Rocket; a guardian (wali)
-system that can review messages and approve matches; advanced analytics and
-match-success prediction; wedding-planning tools (vendor directories,
-checklists, budgets); community features (counselling resources, scholar
-consultations); real-time chat with typing indicators and read receipts; and
-verified-profile badges.
+WebRTC-based voice and video calling for premium members; automated background
+verification (connecting the existing NID/imam verification flow to a real
+identity provider for education and employment checks); additional languages;
+real payment integration with Stripe, bKash, Nagad and Rocket; real-time wali
+email delivery (currently stubbed, with a magic-link fallback); advanced
+analytics and match-success prediction; wedding-planning tools (vendor
+directories, checklists, budgets); deeper community features (live scholar
+consultations); and real-time chat with typing indicators and read receipts.
 
 %==============================================================================
 %  BACK MATTER
@@ -1305,8 +1310,13 @@ WCAG          & Web Content Accessibility Guidelines. \\
 DFD           & Data Flow Diagram. \\
 ER Diagram    & Entity-Relationship Diagram. \\
 Hijab         & Islamic concept of modesty and privacy. \\
-Wali          & Islamic marriage guardian. \\
+Wali          & Islamic marriage guardian whose consent is required for a valid nikah. \\
 Halal         & Permissible under Islamic law. \\
+Deen          & Religion / religious commitment (Arabic). \\
+Mahr          & The mandatory bridal gift given by the husband to the wife at marriage (Qur'an 4:4). \\
+Istikhara     & The prayer of seeking Allah's guidance before a decision. \\
+Madhhab       & A school of Islamic jurisprudence (e.g. Hanafi, Shafi'i). \\
+Sadaqah Jariyah & Perpetual charity --- continuous good deeds. \\
 bKash/Nagad/Rocket & Mobile financial services in Bangladesh. \\
 \bottomrule
 \end{tabularx}

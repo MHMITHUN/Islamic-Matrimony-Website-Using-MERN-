@@ -29,6 +29,9 @@ import Terms from './pages/Terms/Terms';
 import NotFound from './pages/NotFound/NotFound';
 import Stories from './pages/Stories/Stories';
 import Compare from './pages/Compare/Compare';
+import WaliDecision from './pages/Wali/WaliDecision';
+import GuidanceHub from './pages/Guidance/GuidanceHub';
+import GuidanceArticle from './pages/Guidance/GuidanceArticle';
 
 // User Dashboard Pages
 import UserOverview from './pages/Dashboard/User/UserOverview';
@@ -44,6 +47,7 @@ import Messages from './pages/Dashboard/User/Messages';
 import Notifications from './pages/Dashboard/User/Notifications';
 import ProfileViews from './pages/Dashboard/User/ProfileViews';
 import Matches from './pages/Dashboard/User/Matches';
+import WaliPanel from './pages/Dashboard/User/WaliPanel';
 
 // Admin Dashboard Pages
 import AdminDashboard from './pages/Dashboard/Admin/AdminDashboard';
@@ -53,6 +57,7 @@ import ApprovedContacts from './pages/Dashboard/Admin/ApprovedContacts';
 import AdminSuccessStories from './pages/Dashboard/Admin/AdminSuccessStories';
 import ContactMessages from './pages/Dashboard/Admin/ContactMessages';
 import ReportedProfiles from './pages/Dashboard/Admin/ReportedProfiles';
+import VerificationRequests from './pages/Dashboard/Admin/VerificationRequests';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,6 +85,9 @@ const router = createBrowserRouter([
       { path: 'terms', element: <Terms /> },
       { path: 'stories', element: <Stories /> },
       { path: 'compare', element: <Compare /> },
+      { path: 'wali/approve/:token', element: <WaliDecision /> },
+      { path: 'guidance', element: <GuidanceHub /> },
+      { path: 'guidance/:slug', element: <GuidanceArticle /> },
       {
         path: 'biodata/:id',
         element: (
@@ -120,6 +128,7 @@ const router = createBrowserRouter([
       { path: 'notifications', element: <Notifications /> },
       { path: 'profile-views', element: <ProfileViews /> },
       { path: 'matches', element: <Matches /> },
+      { path: 'wali', element: <WaliPanel /> },
       { path: 'settings', element: <Settings /> },
 
       // Admin Dashboard Routes
@@ -152,6 +161,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <ApprovedContacts />
+          </AdminRoute>
+        )
+      },
+      {
+        path: 'admin/verification-requests',
+        element: (
+          <AdminRoute>
+            <VerificationRequests />
           </AdminRoute>
         )
       },

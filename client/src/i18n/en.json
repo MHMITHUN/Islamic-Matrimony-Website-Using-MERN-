@@ -3,6 +3,7 @@
     "home": "Home",
     "biodatas": "Biodatas",
     "stories": "Stories",
+    "guidance": "Guidance",
     "about": "About Us",
     "contact": "Contact Us",
     "dashboard": "Dashboard",
@@ -244,7 +245,26 @@
       "contactHiddenDesc": "Only premium members can view contact information directly",
       "similarProfiles": "Similar Profiles",
       "noSimilar": "No similar profiles found",
-      "years": "years"
+      "years": "years",
+      "deenProfile": "Deen & Islamic Profile",
+      "maritalStatus": "Marital Status",
+      "sect": "Sect / Madhhab",
+      "religiousCommitment": "Religious Commitment",
+      "prayerFrequency": "Prayer (Salah)",
+      "modesty": "Modesty (Hijab / Beard)",
+      "religiousEducation": "Religious Education",
+      "mahrPreference": "Mahr Preference",
+      "smoking": "Smoking",
+      "diet": "Diet",
+      "alcoholFree": "Alcohol-free",
+      "revert": "Revert",
+      "children": "Children",
+      "yes": "Yes",
+      "no": "No",
+      "verified": "Verified",
+      "verifiedTooltip": "Verified profile (NID / Imam endorsement)",
+      "waliProtected": "Wali-protected",
+      "requestContactWali": "Request Contact (Wali approval)"
     }
   },
   "about": {
@@ -360,6 +380,7 @@
       "viewBiodata": "View Biodata",
       "myContactRequests": "My Contact Requests",
       "favouritesBiodata": "Favourites Biodata",
+      "wali": "Wali (Guardian)",
       "gotMarried": "Got Married",
       "adminDashboard": "Admin Dashboard",
       "manageUsers": "Manage Users",
@@ -421,7 +442,33 @@
       "save": "Save And Publish Now",
       "saving": "Saving...",
       "required": "All fields marked with asterisk are required",
-      "loading": "Loading biodata..."
+      "loading": "Loading biodata...",
+      "deenProfile": "Deen & Islamic Profile",
+      "maritalStatus": "Marital Status",
+      "selectMaritalStatus": "Select marital status",
+      "sect": "Sect / Madhhab",
+      "selectSect": "Select sect",
+      "religiousCommitment": "Religious Commitment",
+      "selectCommitment": "Select commitment level",
+      "prayerFrequency": "Prayer (Salah) Frequency",
+      "selectPrayer": "Select prayer frequency",
+      "modesty": "Modesty (Hijab / Beard)",
+      "selectModesty": "Select",
+      "selectTypeFirst": "Select biodata type first",
+      "religiousEducation": "Religious Education",
+      "selectRelEducation": "Select",
+      "mahrPreference": "Mahr Preference",
+      "selectMahr": "Select",
+      "smoking": "Smoking",
+      "selectSmoking": "Select",
+      "diet": "Diet",
+      "selectDiet": "Select",
+      "alcoholFree": "Alcohol-free lifestyle",
+      "revert": "Revert to Islam (converted)",
+      "hasChildren": "I have children",
+      "childrenCount": "Number of children",
+      "childrenLivingWith": "Children living with you?",
+      "selectChildrenLivingWith": "Select"
     },
     "viewBiodata": {
       "badge": "My Profile",
@@ -450,6 +497,8 @@
       "deleteConfirm": "Yes, Delete!",
       "approved": "Approved",
       "pending": "Pending",
+      "waliPending": "Awaiting Wali",
+      "rejected": "Declined",
       "namePlaceholder": "Name Not Available",
       "id": "ID:",
       "idHash": "#",
@@ -702,6 +751,65 @@
       "lightBrown": "Light Brown",
       "brown": "Brown",
       "dark": "Dark"
+    },
+    "maritalStatus": {
+      "neverMarried": "Never Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed",
+      "seekingPolygyny": "Seeking Polygyny"
+    },
+    "sect": {
+      "sunniHanafi": "Sunni - Hanafi",
+      "sunniShafi": "Sunni - Shafi'i",
+      "sunniMaliki": "Sunni - Maliki",
+      "sunniHanbali": "Sunni - Hanbali",
+      "shia": "Shia",
+      "other": "Other"
+    },
+    "religiousCommitment": {
+      "practicing": "Practicing",
+      "moderate": "Moderate",
+      "cultural": "Cultural"
+    },
+    "prayerFrequency": {
+      "fiveDaily": "Five Daily",
+      "sometimes": "Sometimes",
+      "rarely": "Rarely"
+    },
+    "religiousEducation": {
+      "general": "General",
+      "madrasa": "Madrasa",
+      "hifz": "Hifz (Memorized Quran)",
+      "alim": "Alim",
+      "other": "Other"
+    },
+    "modesty": {
+      "hijab": "Hijab",
+      "niqab": "Niqab",
+      "none": "None",
+      "beard": "Beard",
+      "noBeard": "No Beard"
+    },
+    "smoking": {
+      "no": "No",
+      "occasionally": "Occasionally",
+      "yes": "Yes"
+    },
+    "diet": {
+      "halalOnly": "Halal only",
+      "vegetarian": "Vegetarian",
+      "other": "Other"
+    },
+    "mahrPreference": {
+      "simple": "Simple",
+      "moderate": "Moderate",
+      "asPerCapability": "As per capability",
+      "toDiscuss": "To discuss"
+    },
+    "childrenLivingWith": {
+      "yes": "Yes",
+      "no": "No",
+      "shared": "Shared"
     }
   }
 }

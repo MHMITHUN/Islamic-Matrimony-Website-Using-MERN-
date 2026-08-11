@@ -1,10 +1,16 @@
 const express = require('express');
+const crypto = require('crypto');
 const ContactRequest = require('../models/ContactRequest');
 const Biodata = require('../models/Biodata');
 const User = require('../models/User');
+const WaliApproval = require('../models/WaliApproval');
+const Notification = require('../models/Notification');
 const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const waliMagicLink = (token) => `${CLIENT_URL}/wali/approve/${token}`;
 
 // Get user's contact requests
 router.get('/my-requests', verifyToken, async (req, res) => {
@@ -66,17 +72,59 @@ router.post('/', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'Biodata not found' });
         }
 
+        // Resolve the requester's own biodata (used in wali approval page)
+        const requesterBiodata = await Biodata.findOne({ userEmail: req.user.email });
+        const requesterBiodataId = requesterBiodata?.biodataId || null;
+
+        // If the target profile is wali-protected, route the request through wali approval
+        const waliProtected = !!(biodata.waliEnabled && biodata.waliEmail);
+
         const contactRequest = new ContactRequest({
             requesterId: user._id,
             requesterEmail: req.user.email,
             requesterName: user.name || req.user.email.split('@')[0],
+            requesterBiodataId,
             biodataId: numBiodataId,
             biodataUserId: biodata.userId,
             paymentId,
-            status: 'pending'
+            status: waliProtected ? 'wali_pending' : 'pending'
         });
 
         await contactRequest.save();
+
+        let waliLink = null;
+        if (waliProtected) {
+            const token = crypto.randomUUID();
+            await WaliApproval.create({
+                contactRequestId: contactRequest._id,
+                biodataId: numBiodataId,
+                waliEmail: biodata.waliEmail,
+                requesterName: contactRequest.requesterName,
+                requesterBiodataId: requesterBiodataId || numBiodataId,
+                decisionToken: token
+            });
+            waliLink = waliMagicLink(token);
+
+            // Email sending is stubbed for the SDP demo — log + return the link.
+            console.log(`[WALI] Magic link for ${biodata.waliEmail}: ${waliLink}`);
+
+            // Notify the profile owner that their wali's approval is required
+            if (biodata.userId) {
+                await Notification.create({
+                    userId: biodata.userId,
+                    type: 'wali_pending',
+                    title: 'Wali approval required',
+                    message: `${contactRequest.requesterName} requested your contact info — your wali must approve.`,
+                    relatedId: contactRequest._id.toString()
+                });
+            }
+
+            return res.status(201).json({
+                message: 'Contact request submitted — awaiting wali approval',
+                contactRequest,
+                waliPending: true
+            });
+        }
 
         res.status(201).json({ message: 'Contact request submitted successfully', contactRequest });
     } catch (error) {

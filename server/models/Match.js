@@ -28,7 +28,8 @@ const matchSchema = new mongoose.Schema({
         ageMatch: { type: Boolean, default: false },
         heightMatch: { type: Boolean, default: false },
         divisionMatch: { type: Boolean, default: false },
-        occupationMatch: { type: Boolean, default: false }
+        occupationMatch: { type: Boolean, default: false },
+        deenMatch: { type: Boolean, default: false }
     },
     status: {
         type: String,

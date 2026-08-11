@@ -1,0 +1,27 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces High-level three-tier system architecture of Nikah.}}{10}{figure.caption.19}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces System Use Case Diagram.}}{11}{figure.caption.21}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Context-level diagram (DFD-0).}}{12}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces First-level data-flow diagram (DFD-1).}}{12}{figure.caption.23}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Entity-relationship overview of the Nikah database.}}{13}{figure.caption.24}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Sequence Diagram for Payment and Contact Requests.}}{14}{figure.caption.26}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Activity Diagram for user onboarding and matching.}}{15}{figure.caption.27}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Compatibility matching algorithm flowchart.}}{17}{figure.caption.28}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Compatibility scoring logic.}}{17}{figure.caption.29}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Authentication flow (member and administrator paths).}}{18}{figure.caption.30}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Contact-information request workflow.}}{18}{figure.caption.31}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Environment-based administrator login (server, simplified).}}{20}{figure.caption.40}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Home page hero with branding and primary calls to action.}}{24}{figure.caption.47}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Biodata details page with contact-request and favourite actions.}}{24}{figure.caption.48}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Biodatas listing with filter sidebar and paginated card grid.}}{24}{figure.caption.49}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces User dashboard overview with summary cards and activity feed.}}{25}{figure.caption.50}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Compatibility matches with percentage scores and breakdowns.}}{25}{figure.caption.51}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Administrator dashboard with analytics charts and stat cards.}}{26}{figure.caption.52}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Manage users table with role and premium controls.}}{26}{figure.caption.53}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Project Timeline and Release Milestones.}}{34}{figure.caption.57}%

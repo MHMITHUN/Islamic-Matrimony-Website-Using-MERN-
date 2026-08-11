@@ -1,0 +1,74 @@
+\contentsline {chapter}{Abstract}{i}{chapter*.1}%
+\contentsline {chapter}{Acknowledgment}{ii}{chapter*.2}%
+\contentsline {chapter}{List of Figures}{v}{chapter*.3}%
+\contentsline {chapter}{List of Tables}{vi}{chapter*.4}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Problem Specification}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objectives}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Scope}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Flow of the Project}{2}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Organization of the Project Report}{2}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Background and Related Works}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Existing System Analysis}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Supporting Literatures}{5}{section.2.2}%
+\contentsline {paragraph}{Islamic foundations.}{5}{paragraph*.7}%
+\contentsline {paragraph}{Architecture.}{6}{paragraph*.9}%
+\contentsline {paragraph}{Authentication and authorization.}{6}{paragraph*.10}%
+\contentsline {paragraph}{Front-end stack.}{7}{paragraph*.11}%
+\contentsline {paragraph}{Back-end stack.}{7}{paragraph*.12}%
+\contentsline {paragraph}{Database and deployment.}{7}{paragraph*.13}%
+\contentsline {section}{\numberline {2.3}Problem Statement and Research Gap}{7}{section.2.3}%
+\contentsline {chapter}{\numberline {3}System Analysis and Design}{8}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Technology and Tools}{8}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Front-End Stack}{8}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Back-End Stack}{8}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}Database}{8}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}Tools Used}{9}{subsection.3.1.4}%
+\contentsline {section}{\numberline {3.2}Development Model}{9}{section.3.2}%
+\contentsline {section}{\numberline {3.3}System Architecture}{10}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Use-Case Analysis}{10}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Context-Level Diagram (DFD-0)}{11}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Data-Flow Diagram (DFD-1)}{12}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Database Schema}{12}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Sequence Diagram}{14}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Activity Diagram}{14}{section.3.9}%
+\contentsline {section}{\numberline {3.10}Algorithms and Flowcharts}{16}{section.3.10}%
+\contentsline {subsection}{\numberline {3.10.1}Compatibility Matching}{16}{subsection.3.10.1}%
+\contentsline {subsection}{\numberline {3.10.2}Authentication Flow}{17}{subsection.3.10.2}%
+\contentsline {subsection}{\numberline {3.10.3}Contact-Request Workflow}{18}{subsection.3.10.3}%
+\contentsline {chapter}{\numberline {4}Implementation}{19}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Front-End / Interface Design}{19}{section.4.1}%
+\contentsline {paragraph}{Design system.}{19}{paragraph*.32}%
+\contentsline {paragraph}{Routing.}{19}{paragraph*.33}%
+\contentsline {paragraph}{State management.}{19}{paragraph*.34}%
+\contentsline {paragraph}{Server state.}{19}{paragraph*.35}%
+\contentsline {paragraph}{API layer.}{19}{paragraph*.36}%
+\contentsline {paragraph}{UI libraries.}{19}{paragraph*.37}%
+\contentsline {section}{\numberline {4.2}Back-End}{20}{section.4.2}%
+\contentsline {paragraph}{Middleware.}{20}{paragraph*.38}%
+\contentsline {paragraph}{Environment-based administrator login.}{20}{paragraph*.39}%
+\contentsline {paragraph}{Route modules.}{20}{paragraph*.41}%
+\contentsline {paragraph}{Database models.}{20}{paragraph*.42}%
+\contentsline {paragraph}{Security.}{21}{paragraph*.43}%
+\contentsline {section}{\numberline {4.3}Modules and Features}{21}{section.4.3}%
+\contentsline {chapter}{\numberline {5}User Manual}{23}{chapter.5}%
+\contentsline {section}{\numberline {5.1}System Requirements}{23}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Hardware Requirements}{23}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Software Requirements}{23}{subsection.5.1.2}%
+\contentsline {paragraph}{For users.}{23}{paragraph*.45}%
+\contentsline {paragraph}{For local development.}{23}{paragraph*.46}%
+\contentsline {section}{\numberline {5.2}User Interfaces}{23}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Panel A --- Public Pages}{23}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Panel B --- User Dashboard}{24}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Panel C --- Admin Panel}{25}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Login Credentials}{26}{subsection.5.2.4}%
+\contentsline {section}{\numberline {5.3}Getting Started}{27}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Conclusion}{28}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Conclusion}{28}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Limitations}{28}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future Works}{29}{section.6.3}%
+\contentsline {chapter}{References}{30}{chapter*.54}%
+\contentsline {chapter}{\numberline {A}Glossary and Supplementary Material}{32}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Glossary of Terms}{32}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Key API Endpoints}{33}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Project Timeline}{34}{section.A.3}%

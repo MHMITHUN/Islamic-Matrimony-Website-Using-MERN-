@@ -66,8 +66,10 @@ const ApprovedContacts = () => {
                                     <TableCell><Badge variant="soft" className="gap-1 tabular-nums"><Hash className="h-3 w-3" /> #{request.biodataId}</Badge></TableCell>
                                     <TableCell><StatusBadge status={request.status} /></TableCell>
                                     <TableCell className="text-right">
-                                        {request.status === 'pending' ? (
+                                        {['pending', 'wali_pending'].includes(request.status) ? (
                                             <Button size="sm" onClick={() => handleApprove(request)} disabled={approveMutation.isLoading}><CheckCircle2 className="h-4 w-4" /> {t('admin.approvedContacts.approve')}</Button>
+                                        ) : request.status === 'rejected' ? (
+                                            <span className="text-xs text-rose-600 font-medium">Declined by wali</span>
                                         ) : (
                                             <span className="text-xs text-emerald-600 font-medium inline-flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> {t('admin.approvedContacts.completed')}</span>
                                         )}

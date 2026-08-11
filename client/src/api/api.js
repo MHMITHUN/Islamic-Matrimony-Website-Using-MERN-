@@ -54,7 +54,8 @@ export const biodataAPI = {
     getSimilar: (id) => api.get(`/biodata/${id}/similar`),
     getMyBiodata: () => api.get('/biodata/user/me'),
     createOrUpdate: (data) => api.post('/biodata', data),
-    requestPremium: () => api.post('/biodata/request-premium')
+    requestPremium: () => api.post('/biodata/request-premium'),
+    requestVerification: (data) => api.post('/biodata/request-verification', data)
 };
 
 export const contactRequestAPI = {
@@ -86,6 +87,9 @@ export const adminAPI = {
     approvePremium: (biodataId) => api.patch(`/admin/approve-premium/${biodataId}`),
     getContactRequests: () => api.get('/admin/contact-requests'),
     approveContact: (id) => api.patch(`/admin/approve-contact/${id}`),
+    getVerificationRequests: () => api.get('/admin/verification-requests'),
+    approveVerification: (biodataId) => api.patch(`/admin/approve-verification/${biodataId}`),
+    rejectVerification: (biodataId) => api.patch(`/admin/reject-verification/${biodataId}`),
     getSuccessStories: () => api.get('/admin/success-stories')
 };
 
@@ -133,7 +137,8 @@ export const messageAPI = {
     getSent: () => api.get('/messages/sent'),
     getConversation: (email) => api.get(`/messages/conversation/${encodeURIComponent(email)}`),
     send: (data) => api.post('/messages', data),
-    delete: (id) => api.delete(`/messages/${id}`)
+    delete: (id) => api.delete(`/messages/${id}`),
+    getTemplates: () => api.get('/messages/templates')
 };
 
 export const matchAPI = {
@@ -158,4 +163,13 @@ export const recentlyViewedAPI = {
     add: (biodataId) => api.post('/recently-viewed', { biodataId }),
     remove: (biodataId) => api.delete(`/recently-viewed/${biodataId}`),
     clearAll: () => api.delete('/recently-viewed')
+};
+
+export const waliAPI = {
+    getMyWaliInfo: () => api.get('/wali/my-info'),
+    updateWaliInfo: (data) => api.post('/wali/my-info', data),
+    getPendingForMe: () => api.get('/wali/pending'),
+    resend: (contactRequestId) => api.post(`/wali/resend/${contactRequestId}`),
+    getDecisionByToken: (token) => api.get(`/wali/request/${token}`),
+    submitDecision: (token, data) => api.post(`/wali/decision/${token}`, data)
 };

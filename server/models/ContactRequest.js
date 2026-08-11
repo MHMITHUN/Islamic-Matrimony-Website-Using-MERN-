@@ -14,6 +14,10 @@ const contactRequestSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    requesterBiodataId: {
+        type: Number,
+        default: null
+    },
     biodataId: {
         type: Number,
         required: true
@@ -25,7 +29,7 @@ const contactRequestSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'approved'],
+        enum: ['pending', 'wali_pending', 'approved', 'rejected'],
         default: 'pending'
     },
     paymentId: {
