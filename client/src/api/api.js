@@ -83,6 +83,7 @@ export const adminAPI = {
     makeAdmin: (id) => api.patch(`/admin/users/${id}/make-admin`),
     makeGuardian: (id, data) => api.patch(`/auth/make-guardian/${id}`, data),
     makeImam: (id, data) => api.patch(`/auth/make-imam/${id}`, data),
+    updateUserRole: (id, role) => api.patch(`/admin/users/${id}/role`, { role }),
     makePremium: (id) => api.patch(`/admin/users/${id}/make-premium`),
     removePremium: (id) => api.patch(`/admin/users/${id}/remove-premium`),
     getPremiumRequests: () => api.get('/admin/premium-requests'),
@@ -93,6 +94,7 @@ export const adminAPI = {
     getVerificationRequests: () => api.get('/admin/verification-requests'),
     approveVerification: (biodataId) => api.patch(`/admin/approve-verification/${biodataId}`),
     rejectVerification: (biodataId) => api.patch(`/admin/reject-verification/${biodataId}`),
+    getSukoonProfiles: () => api.get('/admin/sukoon-profiles'),
     getSuccessStories: () => api.get('/admin/success-stories')
 };
 
@@ -189,8 +191,12 @@ export const endorsementAPI = {
 export const providerAPI = {
     getAll: (params) => api.get('/providers', { params }),
     getById: (id) => api.get(`/providers/${id}`),
+    apply: (data) => api.post('/providers/apply', data),
     create: (data) => api.post('/providers', data),
+    update: (id, data) => api.put(`/providers/${id}`, data),
     verify: (id) => api.patch(`/providers/${id}/verify`),
+    toggleActive: (id) => api.patch(`/providers/${id}/toggle-active`),
+    delete: (id) => api.delete(`/providers/${id}`),
     attest: (biodataId, data) => api.post(`/providers/attest/${biodataId}`, data)
 };
 

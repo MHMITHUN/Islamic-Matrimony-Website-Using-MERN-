@@ -3,7 +3,7 @@ import {
     Home, Pencil, Eye, Mail, Heart, HeartHandshake, LogOut, Menu, Crown,
     Users, CheckCircle2, PieChart, ListChecks, ArrowLeft, History, Activity,
     Settings, Flag, Bell, Scale, MessageSquare, User as UserIcon, ChevronLeft,
-    ShieldCheck, BookOpen,
+    ShieldCheck, BookOpen, Leaf
 } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -83,6 +83,7 @@ const DashboardLayout = () => {
         { path: '/dashboard/admin/approved-contacts', icon: CheckCircle2, label: t('dashboard.sidebar.approvedContacts') },
         { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: 'Verification Requests' },
         { path: '/dashboard/admin/providers', icon: ShieldCheck, label: 'Providers' },
+        { path: '/dashboard/admin/sukoon', icon: Leaf, label: 'Sukoon Channel' },
         { path: '/dashboard/admin/journeys', icon: HeartHandshake, label: 'Marriage Journeys' },
         { path: '/dashboard/admin/contact-messages', icon: Mail, label: t('dashboard.sidebar.contactMessages') },
         { path: '/dashboard/admin/success-stories', icon: ListChecks, label: t('dashboard.sidebar.successStories') },

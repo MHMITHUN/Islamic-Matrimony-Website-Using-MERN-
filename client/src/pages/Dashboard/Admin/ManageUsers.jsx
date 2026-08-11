@@ -14,6 +14,8 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+
 const ManageUsers = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const queryClient = useQueryClient();
@@ -22,6 +24,12 @@ const ManageUsers = () => {
     const { data: users = [], isLoading } = useQuery({
         queryKey: ['adminUsers', searchTerm],
         queryFn: async () => { const response = await adminAPI.getUsers(searchTerm); return response.data; },
+    });
+
+    const updateRoleMutation = useMutation({
+        mutationFn: ({ id, role }) => adminAPI.updateUserRole(id, role),
+        onSuccess: (res) => { queryClient.invalidateQueries(['adminUsers']); toast.success(res.data.message || 'User role updated'); },
+        onError: (error) => { toast.error(error.response?.data?.message || t('toast.genericError')); }
     });
 
     const makeAdminMutation = useMutation({
@@ -89,9 +97,21 @@ const ManageUsers = () => {
                                     </TableCell>
                                     <TableCell className="hidden md:table-cell text-muted-foreground">{user.email}</TableCell>
                                     <TableCell>
-                                        {user.role === 'admin'
-                                            ? <Badge variant="success" className="gap-1"><ShieldCheck className="h-3 w-3" /> {t('admin.manageUsers.admin')}</Badge>
-                                            : <Badge variant="soft" className="gap-1"><UserIcon className="h-3 w-3" /> {t('admin.manageUsers.userRole')}</Badge>}
+                                        <Select
+                                            value={user.role || 'user'}
+                                            onValueChange={(newRole) => updateRoleMutation.mutate({ id: user._id, role: newRole })}
+                                            disabled={updateRoleMutation.isLoading}
+                                        >
+                                            <SelectTrigger className="h-7 text-xs w-28 capitalize">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="user">User</SelectItem>
+                                                <SelectItem value="admin">Admin</SelectItem>
+                                                <SelectItem value="imam">Imam</SelectItem>
+                                                <SelectItem value="guardian">Guardian</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </TableCell>
                                     <TableCell>
                                         {user.isPremium

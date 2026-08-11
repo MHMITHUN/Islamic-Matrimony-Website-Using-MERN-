@@ -60,6 +60,7 @@ import ReportedProfiles from './pages/Dashboard/Admin/ReportedProfiles';
 import VerificationRequests from './pages/Dashboard/Admin/VerificationRequests';
 import ManageProviders from './pages/Dashboard/Admin/ManageProviders';
 import ManageJourneys from './pages/Dashboard/Admin/ManageJourneys';
+import AdminSukoon from './pages/Dashboard/Admin/AdminSukoon';
 import GuardianRoute from './components/GuardianRoute';
 import GuardianOverview from './pages/Dashboard/Guardian/GuardianOverview';
 import GuardianWards from './pages/Dashboard/Guardian/GuardianWards';
@@ -216,6 +217,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <ManageProviders />
+          </AdminRoute>
+        )
+      },
+      {
+        path: 'admin/sukoon',
+        element: (
+          <AdminRoute>
+            <AdminSukoon />
           </AdminRoute>
         )
       },

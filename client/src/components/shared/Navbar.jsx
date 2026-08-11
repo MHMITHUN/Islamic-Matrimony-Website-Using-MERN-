@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isServicesOpen, setIsServicesOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { user, logout, isAdmin, isPremium } = useAuth();
     const { t } = useLanguage();
@@ -94,18 +95,23 @@ const Navbar = () => {
                     )}
                 </NavLink>
             ))}
-            <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent/60 rounded-lg">
-                    Services <ChevronDown className="h-3.5 w-3.5" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    {serviceLinks.map((link) => (
-                        <DropdownMenuItem key={link.path} asChild>
-                            <Link to={link.path}>{link.label}</Link>
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <div
+                onMouseEnter={() => setIsServicesOpen(true)}
+                onMouseLeave={() => setIsServicesOpen(false)}
+            >
+                <DropdownMenu open={isServicesOpen} onOpenChange={setIsServicesOpen}>
+                    <DropdownMenuTrigger className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent/60 rounded-lg outline-none">
+                        Services <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isServicesOpen && "rotate-180")} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-48">
+                        {serviceLinks.map((link) => (
+                            <DropdownMenuItem key={link.path} asChild onClick={() => setIsServicesOpen(false)}>
+                                <Link to={link.path} className="w-full cursor-pointer">{link.label}</Link>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
             {user && (
                 <NavLink
                     to={dashboardPath}

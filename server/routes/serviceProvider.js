@@ -33,6 +33,34 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// Public: apply/register as a service provider (imam, kazi, or counselor)
+router.post('/apply', async (req, res) => {
+    try {
+        const { name, serviceType, title, organization, city, area, phone, email, bio, fee, yearsExperience } = req.body;
+        if (!name || !serviceType || !phone) {
+            return res.status(400).json({ message: 'Name, service type, and phone are required.' });
+        }
+        const provider = await ServiceProvider.create({
+            name,
+            serviceType,
+            title: title || '',
+            organization: organization || '',
+            city: city || 'Dhaka',
+            area: area || '',
+            phone,
+            email: email || '',
+            bio: bio || '',
+            fee: Number(fee) || 0,
+            yearsExperience: Number(yearsExperience) || 0,
+            verified: false,
+            active: true
+        });
+        res.status(201).json({ message: 'Application submitted successfully! Our team will review and verify your listing.', provider });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 // Admin: create a directory provider (kazi/counselor, or an imam entry)
 router.post('/', verifyToken, verifyAdmin, async (req, res) => {
     try {
@@ -43,16 +71,55 @@ router.post('/', verifyToken, verifyAdmin, async (req, res) => {
     }
 });
 
+// Admin: update a provider
+router.put('/:id', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const provider = await ServiceProvider.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!provider) return res.status(404).json({ message: 'Provider not found' });
+        res.json({ message: 'Provider updated', provider });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 // Admin: verify a provider
 router.patch('/:id/verify', verifyToken, verifyAdmin, async (req, res) => {
     try {
         const provider = await ServiceProvider.findByIdAndUpdate(
             req.params.id,
-            { verified: true },
+            { verified: true, partnerSince: new Date() },
             { new: true }
         );
         if (!provider) return res.status(404).json({ message: 'Provider not found' });
         res.json({ message: 'Provider verified', provider });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Admin: toggle active status
+router.patch('/:id/toggle-active', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const provider = await ServiceProvider.findById(req.params.id);
+        if (!provider) return res.status(404).json({ message: 'Provider not found' });
+        provider.active = !provider.active;
+        await provider.save();
+        res.json({ message: `Provider is now ${provider.active ? 'active' : 'inactive'}`, provider });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Admin: delete a provider
+router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const provider = await ServiceProvider.findByIdAndDelete(req.params.id);
+        if (!provider) return res.status(404).json({ message: 'Provider not found' });
+        res.json({ message: 'Provider deleted' });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }

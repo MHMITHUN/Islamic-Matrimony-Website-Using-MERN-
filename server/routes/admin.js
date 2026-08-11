@@ -241,6 +241,42 @@ router.patch('/approve-contact/:id', verifyToken, verifyAdmin, async (req, res) 
     }
 });
 
+// Change user role (user, admin, imam, guardian)
+router.patch('/users/:id/role', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const { role } = req.body;
+        const validRoles = ['user', 'admin', 'imam', 'guardian'];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({ message: 'Invalid role specified' });
+        }
+
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.role = role;
+        await user.save();
+
+        res.json({ message: `User role updated to ${role}`, user });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Get all Sukoon channel profiles for admin overview
+router.get('/sukoon-profiles', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const sukoonProfiles = await Biodata.find({ sukoon: true })
+            .select('biodataId name userEmail biodataType age maritalStatus hasChildren childrenCount permanentDivision sukoonPhotoReveal createdAt')
+            .sort({ createdAt: -1 });
+
+        res.json(sukoonProfiles);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 // Get all success stories for admin
 router.get('/success-stories', verifyToken, verifyAdmin, async (req, res) => {
     try {

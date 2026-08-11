@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
+import ApplyProviderModal from './ApplyProviderModal';
+
 // Reusable public directory for a given ServiceProvider type (kazi / counselor).
 const ProviderDirectory = ({ serviceType, title, subtitle, Icon }) => {
     const { data: providers = [], isLoading } = useQuery({
@@ -18,12 +20,15 @@ const ProviderDirectory = ({ serviceType, title, subtitle, Icon }) => {
             <Helmet><title>{title} - Nikah</title></Helmet>
             <div className="min-h-screen bg-muted/30 pt-20 pb-12">
                 <div className="container-custom">
-                    <div className="text-center max-w-2xl mx-auto mb-8">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-3">
+                    <div className="text-center max-w-2xl mx-auto mb-8 space-y-3">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
                             <Icon className="h-3.5 w-3.5" /> {title}
                         </span>
-                        <h1 className="font-heading text-3xl font-bold text-foreground mb-2">{title}</h1>
+                        <h1 className="font-heading text-3xl font-bold text-foreground">{title}</h1>
                         <p className="text-muted-foreground">{subtitle}</p>
+                        <div className="pt-2">
+                            <ApplyProviderModal defaultType={serviceType} triggerText={`Join Directory as ${serviceType === 'kazi' ? 'a Kazi' : 'a Counselor'}`} />
+                        </div>
                     </div>
 
                     {isLoading ? (

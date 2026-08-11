@@ -5,6 +5,7 @@ import { providerAPI } from '../../api/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import ApplyProviderModal from '../../components/shared/ApplyProviderModal';
 
 const ImamDirectory = () => {
     const { data: imams = [], isLoading } = useQuery({
@@ -17,12 +18,15 @@ const ImamDirectory = () => {
             <Helmet><title>Imam Directory - Nikah</title></Helmet>
             <div className="min-h-screen bg-muted/30 pt-20 pb-12">
                 <div className="container-custom">
-                    <div className="text-center max-w-2xl mx-auto mb-8">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-3">
+                    <div className="text-center max-w-2xl mx-auto mb-8 space-y-3">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
                             <ShieldCheck className="h-3.5 w-3.5" /> Tazkiya Partners
                         </span>
-                        <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Verified Imams</h1>
+                        <h1 className="font-heading text-3xl font-bold text-foreground">Verified Imams</h1>
                         <p className="text-muted-foreground">Imams who can attest a member's character and deen — the highest-weighted Tazkiya endorsement.</p>
+                        <div className="pt-2">
+                            <ApplyProviderModal defaultType="imam" triggerText="Join Directory as an Imam" />
+                        </div>
                     </div>
 
                     {isLoading ? (

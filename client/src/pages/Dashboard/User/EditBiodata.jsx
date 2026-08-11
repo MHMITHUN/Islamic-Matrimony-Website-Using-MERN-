@@ -254,25 +254,26 @@ const EditBiodata = () => {
                     </div>
                 </SectionCard>
 
-                {priorMarriageStatuses.includes(formData.maritalStatus) && (
-                    <SectionCard title="Sukoon — Second Marriage" icon={Leaf} accent="text-emerald-500">
-                        <div className="space-y-4">
-                            <div className="flex items-start gap-2">
-                                <Checkbox id="sukoon" checked={formData.sukoon} onCheckedChange={(c) => handleCheckbox('sukoon', c)} />
-                                <Label htmlFor="sukoon" className="cursor-pointer text-sm">List me in the Sukoon channel (extra-private, dignified second-marriage matching)</Label>
-                            </div>
-                            {formData.sukoon && (
-                                <Field label="Photo reveal rule">
-                                    <Select value={formData.sukoonPhotoReveal} onValueChange={(v) => handleSelect('sukoonPhotoReveal', v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>
-                                        <SelectItem value="blurred">Blurred until I approve a reveal</SelectItem>
-                                        <SelectItem value="verified_only">Only verified members may see</SelectItem>
-                                        <SelectItem value="full">Visible normally</SelectItem>
-                                    </SelectContent></Select>
-                                </Field>
-                            )}
+                <SectionCard title="Sukoon — Remarriage & Privacy Channel" icon={Leaf} accent="text-emerald-500">
+                    <div className="space-y-4">
+                        <p className="text-xs text-muted-foreground">
+                            Sukoon is our dignified channel tailored for divorced, widowed, or second marriage seekers with enhanced photo privacy and strict identity reveal controls.
+                        </p>
+                        <div className="flex items-start gap-2">
+                            <Checkbox id="sukoon" checked={formData.sukoon} onCheckedChange={(c) => handleCheckbox('sukoon', c)} />
+                            <Label htmlFor="sukoon" className="cursor-pointer text-sm font-medium">List my profile in the Sukoon channel</Label>
                         </div>
-                    </SectionCard>
-                )}
+                        {formData.sukoon && (
+                            <Field label="Photo reveal policy">
+                                <Select value={formData.sukoonPhotoReveal} onValueChange={(v) => handleSelect('sukoonPhotoReveal', v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>
+                                    <SelectItem value="blurred">Blurred until I approve a reveal request</SelectItem>
+                                    <SelectItem value="verified_only">Only verified members may see photos</SelectItem>
+                                    <SelectItem value="full">Visible normally to signed-in members</SelectItem>
+                                </SelectContent></Select>
+                            </Field>
+                        )}
+                    </div>
+                </SectionCard>
 
                 <SectionCard title="Wali (Guardian)" icon={ShieldCheck} accent="text-emerald-500">
                     <div className="space-y-4">
