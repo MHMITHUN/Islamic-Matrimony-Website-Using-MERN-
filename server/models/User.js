@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
     },
     // --- Guardian profile (F1) ---
     guardianProfile: {
-        relation: { type: String, enum: ['Father', 'Mother', 'Brother', 'Uncle', 'Grandfather', 'Son', 'Other'], default: '' },
+        relation: { type: String, enum: ['Father', 'Mother', 'Brother', 'Uncle', 'Grandfather', 'Son', 'Other', ''], default: '' },
         phone: { type: String, default: '' },
         whatsapp: { type: String, default: '' }
     },

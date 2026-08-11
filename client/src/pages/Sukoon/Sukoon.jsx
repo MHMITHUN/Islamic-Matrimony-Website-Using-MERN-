@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Leaf, Loader2, Lock, Eye, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { sukoonAPI } from '../../api/api';
@@ -9,11 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { useAuth } from '../../contexts/AuthContext';
 import TazkiyaBadge from '../../components/shared/TazkiyaBadge';
 import toast from 'react-hot-toast';
 
 const Sukoon = () => {
     const qc = useQueryClient();
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const [filter, setFilter] = useState({ biodataType: '', division: '' });
 
     const { data: profiles = [], isLoading } = useQuery({
@@ -26,6 +29,15 @@ const Sukoon = () => {
         onSuccess: () => { qc.invalidateQueries(['sukoonProfiles']); toast.success('Identity reveal requested'); },
         onError: (e) => toast.error(e.response?.data?.message || 'Failed')
     });
+
+    const handleReveal = (biodataId) => {
+        if (!user) {
+            toast('Please log in to request an identity reveal', { icon: '🔒' });
+            navigate('/login');
+            return;
+        }
+        revealMut.mutate(biodataId);
+    };
 
     return (
         <>
@@ -86,7 +98,7 @@ const Sukoon = () => {
                                         {p.revealed ? (
                                             <Button asChild size="sm" variant="outline" className="w-full"><Link to={`/biodata/${p.biodataId}`}><Eye className="h-4 w-4" /> View full profile</Link></Button>
                                         ) : (
-                                            <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={() => revealMut.mutate(p.biodataId)} disabled={revealMut.isLoading}>
+                                            <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={() => handleReveal(p.biodataId)} disabled={revealMut.isLoading}>
                                                 <Lock className="h-4 w-4" /> Request identity reveal
                                             </Button>
                                         )}

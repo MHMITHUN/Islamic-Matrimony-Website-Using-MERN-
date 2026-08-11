@@ -97,4 +97,33 @@ const verifyRole = (...roles) => (req, res, next) => {
 const verifyGuardian = verifyRole('guardian');
 const verifyImam = verifyRole('imam');
 
-module.exports = { verifyToken, verifyAdmin, verifyPremium, verifyRole, verifyGuardian, verifyImam };
+// Optional auth — sets req.user if a valid token is present, otherwise continues as guest (req.user = null)
+const optionalToken = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            req.user = null;
+            return next();
+        }
+        const token = authHeader.split(' ')[1];
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = decoded;
+            const user = await User.findOne({ email: decoded.email });
+            if (user) {
+                req.user.role = user.role;
+                req.user.isPremium = user.isPremium;
+                req.user._id = user._id;
+                req.user.name = user.name || decoded.name;
+            }
+        } catch {
+            req.user = null;
+        }
+        next();
+    } catch (error) {
+        req.user = null;
+        next();
+    }
+};
+
+module.exports = { verifyToken, verifyAdmin, verifyPremium, verifyRole, verifyGuardian, verifyImam, optionalToken };

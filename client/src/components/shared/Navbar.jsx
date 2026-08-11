@@ -56,10 +56,15 @@ const Navbar = () => {
         { path: '/biodatas', label: t('nav.biodatas') },
         { path: '/stories', label: t('nav.stories') },
         { path: '/guidance', label: t('nav.guidance') },
-        { path: '/imams', label: 'Imams' },
-        { path: '/sukoon', label: 'Sukoon' },
         { path: '/about', label: t('nav.about') },
         { path: '/contact', label: t('nav.contact') },
+    ];
+
+    const serviceLinks = [
+        { path: '/imams', label: 'Imams' },
+        { path: '/kazi', label: 'Kazi' },
+        { path: '/counselors', label: 'Counselors' },
+        { path: '/sukoon', label: 'Sukoon' },
     ];
 
     const dashboardPath = isAdmin ? '/dashboard/admin' : '/dashboard';
@@ -89,6 +94,18 @@ const Navbar = () => {
                     )}
                 </NavLink>
             ))}
+            <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent/60 rounded-lg">
+                    Services <ChevronDown className="h-3.5 w-3.5" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {serviceLinks.map((link) => (
+                        <DropdownMenuItem key={link.path} asChild>
+                            <Link to={link.path}>{link.label}</Link>
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
             {user && (
                 <NavLink
                     to={dashboardPath}
@@ -240,6 +257,17 @@ const Navbar = () => {
                                                             : 'text-foreground/80 hover:bg-accent'
                                                     )
                                                 }
+                                            >
+                                                {link.label}
+                                            </NavLink>
+                                        ))}
+                                        <div className="font-semibold text-sm px-3 pt-2">Services</div>
+                                        {serviceLinks.map((link) => (
+                                            <NavLink
+                                                key={link.path}
+                                                to={link.path}
+                                                onClick={() => setIsOpen(false)}
+                                                className="block px-6 py-2 text-sm text-foreground/80 hover:text-primary"
                                             >
                                                 {link.label}
                                             </NavLink>

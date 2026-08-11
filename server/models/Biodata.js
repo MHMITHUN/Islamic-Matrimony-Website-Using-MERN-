@@ -78,22 +78,22 @@ const biodataSchema = new mongoose.Schema({
     // --- Islamic / Deen Profile (all optional) ---
     maritalStatus: {
         type: String,
-        enum: ['Never Married', 'Divorced', 'Widowed', 'Seeking Polygyny'],
+        enum: ['Never Married', 'Divorced', 'Widowed', 'Seeking Polygyny', ''],
         default: ''
     },
     sect: {
         type: String,
-        enum: ['Sunni-Hanafi', "Sunni-Shafi'i", 'Sunni-Maliki', 'Sunni-Hanbali', 'Shia', 'Other'],
+        enum: ['Sunni-Hanafi', "Sunni-Shafi'i", 'Sunni-Maliki', 'Sunni-Hanbali', 'Shia', 'Other', ''],
         default: ''
     },
     religiousCommitment: {
         type: String,
-        enum: ['Practicing', 'Moderate', 'Cultural'],
+        enum: ['Practicing', 'Moderate', 'Cultural', ''],
         default: ''
     },
     prayerFrequency: {
         type: String,
-        enum: ['Five Daily', 'Sometimes', 'Rarely'],
+        enum: ['Five Daily', 'Sometimes', 'Rarely', ''],
         default: ''
     },
     modesty: {
@@ -107,12 +107,12 @@ const biodataSchema = new mongoose.Schema({
     },
     religiousEducation: {
         type: String,
-        enum: ['General', 'Madrasa', 'Hifz', 'Alim', 'Other'],
+        enum: ['General', 'Madrasa', 'Hifz', 'Alim', 'Other', ''],
         default: ''
     },
     mahrPreference: {
         type: String,
-        enum: ['Simple', 'Moderate', 'As per capability', 'To discuss'],
+        enum: ['Simple', 'Moderate', 'As per capability', 'To discuss', ''],
         default: ''
     },
     alcoholFree: {
@@ -121,7 +121,7 @@ const biodataSchema = new mongoose.Schema({
     },
     smoking: {
         type: String,
-        enum: ['No', 'Occasionally', 'Yes'],
+        enum: ['No', 'Occasionally', 'Yes', ''],
         default: ''
     },
     diet: {
@@ -139,7 +139,7 @@ const biodataSchema = new mongoose.Schema({
     },
     childrenLivingWith: {
         type: String,
-        enum: ['Yes', 'No', 'Shared'],
+        enum: ['Yes', 'No', 'Shared', ''],
         default: ''
     },
     expectedPartnerAge: {
@@ -170,7 +170,7 @@ const biodataSchema = new mongoose.Schema({
     // --- Wali / Guardian (Islamic marriage guardian oversight) ---
     waliEnabled: { type: Boolean, default: false },
     waliName: { type: String, default: '' },
-    waliRelation: { type: String, enum: ['Father', 'Brother', 'Uncle', 'Grandfather', 'Son', 'Other'], default: '' },
+    waliRelation: { type: String, enum: ['Father', 'Brother', 'Uncle', 'Grandfather', 'Son', 'Other', ''], default: '' },
     waliContact: { type: String, default: '' },
     waliEmail: { type: String, default: '' },
     waliConsent: { type: String, enum: ['none', 'pending', 'given', 'denied'], default: 'none' },

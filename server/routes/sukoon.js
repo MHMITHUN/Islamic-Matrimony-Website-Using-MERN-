@@ -2,22 +2,23 @@ const express = require('express');
 const Biodata = require('../models/Biodata');
 const SukoonRevealRequest = require('../models/SukoonRevealRequest');
 const Notification = require('../models/Notification');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken, optionalToken } = require('../middleware/auth');
 
 const router = express.Router();
 
 // My biodata id helper
 const myBiodataId = async (email) => {
+    if (!email) return null;
     const b = await Biodata.findOne({ userEmail: email }).select('biodataId');
     return b?.biodataId || null;
 };
 
-// Browse Sukoon (second-marriage) profiles. Photos blurred unless the viewer is
-// in the profile's sukoonRevealedTo list; contact info is never returned here.
-router.get('/profiles', verifyToken, async (req, res) => {
+// Browse Sukoon (second-marriage) profiles — public, but photo reveal is only
+// available to logged-in users whose reveal was approved by the target.
+router.get('/profiles', optionalToken, async (req, res) => {
     try {
         const { biodataType, division } = req.query;
-        const viewerId = await myBiodataId(req.user.email);
+        const viewerId = req.user ? await myBiodataId(req.user.email) : null;
 
         const query = { sukoon: true };
         if (biodataType) query.biodataType = biodataType;

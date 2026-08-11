@@ -331,39 +331,165 @@ const seedData = async () => {
         ]);
 
         // ===================== FLAGSHIP SEED DATA =====================
-        console.log('🛡️  Seeding flagship data (imam, kazi, counselors, tazkiya, sukoon)...');
+        console.log('🛡️  Seeding flagship data (imams, kazis, counselors, tazkiya, sukoon)...');
 
-        // Imam user + ServiceProvider(imam)
+        // ---- Imam user + ServiceProviders ----
         const imamUser = await User.create({
             name: 'Imam Yusuf Ahmad',
             email: 'imam.yusuf@nikah.demo',
-            photoURL: 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=400',
+            photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop',
             role: 'imam',
             isPremium: true,
-            imamProfile: { title: 'Imam', organization: 'Jamuna Masjid', city: 'Dhaka', bio: 'Serving the community for 15 years.', verified: true, verifiedAt: new Date() }
         });
+
         await ServiceProvider.create([
-            { name: 'Imam Yusuf Ahmad', userId: imamUser._id, serviceType: 'imam', title: 'Imam', organization: 'Jamuna Masjid', city: 'Dhaka', area: 'Gulshan', phone: '+8801710000001', bio: 'Community imam offering tazkiya attestations.', specialties: ['Tazkiya attestation', 'Marriage guidance'], languages: ['Bangla', 'English', 'Arabic'], yearsExperience: 15, verified: true, active: true, partnerSince: new Date() },
-            { name: 'Kazi Abdul Wahab', serviceType: 'kazi', title: 'Licensed Kazi', organization: 'Dhaka Kazi Office', city: 'Dhaka', area: 'Mirpur', phone: '+8801710000002', fee: 5000, bio: 'Registered marriage officiant.', specialties: ['Nikah registration', 'Marriage license'], languages: ['Bangla'], yearsExperience: 12, verified: true, active: true, partnerSince: new Date() },
-            { name: 'Kazi Rafiq Uddin', serviceType: 'kazi', title: 'Licensed Kazi', city: 'Chattagram', phone: '+8801710000003', fee: 4000, bio: 'Kazi service across Chattogram.', languages: ['Bangla'], yearsExperience: 8, verified: true, active: true, partnerSince: new Date() },
-            { name: 'Counselor Dr. Sarah Karim', serviceType: 'counselor', title: 'Islamic Counselor', organization: 'Barakah Counseling', city: 'Dhaka', phone: '+8801710000004', fee: 2000, bio: 'Premarital counseling grounded in Islamic principles.', specialties: ['Premarital', 'Conflict resolution'], languages: ['Bangla', 'English'], yearsExperience: 10, rating: 4.9, reviewCount: 32, verified: true, active: true, partnerSince: new Date() },
-            { name: 'Counselor Br. Mahmud Hasan', serviceType: 'counselor', title: 'Family Counselor', city: 'Sylhet', phone: '+8801710000005', fee: 1500, bio: 'Family & premarital counseling.', languages: ['Bangla'], yearsExperience: 6, verified: true, active: true, partnerSince: new Date() }
+            // ---- IMAMS ----
+            {
+                name: 'Imam Yusuf Ahmad', userId: imamUser._id, serviceType: 'imam',
+                title: 'Head Imam', organization: 'Jamuna Masjid', city: 'Dhaka', area: 'Gulshan',
+                phone: '+8801710000001', email: 'imam.yusuf@nikah.demo',
+                photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop',
+                bio: 'Head Imam of Jamuna Masjid with 15 years of community service. Specializes in Tazkiya attestation and pre-marriage guidance for couples.',
+                specialties: ['Tazkiya attestation', 'Nikah ceremony', 'Marriage guidance', 'Conflict resolution'],
+                languages: ['Bangla', 'English', 'Arabic'], yearsExperience: 15, rating: 4.9, reviewCount: 48,
+                verified: true, active: true, partnerSince: new Date('2023-01-01')
+            },
+            {
+                name: 'Imam Abdul Karim', serviceType: 'imam',
+                title: 'Imam & Khateeb', organization: 'Baitul Mukarram South Gate Masjid', city: 'Dhaka', area: 'Motijheel',
+                phone: '+8801711000002',
+                photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&fit=crop',
+                bio: 'Serving as Imam for over 20 years. Known for his deep knowledge of Islamic jurisprudence related to marriage and family law.',
+                specialties: ['Islamic family law', 'Tazkiya attestation', 'Nikah ceremony'],
+                languages: ['Bangla', 'Arabic', 'Urdu'], yearsExperience: 20, rating: 4.8, reviewCount: 61,
+                verified: true, active: true, partnerSince: new Date('2023-03-15')
+            },
+            {
+                name: 'Mawlana Tariqul Islam', serviceType: 'imam',
+                title: 'Imam', organization: 'Central Mosque Chattagram', city: 'Chattagram', area: 'Agrabad',
+                phone: '+8801812000003',
+                photoURL: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&fit=crop',
+                bio: 'Hafiz and Alim with expertise in community reconciliation and premarital counseling.',
+                specialties: ['Tazkiya attestation', 'Community counseling', 'Premarital guidance'],
+                languages: ['Bangla', 'Arabic'], yearsExperience: 12, rating: 4.7, reviewCount: 29,
+                verified: true, active: true, partnerSince: new Date('2023-06-01')
+            },
+            {
+                name: 'Imam Hafiz Rahmatullah', serviceType: 'imam',
+                title: 'Imam & Hifz Teacher', organization: 'Sylhet Grand Mosque', city: 'Sylhet', area: 'Ambarkhana',
+                phone: '+8801613000004',
+                photoURL: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&fit=crop',
+                bio: 'Hafiz of the Holy Quran and community Imam. Provides character attestations for members of his congregation.',
+                specialties: ['Tazkiya attestation', 'Quran teaching', 'Marriage ceremony'],
+                languages: ['Bangla', 'Arabic'], yearsExperience: 10, rating: 4.6, reviewCount: 22,
+                verified: true, active: true, partnerSince: new Date('2024-01-10')
+            },
+            {
+                name: 'Sheikh Aminul Haque', serviceType: 'imam',
+                title: 'Imam & Islamic Scholar', organization: 'Baitul Aman Masjid', city: 'Khulna', area: 'Sonadanga',
+                phone: '+8801914000005',
+                photoURL: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&fit=crop',
+                bio: 'Islamic scholar specializing in Fiqh al-Munakahaat (Islamic Marriage Law). Available for Tazkiya endorsements and Nikah ceremonies.',
+                specialties: ['Islamic marriage law', 'Tazkiya attestation', 'Nikah ceremony'],
+                languages: ['Bangla', 'Arabic', 'English'], yearsExperience: 18, rating: 4.9, reviewCount: 55,
+                verified: true, active: true, partnerSince: new Date('2023-02-20')
+            },
+
+            // ---- KAZIS ----
+            {
+                name: 'Kazi Abdul Wahab', serviceType: 'kazi',
+                title: 'Licensed Nikah Registrar', organization: 'Dhaka City Kazi Office', city: 'Dhaka', area: 'Mirpur',
+                phone: '+8801715000001',
+                photoURL: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&fit=crop',
+                bio: 'Government-registered Nikah Registrar with 12 years of experience. Handles all legal documentation for Islamic marriages in Dhaka.',
+                specialties: ['Nikah registration', 'Marriage certificate', 'Legal documentation'],
+                languages: ['Bangla'], fee: 5000, yearsExperience: 12, rating: 4.7, reviewCount: 83,
+                verified: true, active: true, partnerSince: new Date('2023-01-01')
+            },
+            {
+                name: 'Kazi Rafiq Uddin', serviceType: 'kazi',
+                title: 'Licensed Kazi', organization: 'Chattagram Kazi Office', city: 'Chattagram', area: 'Nasirabad',
+                phone: '+8801716000002',
+                photoURL: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=400&fit=crop',
+                bio: 'Serving the Chattagram division for over 8 years as a licensed Kazi. Known for his efficiency and transparent process.',
+                specialties: ['Nikah registration', 'Marriage documentation'],
+                languages: ['Bangla'], fee: 4000, yearsExperience: 8, rating: 4.5, reviewCount: 46,
+                verified: true, active: true, partnerSince: new Date('2023-04-01')
+            },
+            {
+                name: 'Kazi Mosharraf Hossain', serviceType: 'kazi',
+                title: 'Senior Nikah Registrar', organization: 'Sylhet Sadar Kazi Office', city: 'Sylhet', area: 'Zindabazar',
+                phone: '+8801717000003',
+                bio: 'Senior Nikah Registrar serving Sylhet for 15 years. Available for home visits for elderly or differently-abled families.',
+                specialties: ['Nikah registration', 'Home visits', 'Marriage documentation'],
+                languages: ['Bangla', 'Sylheti'], fee: 3500, yearsExperience: 15, rating: 4.8, reviewCount: 37,
+                verified: true, active: true, partnerSince: new Date('2023-07-15')
+            },
+            {
+                name: 'Kazi Shafiul Islam', serviceType: 'kazi',
+                title: 'Licensed Kazi', organization: 'Rajshahi Kazi Office', city: 'Rajshahi', area: 'Shaheb Bazaar',
+                phone: '+8801718000004',
+                bio: 'Licensed Kazi serving Rajshahi. Experienced in handling international marriages (NRBs returning to Bangladesh).',
+                specialties: ['Nikah registration', 'NRB marriages', 'Legal documentation'],
+                languages: ['Bangla', 'English'], fee: 4500, yearsExperience: 9, rating: 4.6, reviewCount: 28,
+                verified: true, active: true, partnerSince: new Date('2024-02-01')
+            },
+
+            // ---- COUNSELORS ----
+            {
+                name: 'Dr. Sarah Karim', serviceType: 'counselor',
+                title: 'Islamic Family Counselor (PhD)', organization: 'Barakah Counseling Center', city: 'Dhaka', area: 'Dhanmondi',
+                phone: '+8801719000001', email: 'sarah.karim@barakah.demo',
+                photoURL: 'https://images.unsplash.com/photo-1559468213-7650336d390d?w=400&fit=crop',
+                bio: 'PhD in Family Psychology. Specializes in premarital counseling grounded in Islamic principles. Has helped over 200 couples build strong, faith-centered marriages.',
+                specialties: ['Premarital counseling', 'Conflict resolution', 'Divorce counseling', 'Communication skills'],
+                languages: ['Bangla', 'English'], fee: 2000, yearsExperience: 10, rating: 4.9, reviewCount: 127,
+                verified: true, active: true, partnerSince: new Date('2023-01-01')
+            },
+            {
+                name: 'Br. Mahmud Hasan', serviceType: 'counselor',
+                title: 'Islamic Family Counselor', organization: 'Sylhet Islamic Center', city: 'Sylhet', area: 'Upashahar',
+                phone: '+8801720000002',
+                bio: 'Certified family counselor with a focus on Islamic principles. Helps couples and families navigate relationship challenges through the lens of Quran and Sunnah.',
+                specialties: ['Premarital counseling', 'Family reconciliation', 'Anger management'],
+                languages: ['Bangla', 'English'], fee: 1500, yearsExperience: 6, rating: 4.7, reviewCount: 54,
+                verified: true, active: true, partnerSince: new Date('2023-05-20')
+            },
+            {
+                name: 'Sr. Nusaiba Rahman', serviceType: 'counselor',
+                title: 'Women\'s Wellness Counselor', organization: 'Noor Counseling', city: 'Chattagram', area: 'GEC Circle',
+                phone: '+8801821000003',
+                photoURL: 'https://images.unsplash.com/photo-1547527392-bd5d50305ca0?w=400&fit=crop',
+                bio: 'Specialized in women\'s mental and emotional wellness within an Islamic framework. Particularly experienced in supporting widows and divorcees seeking second marriages.',
+                specialties: ['Women\'s wellness', 'Sukoon guidance', 'Trauma recovery', 'Premarital counseling'],
+                languages: ['Bangla', 'English'], fee: 1800, yearsExperience: 8, rating: 4.8, reviewCount: 71,
+                verified: true, active: true, partnerSince: new Date('2023-08-01')
+            },
+            {
+                name: 'Ustaz Farhan Abdullah', serviceType: 'counselor',
+                title: 'Islamic Life Coach & Counselor', organization: 'Tarbiyyah Institute', city: 'Dhaka', area: 'Uttara',
+                phone: '+8801722000004',
+                photoURL: 'https://images.unsplash.com/photo-1522556189639-b150ed9c4330?w=400&fit=crop',
+                bio: 'Life coach and counselor helping young Muslims build healthy relationships based on Islamic values. Conducts group workshops and individual sessions.',
+                specialties: ['Premarital counseling', 'Youth guidance', 'Communication skills', 'Islamic life coaching'],
+                languages: ['Bangla', 'English', 'Arabic'], fee: 1200, yearsExperience: 5, rating: 4.6, reviewCount: 39,
+                verified: true, active: true, partnerSince: new Date('2024-03-01')
+            }
         ]);
 
-        // Tazkiya endorsements — give a few biodatas earned trust + one imam attestation
+        // ---- Tazkiya endorsements ----
         if (biodatas.length > 10) {
             const target = biodatas[2];
             const endorsers = [createdUsers[3], createdUsers[4], createdUsers[5]];
             for (const e of endorsers) {
                 await Endorsement.create({
                     endorserId: e._id, endorserEmail: e.email, endorserName: e.name, endorserRole: 'user',
-                    endorserTrustAtSubmit: e.trustScore || 0,
+                    endorserTrustAtSubmit: 0,
                     endorsedBiodataId: target.biodataId, endorsedUserId: target.userId, endorsedName: target.name,
                     categories: ['honest', 'good_character', 'prays_regularly'],
                     weight: 1, note: 'A trustworthy, practicing brother.'
                 });
             }
-            // Imam attestation (high weight)
             await Endorsement.create({
                 endorserId: imamUser._id, endorserEmail: imamUser.email, endorserName: imamUser.name, endorserRole: 'imam',
                 endorserTrustAtSubmit: 0,
@@ -374,25 +500,71 @@ const seedData = async () => {
             await computeTrust(target.biodataId);
         }
 
-        // Mark one biodata as a Sukoon (second-marriage) profile for the demo
-        if (biodatas.length > 20) {
-            const sukoonBio = biodatas[20];
-            sukoonBio.maritalStatus = 'Divorced';
-            sukoonBio.hasChildren = true;
-            sukoonBio.childrenCount = 1;
-            sukoonBio.childrenLivingWith = 'Yes';
-            sukoonBio.sukoon = true;
-            sukoonBio.sukoonPhotoReveal = 'blurred';
-            await sukoonBio.save();
+        // ---- Sukoon (second-marriage) profiles ----
+        console.log('🌿 Marking Sukoon profiles...');
+
+        // 4 male Sukoon profiles (divorced/widowed)
+        const sukoonMaleIndices = [20, 22, 24, 26];
+        const sukoonMaleStatuses = ['Divorced', 'Widowed', 'Divorced', 'Divorced'];
+        const sukoonMaleChildren = [
+            { hasChildren: true, childrenCount: 1, childrenLivingWith: 'Yes' },
+            { hasChildren: false, childrenCount: 0, childrenLivingWith: '' },
+            { hasChildren: true, childrenCount: 2, childrenLivingWith: 'Shared' },
+            { hasChildren: false, childrenCount: 0, childrenLivingWith: '' },
+        ];
+
+        for (let i = 0; i < sukoonMaleIndices.length; i++) {
+            const idx = sukoonMaleIndices[i];
+            if (idx < biodatas.length) {
+                await Biodata.findByIdAndUpdate(biodatas[idx]._id, {
+                    maritalStatus: sukoonMaleStatuses[i],
+                    hasChildren: sukoonMaleChildren[i].hasChildren,
+                    childrenCount: sukoonMaleChildren[i].childrenCount,
+                    childrenLivingWith: sukoonMaleChildren[i].childrenLivingWith,
+                    sukoon: true,
+                    sukoonPhotoReveal: 'blurred',
+                    religiousCommitment: 'Practicing',
+                    prayerFrequency: 'Five Daily',
+                });
+            }
+        }
+
+        // 4 female Sukoon profiles
+        const sukoonFemaleRawIndices = [50, 52, 54, 56]; // female biodatas start at index 50 in the array
+        const sukoonFemaleStatuses = ['Divorced', 'Widowed', 'Divorced', 'Widowed'];
+        const sukoonFemaleChildren = [
+            { hasChildren: true, childrenCount: 1, childrenLivingWith: 'Yes' },
+            { hasChildren: true, childrenCount: 2, childrenLivingWith: 'Yes' },
+            { hasChildren: false, childrenCount: 0, childrenLivingWith: '' },
+            { hasChildren: false, childrenCount: 0, childrenLivingWith: '' },
+        ];
+
+        for (let i = 0; i < sukoonFemaleRawIndices.length; i++) {
+            const idx = sukoonFemaleRawIndices[i];
+            if (idx < biodatas.length) {
+                await Biodata.findByIdAndUpdate(biodatas[idx]._id, {
+                    maritalStatus: sukoonFemaleStatuses[i],
+                    hasChildren: sukoonFemaleChildren[i].hasChildren,
+                    childrenCount: sukoonFemaleChildren[i].childrenCount,
+                    childrenLivingWith: sukoonFemaleChildren[i].childrenLivingWith,
+                    sukoon: true,
+                    sukoonPhotoReveal: 'blurred',
+                    religiousCommitment: 'Practicing',
+                    prayerFrequency: 'Five Daily',
+                });
+            }
         }
 
         console.log('✅ Seed data created successfully!');
         console.log('📊 Summary:');
         console.log(`   - Admin: ${adminEmail}`);
+        console.log(`   - Imam user: imam.yusuf@nikah.demo`);
         console.log(`   - Users: ${createdUsers.length}`);
         console.log(`   - Male Biodatas: 50`);
         console.log(`   - Female Biodatas: 50`);
         console.log(`   - Total Biodatas: ${biodatas.length}`);
+        console.log(`   - Sukoon profiles: 8 (4 male, 4 female)`);
+        console.log(`   - Service Providers: 5 Imams + 4 Kazis + 4 Counselors`);
         console.log(`   - Contact Requests: ${contactRequests.length}`);
         console.log(`   - Success Stories: 5`);
 
