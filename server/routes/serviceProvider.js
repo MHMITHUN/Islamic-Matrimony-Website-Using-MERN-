@@ -8,14 +8,19 @@ const { computeTrust, weightOf } = require('../lib/trust');
 
 const router = express.Router();
 
-// Public directory — filter by serviceType and optionally city
+// Public/Admin directory — filter by serviceType, city, and sort properly
 router.get('/', async (req, res) => {
     try {
-        const { serviceType, city } = req.query;
-        const query = { active: true };
+        const { serviceType, city, admin } = req.query;
+        const query = admin ? {} : { active: true }; // Admin sees all, public sees active only
         if (serviceType) query.serviceType = serviceType;
         if (city) query.city = city;
-        const providers = await ServiceProvider.find(query).sort({ verified: -1, rating: -1 });
+        
+        // For admin requests, sort newest first (createdAt -1) so new apps show at top.
+        // For public requests, sort by verified first, then rating.
+        const sortOptions = admin ? { createdAt: -1 } : { verified: -1, rating: -1 };
+        
+        const providers = await ServiceProvider.find(query).sort(sortOptions);
         res.json(providers);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

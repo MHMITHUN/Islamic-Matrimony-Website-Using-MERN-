@@ -29,11 +29,11 @@ const DashboardLayout = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
-    const { data: pendingRequests = [] } = useQuery({
-        queryKey: ['premiumRequests'],
+    const { data: pendingCounts = {} } = useQuery({
+        queryKey: ['adminPendingCounts'],
         queryFn: async () => {
-            if (!isAdmin) return [];
-            const response = await adminAPI.getPremiumRequests();
+            if (!isAdmin) return {};
+            const response = await adminAPI.getPendingCounts();
             return response.data;
         },
         enabled: isAdmin,
@@ -80,14 +80,14 @@ const DashboardLayout = () => {
         { path: '/dashboard/admin', icon: PieChart, label: t('dashboard.sidebar.adminDashboard') },
         { path: '/dashboard/admin/manage-users', icon: Users, label: t('dashboard.sidebar.manageUsers') },
         { path: '/dashboard/admin/approved-premium', icon: Crown, label: t('dashboard.sidebar.approvedPremium'), badgeKey: 'premium' },
-        { path: '/dashboard/admin/approved-contacts', icon: CheckCircle2, label: t('dashboard.sidebar.approvedContacts') },
-        { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: 'Verification Requests' },
-        { path: '/dashboard/admin/providers', icon: ShieldCheck, label: 'Providers' },
+        { path: '/dashboard/admin/approved-contacts', icon: CheckCircle2, label: t('dashboard.sidebar.approvedContacts'), badgeKey: 'contacts' },
+        { path: '/dashboard/admin/verification-requests', icon: ShieldCheck, label: 'Verification Requests', badgeKey: 'verifications' },
+        { path: '/dashboard/admin/providers', icon: ShieldCheck, label: 'Providers', badgeKey: 'providers' },
         { path: '/dashboard/admin/sukoon', icon: Leaf, label: 'Sukoon Channel' },
         { path: '/dashboard/admin/journeys', icon: HeartHandshake, label: 'Marriage Journeys' },
         { path: '/dashboard/admin/contact-messages', icon: Mail, label: t('dashboard.sidebar.contactMessages') },
         { path: '/dashboard/admin/success-stories', icon: ListChecks, label: t('dashboard.sidebar.successStories') },
-        { path: '/dashboard/admin/reports', icon: Flag, label: 'Reports' },
+        { path: '/dashboard/admin/reports', icon: Flag, label: 'Reports', badgeKey: 'reports' },
     ];
 
     const guardianLinks = [
@@ -176,9 +176,9 @@ const DashboardLayout = () => {
                                         <>
                                             <link.icon className={cn('h-[18px] w-[18px] shrink-0', isActive ? 'text-emerald-600' : 'text-white/60 group-hover:text-white')} />
                                             <span className="flex-1">{link.label}</span>
-                                            {isAdmin && link.badgeKey === 'premium' && pendingRequests.length > 0 && (
-                                                <span className="grid place-items-center min-w-[20px] h-5 px-1 bg-amber-500 text-white text-[10px] font-bold rounded-full">
-                                                    {pendingRequests.length}
+                                            {isAdmin && link.badgeKey && pendingCounts[link.badgeKey] > 0 && (
+                                                <span className="grid place-items-center min-w-[20px] h-5 px-1 bg-amber-500 text-white text-[10px] font-bold rounded-full shadow-sm">
+                                                    {pendingCounts[link.badgeKey]}
                                                 </span>
                                             )}
                                         </>

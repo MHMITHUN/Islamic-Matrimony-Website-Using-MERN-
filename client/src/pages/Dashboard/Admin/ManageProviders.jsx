@@ -31,7 +31,8 @@ const ManageProviders = () => {
     const { data: providers = [], isLoading } = useQuery({
         queryKey: ['adminProviders', typeFilter],
         queryFn: async () => {
-            const r = await providerAPI.getAll(typeFilter ? { serviceType: typeFilter } : {});
+            const params = typeFilter ? { serviceType: typeFilter, admin: true } : { admin: true };
+            const r = await providerAPI.getAll(params);
             return r.data;
         }
     });

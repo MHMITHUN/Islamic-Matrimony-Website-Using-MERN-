@@ -3,9 +3,34 @@ const User = require('../models/User');
 const Biodata = require('../models/Biodata');
 const ContactRequest = require('../models/ContactRequest');
 const SuccessStory = require('../models/SuccessStory');
+const ServiceProvider = require('../models/ServiceProvider');
+const Report = require('../models/Report');
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Get counts of pending actions for admin notifications
+router.get('/pending-counts', verifyToken, verifyAdmin, async (req, res) => {
+    try {
+        const [providers, premium, verifications, contacts, reports] = await Promise.all([
+            ServiceProvider.countDocuments({ verified: false }),
+            Biodata.countDocuments({ premiumRequestStatus: 'pending' }),
+            Biodata.countDocuments({ 'verification.status': 'pending' }),
+            ContactRequest.countDocuments({ status: 'pending' }),
+            Report.countDocuments({ status: { $in: ['pending', 'open'] } })
+        ]);
+
+        res.json({
+            providers,
+            premium,
+            verifications,
+            contacts,
+            reports
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
 
 // Get all users with search
 router.get('/users', verifyToken, verifyAdmin, async (req, res) => {

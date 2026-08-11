@@ -95,7 +95,8 @@ export const adminAPI = {
     approveVerification: (biodataId) => api.patch(`/admin/approve-verification/${biodataId}`),
     rejectVerification: (biodataId) => api.patch(`/admin/reject-verification/${biodataId}`),
     getSukoonProfiles: () => api.get('/admin/sukoon-profiles'),
-    getSuccessStories: () => api.get('/admin/success-stories')
+    getSuccessStories: () => api.get('/admin/success-stories'),
+    getPendingCounts: () => api.get('/admin/pending-counts')
 };
 
 export const statsAPI = {
