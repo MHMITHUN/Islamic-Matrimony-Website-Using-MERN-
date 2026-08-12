@@ -61,29 +61,28 @@ export default function BiodataCard({ biodata, index = 0, featured = false, isFa
                 {/* gradient scrim */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/20" />
 
-                {/* Top badges */}
-                <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                    {biodata.isPremium && (
-                        <Badge className="gap-1 bg-gradient-gold border-transparent text-white shadow-sm">
-                            <Crown className="h-3 w-3" /> {t('biodata.card.premium', 'Premium')}
-                        </Badge>
-                    )}
-                    {biodata.sukoon && (
-                        <Badge variant="outline" className="gap-1 border-emerald-500/40 bg-emerald-950/80 text-emerald-300 shadow-sm backdrop-blur">
-                            ✨ Sukoon
-                        </Badge>
-                    )}
-                    {featured && (
-                        <Badge className="gap-1 bg-primary border-transparent text-primary-foreground shadow-sm">
-                            <BadgeCheck className="h-3 w-3" /> {t('home.featured.featured', 'Featured')}
-                        </Badge>
-                    )}
-                </div>
+                {/* Top header bar */}
+                <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-1.5 z-10">
+                    <div className="flex flex-wrap items-center gap-1.5 max-w-[65%]">
+                        {biodata.isPremium && (
+                            <Badge className="gap-1 bg-gradient-gold border-transparent text-white shadow-sm text-[10px]">
+                                <Crown className="h-3 w-3" /> {t('biodata.card.premium', 'Premium')}
+                            </Badge>
+                        )}
+                        {biodata.sukoon && (
+                            <Badge variant="outline" className="gap-1 border-emerald-500/40 bg-emerald-950/85 text-emerald-300 shadow-sm backdrop-blur text-[10px]">
+                                ✨ Sukoon
+                            </Badge>
+                        )}
+                        {featured && (
+                            <Badge className="gap-1 bg-primary border-transparent text-primary-foreground shadow-sm text-[10px]">
+                                <BadgeCheck className="h-3 w-3" /> {t('home.featured.featured', 'Featured')}
+                            </Badge>
+                        )}
+                    </div>
 
-                {/* Gender pill */}
-                <div className="absolute top-3 right-3">
                     <span className={cn(
-                        'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur',
+                        'shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur shadow-sm',
                         isMale ? 'bg-sky-500/85 text-white' : 'bg-rose-500/85 text-white'
                     )}>
                         {isMale ? t('biodata.filters.male', 'Male') : t('biodata.filters.female', 'Female')}
