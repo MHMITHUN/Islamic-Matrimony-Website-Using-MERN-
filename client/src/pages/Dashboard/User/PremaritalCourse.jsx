@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BookOpen, Loader2, CheckCircle2, Award, Printer, LinkIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import { courseAPI, journeyAPI } from '../../../api/api';
 import { premaritalCourse } from '../../../data/premaritalCourse';
 import PageHeader from '../../../components/dashboard/PageHeader';
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 const PremaritalCourse = () => {
+    const { t } = useLanguage();
     const qc = useQueryClient();
     const [answers, setAnswers] = useState({}); // module index -> selected option index
 

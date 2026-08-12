@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ShieldCheck, Loader2, Trash2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import { endorsementAPI, authAPI } from '../../../api/api';
 import PageHeader from '../../../components/dashboard/PageHeader';
 import EmptyState from '../../../components/dashboard/EmptyState';
@@ -18,6 +19,7 @@ import toast from 'react-hot-toast';
 const TIER_MAX = 50; // gold threshold, for the progress visualization
 
 const TrustDashboard = () => {
+    const { t } = useLanguage();
     const { trustTier } = useAuth();
     const qc = useQueryClient();
 
