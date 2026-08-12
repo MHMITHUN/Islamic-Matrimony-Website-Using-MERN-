@@ -34,10 +34,10 @@ const Matches = () => {
 
     return (
         <>
-            <Helmet><title>Kufu (কফু) - Nikah Matrimony</title></Helmet>
+            <Helmet><title>{isBn ? "কফু - Nikah Matrimony" : "Kufu Matches - Nikah Matrimony"}</title></Helmet>
             <div className="space-y-6">
                 <PageHeader
-                    title={isBn ? "কফু (Kufu Matches)" : "Kufu Matches (কফু)"}
+                    title={isBn ? "কফু (Kufu Matches)" : "Kufu Matches"}
                     description={isBn ? "আপনার পছন্দ ও দ্বীনী বৈশিষ্ট্যের ভিত্তিতে ইসলামিক কফু (সামঞ্জস্যপূর্ণ) প্রোফাইল" : "Islamic suitability & compatibility (Kufu) matched based on your preferences"}
                     icon={Scale}
                 />
