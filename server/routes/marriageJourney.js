@@ -1,10 +1,13 @@
 const express = require('express');
 const MarriageJourney = require('../models/MarriageJourney');
+const ContactRequest = require('../models/ContactRequest');
+const Biodata = require('../models/Biodata');
 const Booking = require('../models/Booking');
 const MahrAgreement = require('../models/MahrAgreement');
 const SuccessStory = require('../models/SuccessStory');
 const Notification = require('../models/Notification');
 const { verifyToken } = require('../middleware/auth');
+const { createJourneyFromRequest } = require('../lib/journey');
 
 const router = express.Router();
 const { STAGES } = require('../models/MarriageJourney');
@@ -17,10 +20,34 @@ const isParty = (journey, user) => journey && (
 // My journeys (as either party)
 router.get('/mine', verifyToken, async (req, res) => {
     try {
-        const journeys = await MarriageJourney.find({
-            $or: [{ userA: req.user._id }, { userB: req.user._id }],
+        const userId = req.user._id;
+        const myBiodata = await Biodata.findOne({ userEmail: req.user.email }).select('biodataId');
+        const myBiodataId = myBiodata?.biodataId;
+
+        // Auto-sync/backfill any approved contact requests for this user that don't have a journey yet
+        const approvedRequests = await ContactRequest.find({
+            $or: [
+                { requesterId: userId },
+                { biodataUserId: userId },
+                ...(myBiodataId ? [{ biodataId: myBiodataId }] : [])
+            ],
+            status: 'approved'
+        });
+
+        for (const reqDoc of approvedRequests) {
+            await createJourneyFromRequest(reqDoc);
+        }
+
+        const query = {
+            $or: [
+                { userA: userId },
+                { userB: userId },
+                ...(myBiodataId ? [{ biodataA: myBiodataId }, { biodataB: myBiodataId }] : [])
+            ],
             status: { $ne: 'cancelled' }
-        }).sort({ updatedAt: -1 });
+        };
+
+        const journeys = await MarriageJourney.find(query).sort({ updatedAt: -1 });
         res.json(journeys);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

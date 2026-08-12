@@ -1,8 +1,8 @@
 const MarriageJourney = require('../models/MarriageJourney');
 const Biodata = require('../models/Biodata');
+const User = require('../models/User');
 
 // Create a MarriageJourney from an approved ContactRequest (idempotent).
-// The requester (biodataA/userA) requested the target (biodataB/userB).
 async function createJourneyFromRequest(contactRequest) {
     if (!contactRequest) return null;
 
@@ -10,22 +10,39 @@ async function createJourneyFromRequest(contactRequest) {
     const existing = await MarriageJourney.findOne({ contactRequestId: contactRequest._id });
     if (existing) return existing;
 
-    const requesterBiodata = await Biodata.findOne({ biodataId: contactRequest.biodataId }); // target of the request
-    const requester = await require('../models/User').findById(contactRequest.requesterId);
+    const targetBiodata = await Biodata.findOne({ biodataId: contactRequest.biodataId });
+    let targetUserId = contactRequest.biodataUserId || targetBiodata?.userId;
 
-    if (!requesterBiodata || !requester) return null;
+    if (!targetUserId && targetBiodata?.userEmail) {
+        const u = await User.findOne({ email: targetBiodata.userEmail });
+        if (u) targetUserId = u._id;
+    }
 
-    const journey = await MarriageJourney.create({
-        contactRequestId: contactRequest._id,
-        biodataA: contactRequest.requesterBiodataId || requester?.biodataId,
-        biodataB: contactRequest.biodataId,
-        userA: contactRequest.requesterId,
-        userB: requesterBiodata.userId,
-        currentStage: 'connected',
-        stageHistory: [{ stage: 'connected', enteredAt: new Date(), note: 'Contact request approved' }]
-    });
+    const requesterUser = await User.findById(contactRequest.requesterId);
+    let requesterBiodataId = contactRequest.requesterBiodataId;
+    if (!requesterBiodataId && requesterUser?.email) {
+        const b = await Biodata.findOne({ userEmail: requesterUser.email });
+        if (b) requesterBiodataId = b.biodataId;
+    }
 
-    return journey;
+    if (!targetUserId || !contactRequest.requesterId) return null;
+
+    try {
+        const journey = await MarriageJourney.create({
+            contactRequestId: contactRequest._id,
+            biodataA: requesterBiodataId || 0,
+            biodataB: contactRequest.biodataId,
+            userA: contactRequest.requesterId,
+            userB: targetUserId,
+            currentStage: 'connected',
+            stageHistory: [{ stage: 'connected', enteredAt: contactRequest.updatedAt || new Date(), note: 'Contact request approved' }]
+        });
+
+        return journey;
+    } catch (err) {
+        console.error('[JOURNEY] create error:', err.message);
+        return null;
+    }
 }
 
 module.exports = { createJourneyFromRequest };
