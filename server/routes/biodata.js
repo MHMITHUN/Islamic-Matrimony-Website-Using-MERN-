@@ -17,6 +17,9 @@ router.get('/', async (req, res) => {
             minAge,
             maxAge,
             channel,
+            sukoon,
+            tazkiyaTier,
+            maritalStatus,
             sort = 'asc'
         } = req.query;
 
@@ -26,10 +29,22 @@ router.get('/', async (req, res) => {
             query.biodataType = biodataType;
         }
 
-        if (channel === 'sukoon') {
+        if (channel === 'sukoon' || sukoon === 'true' || sukoon === '1') {
             query.sukoon = true;
-        } else if (channel === 'main') {
+        } else if (channel === 'main' || sukoon === 'false') {
             query.sukoon = { $ne: true };
+        }
+
+        if (tazkiyaTier) {
+            if (tazkiyaTier === 'imam_verified') {
+                query['verification.status'] = 'verified';
+            } else {
+                query.tazkiyaTier = tazkiyaTier;
+            }
+        }
+
+        if (maritalStatus) {
+            query.maritalStatus = maritalStatus;
         }
 
         if (division) {

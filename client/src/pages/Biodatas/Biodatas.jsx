@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight, Frown } from 'lucide-react';
+import { SlidersHorizontal, Search, X, ChevronLeft, ChevronRight, Frown, ShieldCheck, Sparkles, Award } from 'lucide-react';
 import { FaMale, FaFemale } from 'react-icons/fa';
 import { biodataAPI } from '../../api/api';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -27,6 +27,9 @@ const Biodatas = () => {
         division: searchParams.get('division') || searchParams.get('permanentDivision') || '',
         minAge: searchParams.get('minAge') || searchParams.get('age') || '',
         maxAge: searchParams.get('maxAge') || '',
+        sukoon: searchParams.get('sukoon') || '',
+        tazkiyaTier: searchParams.get('tazkiyaTier') || '',
+        maritalStatus: searchParams.get('maritalStatus') || '',
     });
     const [page, setPage] = useState(1);
     const [showMobileFilter, setShowMobileFilter] = useState(false);
@@ -54,10 +57,13 @@ const Biodatas = () => {
         queryFn: async () => {
             const params = {
                 page, limit,
-                ...(filters.biodataType && { biodataType: filters.biodataType }),
-                ...(filters.division && { division: filters.division }),
+                ...(filters.biodataType && filters.biodataType !== 'all' && { biodataType: filters.biodataType }),
+                ...(filters.division && filters.division !== 'all' && { division: filters.division }),
                 ...(filters.minAge && { minAge: filters.minAge }),
                 ...(filters.maxAge && { maxAge: filters.maxAge }),
+                ...(filters.sukoon && filters.sukoon !== 'all' && { sukoon: filters.sukoon }),
+                ...(filters.tazkiyaTier && filters.tazkiyaTier !== 'all' && { tazkiyaTier: filters.tazkiyaTier }),
+                ...(filters.maritalStatus && filters.maritalStatus !== 'all' && { maritalStatus: filters.maritalStatus }),
             };
             const response = await biodataAPI.getAll(params);
             return response.data;
@@ -69,9 +75,9 @@ const Biodatas = () => {
     const pagination = data?.pagination || { currentPage: 1, totalPages: 1, totalItems: 0 };
 
     const setFilter = (name, value) => { setFilters(prev => ({ ...prev, [name]: value })); setPage(1); };
-    const clearFilters = () => { setFilters({ biodataType: '', division: '', minAge: '', maxAge: '' }); setPage(1); };
+    const clearFilters = () => { setFilters({ biodataType: '', division: '', minAge: '', maxAge: '', sukoon: '', tazkiyaTier: '', maritalStatus: '' }); setPage(1); };
 
-    const activeFilterCount = Object.values(filters).filter(Boolean).length;
+    const activeFilterCount = Object.values(filters).filter(v => Boolean(v) && v !== 'all').length;
 
     const genderOptions = [
         { value: '', label: t('biodata.filters.all') },
@@ -80,9 +86,10 @@ const Biodatas = () => {
     ];
 
     const renderFilterContent = () => (
-        <div className="space-y-6">
+        <div className="space-y-5">
+            {/* Gender Filter */}
             <div>
-                <Label className="text-sm font-semibold mb-2.5 block">{t('biodata.filters.biodataType')}</Label>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">{t('biodata.filters.biodataType')}</Label>
                 <div className="grid grid-cols-3 gap-1.5">
                     {genderOptions.map((option) => (
                         <button
@@ -90,41 +97,101 @@ const Biodatas = () => {
                             type="button"
                             onClick={() => setFilter('biodataType', option.value)}
                             className={cn(
-                                'flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-xs font-medium transition-all',
+                                'flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2 text-xs font-medium transition-all',
                                 filters.biodataType === option.value
-                                    ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary/20'
+                                    ? 'border-primary bg-primary/10 text-primary font-semibold ring-1 ring-primary/20'
                                     : 'border-border text-muted-foreground hover:bg-accent hover:text-foreground'
                             )}
                         >
-                            {option.icon || <span className="text-sm">✦</span>}
+                            {option.icon || <span className="text-xs font-bold">ALL</span>}
                             <span className="truncate">{option.label}</span>
                         </button>
                     ))}
                 </div>
             </div>
 
+            {/* Tazkiya Trust Tier Filter */}
             <div>
-                <Label className="text-sm font-semibold mb-2.5 block">{t('biodata.filters.ageRange')}</Label>
-                <div className="flex items-center gap-2">
-                    <Input type="number" name="minAge" value={filters.minAge} onChange={(e) => setFilter('minAge', e.target.value)} placeholder={t('biodata.filters.min')} />
-                    <span className="text-muted-foreground text-sm">—</span>
-                    <Input type="number" name="maxAge" value={filters.maxAge} onChange={(e) => setFilter('maxAge', e.target.value)} placeholder={t('biodata.filters.max')} />
-                </div>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                    {t('biodata.filters.tazkiyaTier')}
+                </Label>
+                <Select value={filters.tazkiyaTier} onValueChange={(v) => setFilter('tazkiyaTier', v)}>
+                    <SelectTrigger className="w-full text-xs">
+                        <SelectValue placeholder={t('biodata.filters.allTiers')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('biodata.filters.allTiers')}</SelectItem>
+                        <SelectItem value="gold">{t('biodata.filters.goldTier')}</SelectItem>
+                        <SelectItem value="silver">{t('biodata.filters.silverTier')}</SelectItem>
+                        <SelectItem value="bronze">{t('biodata.filters.bronzeTier')}</SelectItem>
+                        <SelectItem value="imam_verified">{t('biodata.filters.imamVerified')}</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
+            {/* Sukoon Second-Marriage Channel Filter */}
             <div>
-                <Label className="text-sm font-semibold mb-2.5 block">{t('biodata.filters.division')}</Label>
-                <Select value={filters.division} onValueChange={(v) => setFilter('division', v)}>
-                    <SelectTrigger><SelectValue placeholder={t('biodata.filters.allDivisions')} /></SelectTrigger>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+                    {t('biodata.filters.channel')}
+                </Label>
+                <Select value={filters.sukoon} onValueChange={(v) => setFilter('sukoon', v)}>
+                    <SelectTrigger className="w-full text-xs">
+                        <SelectValue placeholder={t('biodata.filters.allChannels')} />
+                    </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">{t('biodata.filters.allDivisions')}</SelectItem>
+                        <SelectItem value="all">{t('biodata.filters.allChannels')}</SelectItem>
+                        <SelectItem value="false">{t('biodata.filters.mainChannel')}</SelectItem>
+                        <SelectItem value="true">{t('biodata.filters.sukoonChannel')}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {/* Marital Status Filter */}
+            <div>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">
+                    {t('biodata.filters.maritalStatus')}
+                </Label>
+                <Select value={filters.maritalStatus} onValueChange={(v) => setFilter('maritalStatus', v)}>
+                    <SelectTrigger className="w-full text-xs">
+                        <SelectValue placeholder={t('biodata.filters.allMaritalStatuses')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('biodata.filters.allMaritalStatuses')}</SelectItem>
+                        <SelectItem value="Never Married">{t('biodata.filters.neverMarried')}</SelectItem>
+                        <SelectItem value="Divorced">{t('biodata.filters.divorced')}</SelectItem>
+                        <SelectItem value="Widowed">{t('biodata.filters.widowed')}</SelectItem>
+                        <SelectItem value="Seeking Polygyny">{t('biodata.filters.polygyny')}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {/* Division Filter */}
+            <div>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">{t('biodata.filters.division')}</Label>
+                <Select value={filters.division} onValueChange={(v) => setFilter('division', v)}>
+                    <SelectTrigger className="w-full text-xs"><SelectValue placeholder={t('biodata.filters.allDivisions')} /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('biodata.filters.allDivisions')}</SelectItem>
                         {divisions.map(div => <SelectItem key={div} value={div}>{translateEnum('division', div)}</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
 
-            <Button onClick={clearFilters} variant="outline" className="w-full">
-                <X className="h-4 w-4" /> {t('biodata.filters.clearAll')}
+            {/* Age Range Filter */}
+            <div>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">{t('biodata.filters.ageRange')}</Label>
+                <div className="flex items-center gap-2">
+                    <Input type="number" name="minAge" value={filters.minAge} onChange={(e) => setFilter('minAge', e.target.value)} placeholder={t('biodata.filters.min')} className="text-xs" />
+                    <span className="text-muted-foreground text-xs">—</span>
+                    <Input type="number" name="maxAge" value={filters.maxAge} onChange={(e) => setFilter('maxAge', e.target.value)} placeholder={t('biodata.filters.max')} className="text-xs" />
+                </div>
+            </div>
+
+            {/* Clear Filters Button */}
+            <Button onClick={clearFilters} variant="outline" size="sm" className="w-full gap-1.5 text-xs font-semibold">
+                <X className="h-3.5 w-3.5" /> {t('biodata.filters.clearAll')}
             </Button>
         </div>
     );
