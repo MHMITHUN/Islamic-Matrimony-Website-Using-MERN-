@@ -500,6 +500,176 @@ const seedData = async () => {
             await computeTrust(target.biodataId);
         }
 
+        // ---- Flagship User: mhmmithun1@gmail.com ----
+        console.log('👤 Creating flagship user profile (mhmmithun1@gmail.com)...');
+        const mithunEmail = 'mhmmithun1@gmail.com';
+        const mithunUser = await User.create({
+            name: 'M. H. Mithun',
+            email: mithunEmail,
+            photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop',
+            role: 'user',
+            isPremium: true,
+            premiumRequestStatus: 'approved'
+        });
+
+        const mithunBiodata = await Biodata.create({
+            biodataId: 101,
+            userId: mithunUser._id,
+            userEmail: mithunEmail,
+            biodataType: 'Male',
+            name: 'M. H. Mithun',
+            profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop',
+            dateOfBirth: new Date('1998-05-15'),
+            height: `5'9"`,
+            weight: '72 kg',
+            age: 28,
+            occupation: 'Engineer',
+            race: 'Fair',
+            fathersName: 'Mohammad Abdul Hossain',
+            mothersName: 'Mst. Rokeya Begum',
+            permanentDivision: 'Dhaka',
+            presentDivision: 'Dhaka',
+            maritalStatus: 'Never Married',
+            sect: 'Sunni-Hanafi',
+            religiousCommitment: 'Practicing',
+            prayerFrequency: 'Five Daily',
+            modesty: 'Beard',
+            religiousEducation: 'General',
+            mahrPreference: 'As per capability',
+            alcoholFree: true,
+            smoking: 'No',
+            diet: 'Halal only',
+            expectedPartnerAge: '20-25',
+            expectedPartnerHeight: `5'2"`,
+            expectedPartnerWeight: '50-60 kg',
+            mobileNumber: '+8801700112233',
+            isPremium: true,
+            premiumRequestStatus: 'approved',
+            verification: {
+                status: 'verified',
+                method: 'imam_endorsement',
+                referenceName: 'Imam Yusuf Ahmad',
+                referenceContact: '+8801710000001',
+                submittedAt: new Date('2024-01-01'),
+                verifiedAt: new Date('2024-01-02')
+            },
+            waliEnabled: true,
+            waliName: 'Mohammad Abdul Hossain',
+            waliRelation: 'Father',
+            waliContact: '+8801700112244',
+            waliEmail: 'father.mithun@example.com',
+            waliConsent: 'given'
+        });
+
+        // Tazkiya Endorsements for mhmmithun1@gmail.com -> Gold Tier (score >= 50)
+        console.log('🛡️ Creating Tazkiya endorsements for mhmmithun1@gmail.com...');
+        // 1) Imam Yusuf Ahmad (+10)
+        await Endorsement.create({
+            endorserId: imamUser._id,
+            endorserEmail: imamUser.email,
+            endorserName: imamUser.name,
+            endorserRole: 'imam',
+            endorserTrustAtSubmit: 0,
+            endorsedBiodataId: mithunBiodata.biodataId,
+            endorsedUserId: mithunBiodata.userId,
+            endorsedName: mithunBiodata.name,
+            categories: ['good_character', 'knowledgeable_deen', 'prays_regularly'],
+            weight: 10,
+            note: 'Attested by Head Imam Yusuf Ahmad. Known to the Jamuna Masjid congregation as a practicing, honest brother.'
+        });
+
+        // 2) Imam Abdul Karim (+10)
+        await Endorsement.create({
+            endorserId: createdUsers[0]._id,
+            endorserEmail: createdUsers[0].email,
+            endorserName: 'Imam Abdul Karim',
+            endorserRole: 'imam',
+            endorserTrustAtSubmit: 0,
+            endorsedBiodataId: mithunBiodata.biodataId,
+            endorsedUserId: mithunBiodata.userId,
+            endorsedName: mithunBiodata.name,
+            categories: ['honest', 'good_family', 'prays_regularly'],
+            weight: 10,
+            note: 'A trustworthy brother of exemplary character and high Islamic moral standards.'
+        });
+
+        // 3) Mawlana Tariqul Islam (+10)
+        await Endorsement.create({
+            endorserId: createdUsers[1]._id,
+            endorserEmail: createdUsers[1].email,
+            endorserName: 'Mawlana Tariqul Islam',
+            endorserRole: 'imam',
+            endorserTrustAtSubmit: 0,
+            endorsedBiodataId: mithunBiodata.biodataId,
+            endorsedUserId: mithunBiodata.userId,
+            endorsedName: mithunBiodata.name,
+            categories: ['good_character', 'knowledgeable_deen'],
+            weight: 10,
+            note: 'Highly recommended for marriage. Dependable, humble and polite.'
+        });
+
+        // 4-8) Community members (+5 each = +25)
+        const communityList = [createdUsers[2], createdUsers[3], createdUsers[4], createdUsers[5], createdUsers[6]];
+        for (let idx = 0; idx < communityList.length; idx++) {
+            const u = communityList[idx];
+            await Endorsement.create({
+                endorserId: u._id,
+                endorserEmail: u.email,
+                endorserName: u.name,
+                endorserRole: 'user',
+                endorserTrustAtSubmit: 20,
+                endorsedBiodataId: mithunBiodata.biodataId,
+                endorsedUserId: mithunBiodata.userId,
+                endorsedName: mithunBiodata.name,
+                categories: ['honest', 'good_character', 'prays_regularly'],
+                weight: 5,
+                note: 'Known personally for several years. Excellent manners and steadfast in prayer.'
+            });
+        }
+
+        // Recompute Tazkiya Trust for mhmmithun1@gmail.com
+        await computeTrust(mithunBiodata.biodataId);
+
+        // Give an endorsement from mhmmithun1@gmail.com to female biodata 51 (so 'Given' tab has demo data too)
+        await Endorsement.create({
+            endorserId: mithunUser._id,
+            endorserEmail: mithunUser.email,
+            endorserName: mithunUser.name,
+            endorserRole: 'user',
+            endorserTrustAtSubmit: 55,
+            endorsedBiodataId: 51,
+            endorsedUserId: biodatas[50].userId,
+            endorsedName: biodatas[50].name,
+            categories: ['good_character', 'prays_regularly'],
+            weight: 12,
+            note: 'Endorsed for pious nature and good character.'
+        });
+        await computeTrust(51);
+
+        // Contact requests for mhmmithun1@gmail.com
+        await ContactRequest.create([
+            {
+                requesterId: mithunUser._id,
+                requesterEmail: mithunUser.email,
+                requesterName: mithunUser.name,
+                biodataId: 51,
+                biodataUserId: biodatas[50].userId,
+                status: 'approved',
+                paymentId: 'pi_mithun_approved_1',
+                amount: 500
+            },
+            {
+                requesterId: mithunUser._id,
+                requesterEmail: mithunUser.email,
+                requesterName: mithunUser.name,
+                biodataId: 52,
+                biodataUserId: biodatas[51].userId,
+                status: 'pending',
+                paymentId: 'pi_mithun_pending_1',
+                amount: 500
+            }
+        ]);
+
         // ---- Sukoon (second-marriage) profiles ----
         console.log('🌿 Marking Sukoon profiles...');
 
