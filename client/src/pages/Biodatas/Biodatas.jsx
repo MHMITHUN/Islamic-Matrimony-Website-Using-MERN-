@@ -86,7 +86,7 @@ const Biodatas = () => {
     ];
 
     const renderFilterContent = () => (
-        <div className="space-y-5">
+        <div className="space-y-4">
             {/* Gender Filter */}
             <div>
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">{t('biodata.filters.biodataType')}</Label>
@@ -216,9 +216,9 @@ const Biodatas = () => {
                 <div className="flex gap-8">
                     {/* Desktop sidebar */}
                     <aside className="hidden md:block w-72 flex-shrink-0">
-                        <Card className="sticky top-24">
+                        <Card className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto custom-scrollbar">
                             <CardContent className="p-5">
-                                <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-border">
+                                <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-border sticky top-0 bg-card z-10">
                                     <span className="grid place-items-center h-9 w-9 rounded-lg bg-primary/10 text-primary"><SlidersHorizontal className="h-4 w-4" /></span>
                                     <div>
                                         <h2 className="text-sm font-bold text-foreground">{t('biodata.filters.filters')}</h2>
