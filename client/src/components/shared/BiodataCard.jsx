@@ -47,7 +47,10 @@ export default function BiodataCard({ biodata, index = 0, featured = false, isFa
                         src={biodata.profileImage}
                         alt={`Biodata ${biodata.biodataId}`}
                         onError={() => setImgError(true)}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        className={cn(
+                            "h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105",
+                            biodata.sukoon && "blur-md scale-110 select-none"
+                        )}
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-50 to-emerald-50 dark:from-emerald-950 dark:to-slate-900">
@@ -59,10 +62,15 @@ export default function BiodataCard({ biodata, index = 0, featured = false, isFa
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/20" />
 
                 {/* Top badges */}
-                <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
                     {biodata.isPremium && (
                         <Badge className="gap-1 bg-gradient-gold border-transparent text-white shadow-sm">
                             <Crown className="h-3 w-3" /> {t('biodata.card.premium', 'Premium')}
+                        </Badge>
+                    )}
+                    {biodata.sukoon && (
+                        <Badge variant="outline" className="gap-1 border-emerald-500/40 bg-emerald-950/80 text-emerald-300 shadow-sm backdrop-blur">
+                            ✨ Sukoon
                         </Badge>
                     )}
                     {featured && (

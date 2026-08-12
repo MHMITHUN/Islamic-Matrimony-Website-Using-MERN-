@@ -164,10 +164,9 @@ const BiodataDetails = () => {
         );
     }
 
-    const canViewContact = biodata.canViewContact || isPremium;
-    const isOwnBiodata = biodata.userEmail === user?.email;
+    const sukoonHidden = biodata.sukoon && (!myBiodata || (!biodata.sukoonRevealedTo?.includes(myBiodata.biodataId) && !isOwnBiodata));
+    const canViewContact = (biodata.canViewContact || isPremium) && (!biodata.sukoon || !sukoonHidden || isOwnBiodata);
     const isMale = biodata.biodataType === 'Male';
-    const sukoonHidden = biodata.sukoon && myBiodata && !biodata.sukoonRevealedTo?.includes(myBiodata.biodataId) && !isOwnBiodata;
 
     return (
         <div className="min-h-screen bg-muted/30 pt-20 pb-12">
@@ -343,6 +342,15 @@ const BiodataDetails = () => {
                                     <InfoItem icon={Mail} label={t('biodata.details.email')} value={biodata.userEmail} />
                                     <InfoItem icon={Phone} label={t('biodata.details.mobile')} value={biodata.mobileNumber} />
                                 </div>
+                            ) : sukoonHidden ? (
+                                <div className="text-center py-8 rounded-xl border border-dashed border-emerald-500/40 bg-emerald-500/5">
+                                    <div className="grid place-items-center h-12 w-12 rounded-full bg-emerald-500/10 text-emerald-600 mx-auto mb-3"><Leaf className="h-5 w-5" /></div>
+                                    <h3 className="text-base font-bold text-foreground mb-1">Sukoon Privacy Protected</h3>
+                                    <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">This profile is in the Sukoon Channel. Contact details and unblurred photos are protected until identity reveal is requested & approved.</p>
+                                    <Button variant="outline" className="border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10" onClick={() => revealMut.mutate()} disabled={revealMut.isLoading}>
+                                        <Lock className="h-4 w-4" /> {t('fp.sukoon.requestReveal')}
+                                    </Button>
+                                </div>
                             ) : (
                                 <div className="text-center py-8 rounded-xl border border-dashed border-border bg-muted/30">
                                     <div className="grid place-items-center h-12 w-12 rounded-full bg-muted text-muted-foreground mx-auto mb-3"><Lock className="h-5 w-5" /></div>
@@ -371,9 +379,9 @@ const BiodataDetails = () => {
                                     <div className="space-y-3">
                                         {similarBiodatas.map((similar) => (
                                             <Link key={similar._id} to={`/biodata/${similar.biodataId}`} className="flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/[0.03] transition-colors">
-                                                <Avatar className="h-11 w-11 rounded-lg">
-                                                    {similar.profileImage ? <AvatarImage src={similar.profileImage} alt="Profile" /> : null}
-                                                    <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs"><User className="h-4 w-4" /></AvatarFallback>
+                                                <Avatar className={cn("h-11 w-11 rounded-lg", similar.sukoon && "blur-md")}>
+                                                    {(!similar.sukoon && similar.profileImage) ? <AvatarImage src={similar.profileImage} alt="Profile" /> : null}
+                                                    <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-xs">{similar.sukoon ? <Lock className="h-4 w-4" /> : <User className="h-4 w-4" />}</AvatarFallback>
                                                 </Avatar>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-[10px] text-muted-foreground tabular-nums">ID: {similar.biodataId}</p>
