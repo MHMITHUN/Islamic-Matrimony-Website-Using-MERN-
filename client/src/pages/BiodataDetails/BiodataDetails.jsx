@@ -164,6 +164,7 @@ const BiodataDetails = () => {
         );
     }
 
+    const isOwnBiodata = biodata.userEmail === user?.email;
     const sukoonHidden = biodata.sukoon && (!myBiodata || (!biodata.sukoonRevealedTo?.includes(myBiodata.biodataId) && !isOwnBiodata));
     const canViewContact = (biodata.canViewContact || isPremium) && (!biodata.sukoon || !sukoonHidden || isOwnBiodata);
     const isMale = biodata.biodataType === 'Male';
